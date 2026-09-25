@@ -12,7 +12,7 @@ import { useUi, type SelItem } from "../../store/uiStore";
 import { useAllIssues } from "../../store/hooks";
 import { signalsByElement } from "../../store/selectors";
 import { nextId, KIND_PREFIX } from "../../lib/ids";
-import { buildGraph, smallestContaining, NODE_W, type DeviceData, type FrameData, type Rect } from "./graph";
+import { buildGraph, smallestContaining, fileFrameRect, NODE_W, type DeviceData, type FrameData, type Rect } from "./graph";
 import { DeviceNode } from "./DeviceNode";
 import { FrameNode } from "./FrameNode";
 import { JunctionNode } from "./JunctionNode";
@@ -122,6 +122,30 @@ function CanvasInner() {
 
   // ---------------------------------------------------------------- node changes + frame dragging carries contents
   const dragMembers = useRef(new Map<string, string[]>());
+  // File frames as they were at drag start, so devices can stretch them (null while a file frame is dragged)
+  const frameBase = useRef<{ id: string; rect: Rect }[] | null>(null);
+  const graphRef = useRef(graph);
+  graphRef.current = graph;
+  /** Each file frame grown from its drag-start rect to hold its devices where they are now. */
+  const stretchedFrames = (ns: Node[]): Map<string, Rect> => {
+    const members = new Map<string, Rect[]>();
+    for (const n of ns) {
+      if (n.type !== "device") continue;
+      const file = (n.data as DeviceData).inst.file;
+      members.set(file, [...(members.get(file) ?? []), rectOf(n)]);
+    }
+    return new Map((frameBase.current ?? []).map((b) => [b.id, fileFrameRect(b.rect, members.get(b.id) ?? [])!]));
+  };
+  const sameRect = (a: Rect, b: Rect) => a.x === b.x && a.y === b.y && a.w === b.w && a.h === b.h;
+  const stretchFrames = (ns: Node[]): Node[] => {
+    if (!frameBase.current) return ns;
+    const rects = stretchedFrames(ns);
+    return ns.map((n) => {
+      const r = n.type === "fileFrame" ? rects.get((n.data as FrameData).id) : undefined;
+      if (!r || sameRect(r, rectOf(n))) return n;
+      return { ...n, position: { x: r.x, y: r.y }, width: r.w, height: r.h, style: { ...n.style, width: r.w, height: r.h } };
+    });
+  };
   const onNodesChange = useCallback((changes: NodeChange[]) => {
     const cur = nodesRef.current;
     const byId = new Map(cur.map((n) => [n.id, n]));
@@ -138,13 +162,16 @@ function CanvasInner() {
         if (mn) extra.push({ type: "position", id: m, position: { x: mn.position.x + dx, y: mn.position.y + dy } });
       }
     }
-    setNodes(applyNodeChanges([...changes, ...extra], cur));
+    setNodes(stretchFrames(applyNodeChanges([...changes, ...extra], cur)));
   }, []);
   const onEdgesChange = useCallback((changes: EdgeChange[]) => setEdges((es) => applyEdgeChanges(changes, es)), []);
 
   const onNodeDragStart = useCallback((_: unknown, _node: Node, dragged: Node[]) => {
     dragMembers.current.clear();
     const draggedIds = new Set(dragged.map((d) => d.id));
+    // dragging a file frame moves it rather than stretching it; hidden frames still stretch (from the built rects)
+    frameBase.current = dragged.some((d) => d.type === "fileFrame") ? null
+      : useUi.getState().showFileFrames ? frameRects("fileFrame") : graphRef.current?.fileRects ?? null;
     for (const f of dragged) {
       if (f.type !== "fileFrame" && f.type !== "siteFrame") continue;
       const r = rectOf(f);
@@ -163,7 +190,6 @@ function CanvasInner() {
     if (!m) return;
     const ops: Op[] = [];
     const byId = new Map(nodesRef.current.map((n) => [n.id, n]));
-    const files = frameRects("fileFrame");
     const sites = frameRects("siteFrame");
     const layoutOf = (n: Node): Op | null => {
       if (n.type === "device") return { op: "setLayout", kind: "node", id: n.id, rect: { x: n.position.x, y: n.position.y } };
@@ -182,14 +208,17 @@ function CanvasInner() {
       if (n.type !== "device") continue;
       const inst = (n.data as DeviceData).inst;
       const c = center(n);
-      if (useUi.getState().showFileFrames) {
-        const target = smallestContaining(files, c.x, c.y)?.id ?? m.rootFile;
-        if (target !== inst.file) ops.push({ op: "moveToFile", kind: "node", id: inst.id, file: target });
-      }
       const site = smallestContaining(sites, c.x, c.y)?.id;
       if (site !== inst.site && (site || m.layout.sites?.[inst.site ?? ""])) ops.push({ op: "updateNode", id: inst.id, patch: { site } });
     }
+    // persist file frames that were stretched to hold the dropped devices (dragging never changes a device's file)
+    const stretched = stretchedFrames(nodesRef.current);
+    for (const b of frameBase.current ?? []) {
+      const r = stretched.get(b.id)!;
+      if (!sameRect(r, b.rect)) ops.push({ op: "setLayout", kind: "file", id: b.id, rect: r });
+    }
     dragMembers.current.clear();
+    frameBase.current = null;
     useProject.getState().applyOps(ops);
   }, []);
 

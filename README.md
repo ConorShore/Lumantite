@@ -3,6 +3,7 @@
 </p>
 
 <h1 align="center">Lumantite</h1>
+<p align="center"><em>(loo-MAN-tight)</em></p>
 
 <p align="center">
   <em>Optical network planner: power budgets, chromatic dispersion and wavelength-aware routing, edited on a canvas and stored as YAML.</em>
