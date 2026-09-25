@@ -552,7 +552,8 @@ Tabs:
    `layout:`; layout-only edits do not trigger recompute.
    **File frames**: each project file (parent and every fragment) is drawn as a dashed,
    labelled frame, toggleable. Dropping an element inside a frame assigns it to that file;
-   elements outside every frame belong to the parent. "New file" on the canvas creates an
+   dropping it outside every frame keeps its file. A file frame always grows to hold its
+   elements, stretching live as they are dragged. "New file" on the canvas creates an
    empty fragment and adds it to `includes:`. The inspector shows and lets you change the
    file of the selected elements. Fibres belong to a file independently of their end nodes.
 2. **YAML** — Monaco editor with one sub-tab per project file, schema validation, autocomplete for

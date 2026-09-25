@@ -79,6 +79,13 @@ export function bbox(rects: Rect[], pad = 0): Rect | null {
   const y1 = Math.max(...rects.map((r) => r.y + r.h)) + pad;
   return { x: x0, y: y0, w: x1 - x0, h: y1 - y0 };
 }
+/** Padding between a file frame's edge and the devices it holds. */
+export const FILE_PAD = 40;
+/** A file frame's rect: its stored rect grown to hold every member (or just the members' box). */
+export function fileFrameRect(stored: Rect | undefined, members: Rect[]): Rect | null {
+  const fit = bbox(members, FILE_PAD);
+  return bbox([stored, fit].filter((r): r is Rect => !!r));
+}
 export const contains = (r: Rect, x: number, y: number) => x >= r.x && x <= r.x + r.w && y >= r.y && y <= r.y + r.h;
 
 /** Smallest rect containing the point. */
@@ -141,7 +148,7 @@ export function buildGraph(model: ProjectModel, catalog: Catalog, opts: BuildOpt
   let emptyX = spill;
   for (const f of model.files) {
     const members = [...dev.values()].filter((d) => d.inst.file === f.path).map((d) => d.rect);
-    let rect = model.layout.files?.[f.path] ?? bbox(members, 40);
+    let rect = fileFrameRect(model.layout.files?.[f.path], members);
     if (!rect) { rect = { x: emptyX, y: -40, w: 260, h: 160 }; emptyX += 300; }
     fileRects.push({ id: f.path, rect });
   }
