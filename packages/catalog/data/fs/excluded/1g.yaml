@@ -1,0 +1,366 @@
+# Rows excluded from the generated catalog (see ../README.md, "Exclusions"). Moved from 1g.yaml.
+# Each keeps its transcribed values plus an `excluded` reason; the generator does not read this directory.
+
+
+- pn: SFP1G-SX-31
+  fs_products: [ 75795 ]
+  title: 1000BASE-SX SFP, 1310nm, 2km, MMF
+  form_factor: SFP
+  rate_Gbps: 1
+  reach_km: 2
+  media: mmf
+  connector: lc-upc
+  temp: commercial
+  wavelength_nm: 1310
+  tx_power_dBm: { min: -9, max: -3 }
+  rx_sensitivity_dBm: -19
+  rx_overload_dBm: -3
+  rx_range_nm: [ 1260, 1600 ]
+  source: "https://resource.fs.com/mall/doc/20231115172041cpq6rr.pdf (Table 3, p.14)"
+  verified: true
+  notes: "Listing 75795 ('1G SFP 2km 1310nm') is this part. It is a 1310nm laser over multimode fibre (single sheet img-en.fs.com/file/datasheet/sfp1g-sx-31.pdf: 2km on 50/125um 800MHz.km MMF; 2023 combined sheet: 'over MMF'); the 2022 combined sheet and several ordering tables say 'SMF', treated as a typo. Sensitivity: 2023 combined sheet -19 dBm (used, newest); the single-product sheet says -21 dBm."
+  excluded: "FS sources disagree: sensitivity -19 dBm (2023 combined) vs -21 dBm (single-product sheet)."
+
+# --- 1000BASE-BX BiDi. Older FS sheets print every variant as SFP-GE-BX /
+# SFP-GE-BX40 / -BX80 / -BX120; the 2025 single-product datasheets' ordering tables
+# give per-direction P/Ns (SFP-1G<tx><rx>-BX<km>), used here as pn.
+
+- pn: SFP-1G34-BX10
+  fs_products: [ 11802 ]
+  title: 1000BASE-BX BiDi SFP, Tx1310/Rx1490, 10km, SMF
+  form_factor: SFP
+  rate_Gbps: 1
+  reach_km: 10
+  media: smf
+  connector: lc-upc
+  temp: commercial
+  bidi: { tx_nm: 1310, rx_nm: 1490 }
+  tx_power_dBm: { min: -9, max: -3 }
+  rx_sensitivity_dBm: -20
+  rx_overload_dBm: -3
+  rx_range_nm: [ 1440, 1540 ]
+  source: "https://resource.fs.com/mall/resource/sfp-1g34-bx10-datasheet-20251208090113.pdf (IV. Optical Characteristics, p.3-4)"
+  verified: true
+  notes: "Mate: SFP-1G43-BX10. 2025 edition gives sensitivity -20 dBm; the older img-en sheet (bidi-sfp-1310tx1490rx-10km) and the 2023 combined sheet gave -23 dBm."
+  excluded: "FS sources disagree: sensitivity -20 dBm (2025 sheet) vs -23 dBm (older sheet and 2023 combined)."
+
+- pn: SFP-1G43-BX10
+  fs_products: [ 11795 ]
+  title: 1000BASE-BX BiDi SFP, Tx1490/Rx1310, 10km, SMF
+  form_factor: SFP
+  rate_Gbps: 1
+  reach_km: 10
+  media: smf
+  connector: lc-upc
+  temp: commercial
+  bidi: { tx_nm: 1490, rx_nm: 1310 }
+  tx_power_dBm: { min: -9, max: -3 }
+  rx_sensitivity_dBm: -23
+  rx_overload_dBm: -3
+  rx_range_nm: [ 1290, 1330 ]
+  source: "https://img-en.fs.com/file/datasheet/bidi-sfp-1490tx1310rx-10km-transceiver-datasheet.pdf (IV. Optical Characteristics, p.4-5)"
+  verified: true
+  notes: "Mate: SFP-1G34-BX10. No 2025 edition found for this direction; this (older) sheet prints P/N SFP-GE-BX and -23 dBm sensitivity, whereas the 2025 editions of sibling BX10/BX20 parts revised sensitivity to -20 dBm. P/N SFP-1G43-BX10 from the 2025 ordering tables."
+  excluded: "FS sources disagree: only an older sheet (-23 dBm) exists; FS revised sibling BX10/BX20 parts to -20 dBm. Mate SFP-1G34-BX10 also excluded."
+
+- pn: SFP-1G35-BX10
+  fs_products: [ 39135 ]
+  title: 1000BASE-BX BiDi SFP, Tx1310/Rx1550, 10km, SMF
+  form_factor: SFP
+  rate_Gbps: 1
+  reach_km: 10
+  media: smf
+  connector: lc-upc
+  temp: commercial
+  bidi: { tx_nm: 1310, rx_nm: 1550 }
+  tx_power_dBm: { min: -9, max: -3 }
+  rx_sensitivity_dBm: -20
+  rx_overload_dBm: -3
+  source: "https://resource.fs.com/mall/resource/sfp-1g35-bx10-datasheet-20251202161009.pdf (IV. Optical Characteristics, p.3-4)"
+  verified: true
+  notes: "Mate: SFP-1G53-BX10. Receiver range printed as 1550/1550/1600nm (min = typ, would exclude part of the mate's 1530-1570nm Tx band) - looks like a typo, so rx_range_nm is omitted. Older img-en sheet gave -23 dBm sensitivity; 2025 edition -20 dBm used."
+  excluded: "FS sources disagree: sensitivity -20 dBm (2025 sheet) vs -23 dBm (older sheet)."
+
+- pn: SFP-1G53-BX10
+  fs_products: [ 39138 ]
+  title: 1000BASE-BX BiDi SFP, Tx1550/Rx1310, 10km, SMF
+  form_factor: SFP
+  rate_Gbps: 1
+  reach_km: 10
+  media: smf
+  connector: lc-upc
+  temp: commercial
+  bidi: { tx_nm: 1550, rx_nm: 1310 }
+  tx_power_dBm: { min: -9, max: -3 }
+  rx_sensitivity_dBm: -23
+  rx_overload_dBm: -3
+  rx_range_nm: [ 1290, 1330 ]
+  source: "https://img-en.fs.com/file/datasheet/bidi-sfp-1550tx1310rx-10km-transceiver-datasheet.pdf (IV. Optical Characteristics, p.4-5)"
+  verified: true
+  notes: "Mate: SFP-1G35-BX10. No 2025 edition found for this direction; older sheet (P/N SFP-GE-BX) gives -23 dBm, while 2025 editions of sibling parts give -20 dBm. P/N from the 2025 ordering tables."
+  excluded: "FS sources disagree: only an older sheet (-23 dBm) exists; FS revised sibling parts to -20 dBm. Mate SFP-1G35-BX10 also excluded."
+
+- pn: SFP-1G34-BX20
+  fs_products: [ 15535 ]
+  title: 1000BASE-BX BiDi SFP, Tx1310/Rx1490, 20km, SMF
+  form_factor: SFP
+  rate_Gbps: 1
+  reach_km: 20
+  media: smf
+  connector: lc-upc
+  temp: commercial
+  bidi: { tx_nm: 1310, rx_nm: 1490 }
+  tx_power_dBm: { min: -9, max: -3 }
+  rx_sensitivity_dBm: -20
+  rx_overload_dBm: -3
+  rx_range_nm: [ 1440, 1540 ]
+  source: "https://resource.fs.com/mall/resource/sfp-1g34-bx20-data-sheet-20251112110157.pdf (IV. Optical Characteristics, p.3-4)"
+  verified: true
+  notes: "Mate: SFP-1G43-BX20. Datasheet's 'Transmission Distance 10 km' line contradicts its Lmax 20 km and title; 20 km used. Older img-en sheet gave -23 dBm sensitivity."
+  excluded: "FS sources disagree: sensitivity -20 dBm (2025 sheet) vs -23 dBm (older sheet); reach printed as both 10km and 20km."
+
+- pn: SFP-1G43-BX20
+  fs_products: [ 39140 ]
+  title: 1000BASE-BX BiDi SFP, Tx1490/Rx1310, 20km, SMF
+  form_factor: SFP
+  rate_Gbps: 1
+  reach_km: 20
+  media: smf
+  connector: lc-upc
+  temp: commercial
+  bidi: { tx_nm: 1490, rx_nm: 1310 }
+  tx_power_dBm: { min: -9, max: -3 }
+  rx_sensitivity_dBm: -20
+  rx_overload_dBm: -3
+  rx_range_nm: [ 1290, 1330 ]
+  source: "https://resource.fs.com/mall/resource/cn_sfp-1g43-bx20-datasheet-20251202161613.pdf (IV. Optical Characteristics, p.3-4)"
+  verified: true
+  notes: "Mate: SFP-1G34-BX20. Older img-en sheet gave -23 dBm sensitivity."
+  excluded: "FS sources disagree: sensitivity -20 dBm (2025 sheet) vs -23 dBm (older sheet)."
+
+- pn: SFP-1G35-BX20
+  fs_products: [ 39143 ]
+  title: 1000BASE-BX BiDi SFP, Tx1310/Rx1550, 20km, SMF
+  form_factor: SFP
+  rate_Gbps: 1
+  reach_km: 20
+  media: smf
+  connector: lc-upc
+  temp: commercial
+  bidi: { tx_nm: 1310, rx_nm: 1550 }
+  tx_power_dBm: { min: -9, max: -3 }
+  rx_sensitivity_dBm: -20
+  rx_overload_dBm: -3
+  source: "https://resource.fs.com/mall/resource/sfp-1g35-bx20-datasheet-20251208091325.pdf (IV. Optical Characteristics, p.3-4)"
+  verified: true
+  notes: "Mate: SFP-1G53-BX20. Receiver range printed as 1550/1550/1600nm (min = typ) - likely typo, rx_range_nm omitted. Older img-en sheet gave -23 dBm sensitivity."
+  excluded: "FS sources disagree: sensitivity -20 dBm (2025 sheet) vs -23 dBm (older sheet)."
+
+- pn: SFP-1G53-BX20
+  fs_products: [ 39146 ]
+  title: 1000BASE-BX BiDi SFP, Tx1550/Rx1310, 20km, SMF
+  form_factor: SFP
+  rate_Gbps: 1
+  reach_km: 20
+  media: smf
+  connector: lc-upc
+  temp: commercial
+  bidi: { tx_nm: 1550, rx_nm: 1310 }
+  tx_power_dBm: { min: -9, max: -3 }
+  rx_sensitivity_dBm: -20
+  rx_overload_dBm: -3
+  rx_range_nm: [ 1290, 1330 ]
+  source: "https://resource.fs.com/mall/resource/cn_sfp-1g53-bx20-data-sheet-20251031114058.pdf (IV. Optical Characteristics, p.3-4)"
+  verified: true
+  notes: "Mate: SFP-1G35-BX20. Datasheet typos ignored: Lmax/Transmission Distance printed as 10 km (title and P/N say 20km), and the B53 Tx centre wavelength printed as 1470-1510nm (copied from the 1490 part; the older bidi-sfp-1550tx1310rx-20km sheet gives 1530-1570nm). Older sheet gave -23 dBm sensitivity."
+  excluded: "FS sources disagree: sensitivity -20 vs -23 dBm; reach printed 10km vs 20km; Tx band printed 1470-1510 vs 1530-1570nm."
+
+- pn: SFP-1G45-BX80
+  fs_products: [ 49480 ]
+  title: 1000BASE-BX BiDi SFP, Tx1490/Rx1550, 80km, SMF
+  form_factor: SFP
+  rate_Gbps: 1
+  reach_km: 80
+  media: smf
+  connector: lc-upc
+  temp: commercial
+  bidi: { tx_nm: 1490, rx_nm: 1550 }
+  tx_power_dBm: { min: -2, max: 3 }
+  rx_sensitivity_dBm: -24
+  rx_overload_dBm: -3
+  rx_range_nm: [ 1530, 1570 ]
+  source: "https://img-en.fs.com/file/datasheet/bidi-sfp-1490tx1550rx-80km-transceiver-datasheet.pdf (IV. Optical Characteristics, p.5-6)"
+  verified: true
+  notes: "Mate: SFP-1G54-BX80. The sheet prints two unlabelled Tx power rows (-2/+3 and -5/0) for its two variants (MQEL-K80B45 listed first, K80B54 second); -2/+3 is taken for the 1490nm part by row order, which also matches the 2023 combined sheet's single SFP-GE-BX80 row (-2/3, -24/-3)."
+  excluded: Datasheet Tx power rows are unlabelled; assignment to each direction was by row order (ambiguous).
+
+- pn: SFP-1G54-BX80
+  fs_products: [ 49481 ]
+  title: 1000BASE-BX BiDi SFP, Tx1550/Rx1490, 80km, SMF
+  form_factor: SFP
+  rate_Gbps: 1
+  reach_km: 80
+  media: smf
+  connector: lc-upc
+  temp: commercial
+  bidi: { tx_nm: 1550, rx_nm: 1490 }
+  tx_power_dBm: { min: -5, max: 0 }
+  rx_sensitivity_dBm: -24
+  rx_overload_dBm: -3
+  rx_range_nm: [ 1470, 1510 ]
+  source: "https://img-en.fs.com/file/datasheet/bidi-sfp-1550tx1490rx-80km-transceiver-datasheet.pdf (IV. Optical Characteristics, p.5-6)"
+  verified: true
+  notes: "Mate: SFP-1G45-BX80. Tx -5/0 dBm is the second (MQEL-K80B54) of two unlabelled Tx power rows, assigned by row order; the 2023 combined sheet gives only -2/3 for the family."
+  excluded: "Tx power row assignment ambiguous; FS sources disagree: combined sheet gives -2..+3 dBm for the family vs -5..0 dBm here."
+
+- pn: SFP-1G4957-BX80
+  fs_products: [ 39705 ]
+  title: 1000BASE-BX BiDi SFP, Tx1490/Rx1570, 80km, SMF
+  form_factor: SFP
+  rate_Gbps: 1
+  reach_km: 80
+  media: smf
+  connector: lc-upc
+  temp: commercial
+  bidi: { tx_nm: 1490, rx_nm: 1570 }
+  tx_power_dBm: { min: 0, max: 5 }
+  rx_sensitivity_dBm: -26
+  rx_overload_dBm: -3
+  rx_range_nm: [ 1560, 1580 ]
+  source: "https://img-en.fs.com/file/datasheet/bidi-sfp-1490tx1570rx-80km-transceiver-datasheet.pdf (IV. Optical Characteristics, p.5)"
+  verified: true
+  notes: "Mate: SFP-1G5749-BX80. Sheet prints P/N SFP-GE-BX80. Sensitivity row reads '-0.3 -26' - the -0.3 is a stray value (also appears in the spectrum-width row); -26 dBm is the max (sensitivity) column."
+  excluded: Datasheet sensitivity row garbled ('-0.3 -26'); value had to be inferred. Mate also excluded.
+
+- pn: SFP-1G5749-BX80
+  fs_products: [ 39706 ]
+  title: 1000BASE-BX BiDi SFP, Tx1570/Rx1490, 80km, SMF
+  form_factor: SFP
+  rate_Gbps: 1
+  reach_km: 80
+  media: smf
+  connector: lc-upc
+  temp: commercial
+  bidi: { tx_nm: 1570, rx_nm: 1490 }
+  tx_power_dBm: { min: 0, max: 5 }
+  rx_sensitivity_dBm: -26
+  rx_overload_dBm: -3
+  rx_range_nm: [ 1480, 1500 ]
+  source: "https://img-en.fs.com/file/datasheet/bidi-sfp-1570tx1490rx-80km-transceiver-datasheet.pdf (IV. Optical Characteristics, p.5)"
+  verified: true
+  notes: "Mate: SFP-1G4957-BX80. This sheet's optical table is identical to the 1490Tx sheet (its wavelength rows still label 1490nm as Tx); the power figures are shared by both directions. Rx range 1480-1500nm is the 1490nm band from that table."
+  excluded: Datasheet optical table is a copy of the 1490nm-Tx sheet (wavelength rows mislabelled); figures ambiguous.
+
+- pn: SFP-1G5159-BX120
+  fs_products: [ 39754 ]
+  title: 1000BASE-BX BiDi SFP, Tx1510/Rx1590, 120km, SMF
+  form_factor: SFP
+  rate_Gbps: 1
+  reach_km: 120
+  media: smf
+  connector: lc-upc
+  temp: commercial
+  bidi: { tx_nm: 1510, rx_nm: 1590 }
+  tx_power_dBm: { min: -1, max: 4 }
+  rx_sensitivity_dBm: -31
+  rx_overload_dBm: -8
+  source: "https://resource.fs.com/mall/doc/20231115172041cpq6rr.pdf (Table 3, p.15, SFP-GE-BX120 row)"
+  verified: false
+  notes: "Mate: SFP-1G5951-BX120. ASSUMED: no FS datasheet with figures for the 1510/1590nm variant was found (P/N from the 2025 ordering tables). Power/sensitivity copied from the SFP-GE-BX120 1490/1550nm figures (combined sheet and single-product sheets), on the basis that FS sells both under the SFP-GE-BX120 family name."
+  excluded: No datasheet figures found; values copied from the 1490/1550nm BX120 (unverified).
+
+- pn: SFP-1G5951-BX120
+  fs_products: [ 39755 ]
+  title: 1000BASE-BX BiDi SFP, Tx1590/Rx1510, 120km, SMF
+  form_factor: SFP
+  rate_Gbps: 1
+  reach_km: 120
+  media: smf
+  connector: lc-upc
+  temp: commercial
+  bidi: { tx_nm: 1590, rx_nm: 1510 }
+  tx_power_dBm: { min: -1, max: 4 }
+  rx_sensitivity_dBm: -31
+  rx_overload_dBm: -8
+  source: "https://resource.fs.com/mall/doc/20231115172041cpq6rr.pdf (Table 3, p.15, SFP-GE-BX120 row)"
+  verified: false
+  notes: "Mate: SFP-1G5159-BX120. ASSUMED: no datasheet figures found for the 1510/1590nm variant; values copied from the SFP-GE-BX120 1490/1550nm figures."
+  excluded: No datasheet figures found; values copied from the 1490/1550nm BX120 (unverified).
+
+- pn: SFP-GE-BX160 (Tx1490)
+  id: fs-sfp-ge-bx160-1490tx
+  fs_products: [ 186781 ]
+  title: 1000BASE-BX BiDi SFP, Tx1490/Rx1550, 160km, SMF
+  form_factor: SFP
+  rate_Gbps: 1
+  reach_km: 160
+  media: smf
+  connector: lc-upc
+  temp: commercial
+  bidi: { tx_nm: 1490, rx_nm: 1550 }
+  tx_power_dBm: { min: 1, max: 6 }
+  rx_sensitivity_dBm: -33
+  rx_overload_dBm: -10
+  rx_range_nm: [ 1530, 1570 ]
+  source: "https://resource.fs.com/mall/doc/20230610115656cbcm6d.pdf (V. Optical Characteristics, p.6)"
+  verified: true
+  notes: "Mate: SFP-GE-BX160 (Tx1550). Both directions share P/N SFP-GE-BX160 in FS's ordering table."
+  excluded: BiDi mate SFP-GE-BX160 (Tx1550) excluded (its figures are not published).
+
+- pn: SFP-GE-BX160 (Tx1550)
+  id: fs-sfp-ge-bx160-1550tx
+  fs_products: [ 186782 ]
+  title: 1000BASE-BX BiDi SFP, Tx1550/Rx1490, 160km, SMF
+  form_factor: SFP
+  rate_Gbps: 1
+  reach_km: 160
+  media: smf
+  connector: lc-upc
+  temp: commercial
+  bidi: { tx_nm: 1550, rx_nm: 1490 }
+  tx_power_dBm: { min: 1, max: 6 }
+  rx_sensitivity_dBm: -33
+  rx_overload_dBm: -10
+  source: "https://resource.fs.com/mall/doc/20230610115656cbcm6d.pdf (V. Optical Characteristics, p.6)"
+  verified: false
+  notes: "Mate: SFP-GE-BX160 (Tx1490). ASSUMED: FS's SFP-GE-BX160 datasheet only tabulates the 1490nm-Tx direction; figures copied to the 1550nm-Tx direction (they match FS's 160km SFP1G-ZXC-55: 1/6, -33/-10)."
+  excluded: Datasheet only tabulates the 1490nm-Tx direction; figures copied (unverified).
+
+- pn: SFP-GE-BX160-I (Tx1490)
+  id: fs-sfp-ge-bx160-i-1490tx
+  fs_products: [ 186809 ]
+  title: 1000BASE-BX BiDi SFP, Tx1490/Rx1550, 160km, SMF, industrial
+  form_factor: SFP
+  rate_Gbps: 1
+  reach_km: 160
+  media: smf
+  connector: lc-upc
+  temp: industrial
+  bidi: { tx_nm: 1490, rx_nm: 1550 }
+  tx_power_dBm: { min: 1, max: 6 }
+  rx_sensitivity_dBm: -33
+  rx_overload_dBm: -10
+  rx_range_nm: [ 1530, 1570 ]
+  source: "https://resource.fs.com/mall/doc/20230610115656cbcm6d.pdf (V. Optical Characteristics, p.6)"
+  verified: true
+  notes: "Mate: SFP-GE-BX160-I (Tx1550). The SFP-GE-BX160 sheet covers commercial and industrial (-40 to 85C) grades with one optical table; ordering table lists SFP-GE-BX160-I."
+  excluded: BiDi mate SFP-GE-BX160-I (Tx1550) excluded (its figures are not published).
+
+- pn: SFP-GE-BX160-I (Tx1550)
+  id: fs-sfp-ge-bx160-i-1550tx
+  fs_products: [ 186810 ]
+  title: 1000BASE-BX BiDi SFP, Tx1550/Rx1490, 160km, SMF, industrial
+  form_factor: SFP
+  rate_Gbps: 1
+  reach_km: 160
+  media: smf
+  connector: lc-upc
+  temp: industrial
+  bidi: { tx_nm: 1550, rx_nm: 1490 }
+  tx_power_dBm: { min: 1, max: 6 }
+  rx_sensitivity_dBm: -33
+  rx_overload_dBm: -10
+  source: "https://resource.fs.com/mall/doc/20230610115656cbcm6d.pdf (V. Optical Characteristics, p.6)"
+  verified: false
+  notes: "Mate: SFP-GE-BX160-I (Tx1490). ASSUMED: figures copied from the 1490nm-Tx direction (the only one tabulated)."
+  excluded: Datasheet only tabulates the 1490nm-Tx direction; figures copied (unverified).

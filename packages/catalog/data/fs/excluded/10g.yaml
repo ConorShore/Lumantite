@@ -1,0 +1,337 @@
+# Rows excluded from the generated catalog (see ../README.md, "Exclusions"). Moved from 10g.yaml.
+# Each keeps its transcribed values plus an `excluded` reason; the generator does not read this directory.
+
+- pn: SFP-10GSR-85 (dual-rate 1/10G)
+  id: fs-sfp-10gsr-85-dual-rate
+  fs_products: [ 36431 ]
+  title: Dual-rate 1000BASE-SX / 10GBASE-SR SFP+, 850nm, 300m, MMF
+  form_factor: SFP+
+  rate_Gbps: 10
+  reach_km: 0.3
+  media: mmf
+  connector: lc-upc
+  temp: commercial
+  wavelength_nm: 850
+  tx_power_dBm: { min: -5, max: -1 }
+  rx_sensitivity_dBm: -11.1
+  rx_overload_dBm: 0.5
+  rx_range_nm: [ 840, 860 ]
+  source: "https://img-en.fs.com/file/datasheet/dr-1g-sx--and-10g-sr-850nm.pdf (sec. V, 10G operation)"
+  verified: true
+  notes: "The datasheet prints P/N SFP-10GSR-85 for this dual-rate part; pn suffixed here to keep it distinct. Figures are the 10G (RS0=HIGH) table in section V; the section IV table is also labelled 10G but carries 1G-SX values (Tx -9.5..-1, sens -17), so it was not used. Rx -11.1 dBm is OMA sensitivity (no average-power figure given)."
+  excluded: Datasheet optical tables are mislabelled/garbled (a "10G" table carries 1G values); figures had to be interpreted.
+
+- pn: SFP-10GSR-85-I
+  fs_products: [ 111899 ]
+  title: 10GBASE-SR SFP+, 850nm, 300m (OM3), MMF
+  form_factor: SFP+
+  rate_Gbps: 10
+  reach_km: 0.3
+  media: mmf
+  connector: lc-upc
+  temp: industrial
+  wavelength_nm: 850
+  tx_power_dBm: { min: -6, max: -1 }
+  rx_sensitivity_dBm: -11.1
+  rx_overload_dBm: 0.5
+  rx_range_nm: [ 840, 860 ]
+  source: "https://resource.fs.com/mall/resource/sfp-10gsr-85-i-data-sheet.pdf; https://img-en.fs.com/file/datasheet/10g-sr-i-datasheet.pdf"
+  verified: true
+  notes: "Combined datasheet Table 3 prints Tx -8..+1 dBm (a +1 dBm max exceeds the 10GBASE-SR limit); both single-product SFP-10GSR-85-I datasheets give Tx -6..-1 dBm, used here. Rx -11.1 / max input +0.5 dBm agree across all three (one single-product sheet also lists 'overload -1 dBm' separately from 'max input +0.5')."
+  excluded: "FS sources disagree: Tx -8..+1 dBm (combined Table 3) vs -6..-1 dBm (single-product sheets)."
+
+- pn: SFP-10GLR-31-I
+  fs_products: [ 111897 ]
+  title: 10GBASE-LR SFP+, 1310nm, 10km, SMF
+  form_factor: SFP+
+  rate_Gbps: 10
+  reach_km: 10
+  media: smf
+  connector: lc-upc
+  temp: industrial
+  wavelength_nm: 1310
+  tx_power_dBm: { min: -8.2, max: 0.5 }
+  rx_sensitivity_dBm: -14.2
+  rx_overload_dBm: 0.5
+  rx_range_nm: [ 1260, 1610 ]
+  source: "https://resource.fs.com/mall/file/datasheet/10g-base-lr-1310nm-i.pdf"
+  verified: true
+  notes: "Combined Table 3 gives Rx min -12.6 dBm, which is the OMA sensitivity in the single-product datasheet; the average-receive-power minimum there is -14.2 dBm, used here. Tx and overload agree."
+  excluded: "FS sources disagree: receive power minimum -12.6 dBm (combined Table 3) vs -14.2 dBm average (single-product sheet)."
+
+- pn: SFP-10GER-31
+  fs_products: [ 48813 ]
+  title: 10GBASE-ER SFP+, 1310nm, 40km, SMF
+  form_factor: SFP+
+  rate_Gbps: 10
+  reach_km: 40
+  media: smf
+  connector: lc-upc
+  temp: commercial
+  wavelength_nm: 1310
+  tx_power_dBm: { min: 0, max: 5 }
+  rx_sensitivity_dBm: -15
+  rx_overload_dBm: 1
+  source: "https://resource.fs.com/mall/resource/10g-sfp-cable-and-transceiver-modules-data-sheet-20250407151554.pdf (Table 3, p.14)"
+  verified: true
+  notes: "Conflict: an older single-product SFP-10GER-31 datasheet (img-en.fs.com/file/datasheet/customized-10g-er-1310nm.pdf) gives Tx -3..+4, avg sens -20, overload -7 dBm, Rx 1200-1600nm. All three combined-datasheet editions give the figures used here."
+  excluded: "FS sources disagree: Tx 0..5 / sens -15 / overload +1 dBm (combined) vs Tx -3..4 / sens -20 / overload -7 dBm (single-product sheet)."
+
+- pn: SFP-10GER-31-I
+  fs_products: [ 111898 ]
+  title: 10GBASE-ER SFP+, 1310nm, 40km, SMF
+  form_factor: SFP+
+  rate_Gbps: 10
+  reach_km: 40
+  media: smf
+  connector: lc-upc
+  temp: industrial
+  wavelength_nm: 1310
+  tx_power_dBm: { min: 0, max: 5 }
+  rx_sensitivity_dBm: -15
+  rx_overload_dBm: 1
+  rx_range_nm: [ 1260, 1610 ]
+  source: "https://resource.fs.com/mall/resource/10g-sfp-cable-and-transceiver-modules-data-sheet-20250407151554.pdf (Table 3, p.14); rx_range_nm: https://resource.fs.com/mall/resource/sfp-10ger-31-i-data-sheet.pdf"
+  verified: true
+  notes: "Single-product datasheet agrees on overload +1 dBm but states -15 dBm as OMA sensitivity and gives Tx as 1 (20km) / 3 (30km) dBm; Table 3 figures used."
+  excluded: "FS sources disagree: Tx 0..5 dBm (combined) vs 1 (20km) / 3 (30km) dBm, and sensitivity stated as OMA (single-product sheet)."
+
+# ---------------------------------------------------------------- 1550nm single-mode
+- pn: SFP-10GER-55
+  fs_products: [ 11557 ]
+  title: 10GBASE-ER SFP+, 1550nm, 40km, SMF
+  form_factor: SFP+
+  rate_Gbps: 10
+  reach_km: 40
+  media: smf
+  connector: lc-upc
+  temp: commercial
+  wavelength_nm: 1550
+  tx_power_dBm: { min: -1, max: 4 }
+  rx_sensitivity_dBm: -16
+  rx_overload_dBm: -1
+  rx_range_nm: [ 1260, 1600 ]
+  source: "https://resource.fs.com/mall/resource/10g-sfp-cable-and-transceiver-modules-data-sheet-20250407151554.pdf (Table 3, p.14); rx_range_nm: https://img-en.fs.com/file/datasheet/10g-er-1550.pdf"
+  verified: true
+  notes: "Single-product datasheet agrees on sens -16 (avg) and overload -1 dBm but gives Tx -1..+2 dBm; Table 3 Tx used."
+  excluded: "FS sources disagree: Tx -1..+4 dBm (combined) vs -1..+2 dBm (single-product sheet)."
+
+- pn: SFP-10GZR100-55
+  fs_products: [ 48814 ]
+  title: 10GBASE-ZRC SFP+, 1550nm, 100km, SMF
+  form_factor: SFP+
+  rate_Gbps: 10
+  reach_km: 100
+  media: smf
+  connector: lc-upc
+  temp: commercial
+  wavelength_nm: 1550
+  tx_power_dBm: { min: 0, max: 5 }
+  rx_sensitivity_dBm: -25
+  rx_overload_dBm: -7
+  rx_range_nm: [ 1260, 1620 ]
+  source: "https://resource.fs.com/mall/resource/10g-sfp-cable-and-transceiver-modules-data-sheet-20250407151554.pdf (Table 3, p.14); rx_range_nm: https://img-en.fs.com/file/datasheet/pre-order-10g-base-zr-100km.pdf"
+  verified: true
+  notes: "Printed as SFP-10GZRC-55 in the 2022 edition. Conflict: the single-product SFP-10GZRC-55 datasheet gives Tx 0..4 dBm and avg sens -24 dBm (back-to-back, 10.3G) / -22 dBm (after 80km); overload -7 agrees. Table 3 figures used."
+  excluded: "FS sources disagree: Tx 0..5 / sens -25 dBm (combined) vs Tx 0..4 / sens -24 dBm (single-product sheet)."
+
+- pn: SFP-10GZR120-55
+  fs_products: [ 166134 ]
+  title: 10GBASE-ZRC SFP+, 1550nm, 120km, SMF
+  form_factor: SFP+
+  rate_Gbps: 10
+  reach_km: 120
+  media: smf
+  connector: lc-upc
+  temp: commercial
+  wavelength_nm: 1550
+  tx_power_dBm: { min: 1, max: 6 }
+  rx_sensitivity_dBm: -26
+  rx_overload_dBm: -8
+  rx_range_nm: [ 1270, 1610 ]
+  source: "https://resource.fs.com/mall/resource/sfp-10gzr120-55-data-sheet.pdf"
+  verified: true
+  notes: "Typo in combined Table 3 (all editions): '1 3 6 -8' (Rx min +6 dBm). Single-product SFP-10GZR120-55 datasheet gives Tx 1..6 dBm, avg sens -26 dBm, overload -8 dBm, used here. Printed as SFP-10GZRC-120 in the 2022 edition."
+  excluded: "FS sources disagree: combined Table 3 prints '1 3 6 -8' (Tx max 3, Rx min +6) vs single-product sheet Tx 1..6 / sens -26 / overload -8 dBm."
+
+- pn: SFP-10G-BX20-I (Tx1270)
+  id: fs-sfp-10g-bx20-i-1270tx
+  fs_products: [ 111846 ]
+  title: 10GBASE-BX20 SFP+, 20km, SMF
+  form_factor: SFP+
+  rate_Gbps: 10
+  reach_km: 20
+  media: smf
+  connector: lc-upc
+  temp: industrial
+  bidi: { tx_nm: 1270, rx_nm: 1330 }
+  tx_power_dBm: { min: -6, max: 3 }
+  rx_sensitivity_dBm: -14.4
+  rx_overload_dBm: 0.5
+  rx_range_nm: [ 1320, 1340 ]
+  source: "https://resource.fs.com/mall/resource/10g-sfp-cable-and-transceiver-modules-data-sheet-20250407151554.pdf (Table 3, p.15); https://img-en.fs.com/file/datasheet/bidi-sfp-plus-1330tx1270rx-20km-i.pdf"
+  verified: true
+  notes: "Datasheet prints P/N SFP-10G-BX-I. Single-product datasheets agree on power figures. The 1270-Tx sheet prints Rx range 1260-1280nm for the 1270-Tx end (typo: that is its own Tx band); the 1330-Tx sheet gives 1320-1340nm, used here. Mate: fs-sfp-10g-bx20-i-1330tx."
+  excluded: "FS sources disagree: this end's sheet prints Rx range 1260-1280nm; the mate's sheet gives 1320-1340nm."
+
+- pn: SFP-10G-BX20-I (Tx1330)
+  id: fs-sfp-10g-bx20-i-1330tx
+  fs_products: [ 111848 ]
+  title: 10GBASE-BX20 SFP+, 20km, SMF
+  form_factor: SFP+
+  rate_Gbps: 10
+  reach_km: 20
+  media: smf
+  connector: lc-upc
+  temp: industrial
+  bidi: { tx_nm: 1330, rx_nm: 1270 }
+  tx_power_dBm: { min: -6, max: 3 }
+  rx_sensitivity_dBm: -14.4
+  rx_overload_dBm: 0.5
+  rx_range_nm: [ 1260, 1280 ]
+  source: "https://resource.fs.com/mall/resource/10g-sfp-cable-and-transceiver-modules-data-sheet-20250407151554.pdf (Table 3, p.15); https://img-en.fs.com/file/datasheet/bidi-sfp-plus-1330tx1270rx-20km-i.pdf"
+  verified: true
+  notes: "Datasheet prints P/N SFP-10G-BX-I. Single-product datasheet agrees. Mate: fs-sfp-10g-bx20-i-1270tx."
+  excluded: BiDi mate SFP-10G-BX20-I (Tx1270) excluded.
+
+# ---------------------------------------------------------------- BiDi 1270/1330, 60km
+- pn: SFP-10G-BX60 (Tx1270)
+  id: fs-sfp-10g-bx60-1270tx
+  fs_products: [ 124447 ]
+  title: 10GBASE-BX60 SFP+, 60km, SMF
+  form_factor: SFP+
+  rate_Gbps: 10
+  reach_km: 60
+  media: smf
+  connector: lc-upc
+  temp: commercial
+  bidi: { tx_nm: 1270, rx_nm: 1330 }
+  tx_power_dBm: { min: 1, max: 6 }
+  rx_sensitivity_dBm: -20
+  rx_overload_dBm: 0.5
+  rx_range_nm: [ 1320, 1340 ]
+  source: "https://resource.fs.com/mall/resource/10g-sfp-cable-and-transceiver-modules-data-sheet-20250407151554.pdf (Table 3, p.15); rx_range_nm: https://img-en.fs.com/file/datasheet/bidi-sfp+-1330tx1270rx-60kmtransceiver-datasheet.pdf"
+  verified: true
+  notes: "Conflict: the single-product SFP-10G-BX60 datasheet agrees on Tx 1..6 and sens -20 dBm but gives receiver overload -6 dBm (Table 3: +0.5). Table 3 used; treat short links with caution. Mate: fs-sfp-10g-bx60-1330tx."
+  excluded: "FS sources disagree: overload +0.5 dBm (combined) vs -6 dBm (single-product sheet)."
+
+- pn: SFP-10G-BX60 (Tx1330)
+  id: fs-sfp-10g-bx60-1330tx
+  fs_products: [ 124446 ]
+  title: 10GBASE-BX60 SFP+, 60km, SMF
+  form_factor: SFP+
+  rate_Gbps: 10
+  reach_km: 60
+  media: smf
+  connector: lc-upc
+  temp: commercial
+  bidi: { tx_nm: 1330, rx_nm: 1270 }
+  tx_power_dBm: { min: 1, max: 6 }
+  rx_sensitivity_dBm: -20
+  rx_overload_dBm: 0.5
+  rx_range_nm: [ 1260, 1280 ]
+  source: "https://resource.fs.com/mall/resource/10g-sfp-cable-and-transceiver-modules-data-sheet-20250407151554.pdf (Table 3, p.15); rx_range_nm: https://img-en.fs.com/file/datasheet/bidi-sfp+-1330tx1270rx-60kmtransceiver-datasheet.pdf"
+  verified: true
+  notes: "Conflict: the single-product datasheet gives overload -6 dBm (Table 3: +0.5) and prints Tx '1 0' dBm for this end (garbled). Table 3 used. Mate: fs-sfp-10g-bx60-1270tx."
+  excluded: "FS sources disagree: overload +0.5 dBm (combined) vs -6 dBm (single-product sheet); Tx printed garbled ('1 0')."
+
+- pn: SFP-10G-BX60-I (Tx1270)
+  id: fs-sfp-10g-bx60-i-1270tx
+  fs_products: [ 153842 ]
+  title: 10GBASE-BX60 SFP+, 60km, SMF
+  form_factor: SFP+
+  rate_Gbps: 10
+  reach_km: 60
+  media: smf
+  connector: lc-upc
+  temp: industrial
+  bidi: { tx_nm: 1270, rx_nm: 1330 }
+  tx_power_dBm: { min: 1, max: 6 }
+  rx_sensitivity_dBm: -20
+  rx_overload_dBm: 0.5
+  source: "https://resource.fs.com/mall/resource/10g-sfp-cable-and-transceiver-modules-data-sheet-20250407151554.pdf (Table 3, p.15)"
+  verified: true
+  notes: "No single-product datasheet found; the commercial BX60 sheet gives overload -6 dBm vs Table 3 +0.5. Mate: fs-sfp-10g-bx60-i-1330tx."
+  excluded: "FS sources disagree: overload +0.5 dBm (combined) vs -6 dBm (commercial BX60 single-product sheet)."
+
+- pn: SFP-10G-BX60-I (Tx1330)
+  id: fs-sfp-10g-bx60-i-1330tx
+  fs_products: [ 153843 ]
+  title: 10GBASE-BX60 SFP+, 60km, SMF
+  form_factor: SFP+
+  rate_Gbps: 10
+  reach_km: 60
+  media: smf
+  connector: lc-upc
+  temp: industrial
+  bidi: { tx_nm: 1330, rx_nm: 1270 }
+  tx_power_dBm: { min: 1, max: 6 }
+  rx_sensitivity_dBm: -20
+  rx_overload_dBm: 0.5
+  source: "https://resource.fs.com/mall/resource/10g-sfp-cable-and-transceiver-modules-data-sheet-20250407151554.pdf (Table 3, p.15)"
+  verified: true
+  notes: "No single-product datasheet found; the commercial BX60 sheet gives overload -6 dBm vs Table 3 +0.5. Mate: fs-sfp-10g-bx60-i-1270tx."
+  excluded: "FS sources disagree: overload +0.5 dBm (combined) vs -6 dBm (commercial BX60 single-product sheet)."
+
+# ---------------------------------------------------------------- BiDi 1490/1550, 100km
+- pn: SFP-10G-BX100 (Tx1490)
+  id: fs-sfp-10g-bx100-1490tx
+  fs_products: [ 74013 ]
+  title: 10GBASE-BX100 SFP+, 100km, SMF
+  form_factor: SFP+
+  rate_Gbps: 10
+  reach_km: 100
+  media: smf
+  connector: lc-upc
+  temp: commercial
+  bidi: { tx_nm: 1490, rx_nm: 1550 }
+  tx_power_dBm: { min: 1, max: 5 }
+  rx_sensitivity_dBm: -22
+  rx_overload_dBm: -7
+  source: "https://resource.fs.com/mall/resource/10g-sfp-cable-and-transceiver-modules-data-sheet-20250407151554.pdf (Table 3, p.16)"
+  verified: true
+  notes: "Conflict: the single-product SFP-10G-BX100 (1550-Tx) datasheet (resource.fs.com/mall/doc/20231016163711vt85uo.pdf) gives Tx 0..6, avg sens -25, overload -8 dBm. Table 3 (all editions) used. Mate: fs-sfp-10g-bx100-1550tx."
+  excluded: "FS sources disagree: Tx 1..5 / sens -22 / overload -7 dBm (combined) vs Tx 0..6 / sens -25 / overload -8 dBm (single-product sheet)."
+
+- pn: SFP-10G-BX100 (Tx1550)
+  id: fs-sfp-10g-bx100-1550tx
+  fs_products: [ 74014 ]
+  title: 10GBASE-BX100 SFP+, 100km, SMF
+  form_factor: SFP+
+  rate_Gbps: 10
+  reach_km: 100
+  media: smf
+  connector: lc-upc
+  temp: commercial
+  bidi: { tx_nm: 1550, rx_nm: 1490 }
+  tx_power_dBm: { min: 1, max: 5 }
+  rx_sensitivity_dBm: -22
+  rx_overload_dBm: -7
+  source: "https://resource.fs.com/mall/resource/10g-sfp-cable-and-transceiver-modules-data-sheet-20250407151554.pdf (Table 3, p.16)"
+  verified: true
+  notes: "Conflict: the single-product datasheet for this end (resource.fs.com/mall/doc/20231016163711vt85uo.pdf) gives Tx 0..6, avg sens -25, overload -8 dBm, Rx centre 1480-1500nm. Table 3 (all editions) used. Mate: fs-sfp-10g-bx100-1490tx."
+  excluded: "FS sources disagree: Tx 1..5 / sens -22 / overload -7 dBm (combined) vs Tx 0..6 / sens -25 / overload -8 dBm (single-product sheet)."
+# FS.com 10G SFP+ grey duplex and BiDi optics. Format and conventions: README.md in this directory.
+# Primary source: FS "10G SFP+ Cable and Transceiver Modules Data Sheet" (2025-04-07 edition),
+# Table 3 "Optical specifications" (pp.14-16). The 2025-04-03 and 2022 editions carry identical
+# Table 3 figures. Single-product datasheets were used to cross-check, to resolve typos, and for
+# receiver wavelength ranges; each such use is stated in `notes`.
+
+# ---------------------------------------------------------------- multimode
+- pn: SFP-10GSR-85
+  fs_products: [ 11552 ]
+  title: 10GBASE-SR SFP+, 850nm, 300m (OM3) / 400m (OM4), MMF
+  form_factor: SFP+
+  rate_Gbps: 10
+  reach_km: 0.3
+  media: mmf
+  connector: lc-upc
+  temp: commercial
+  wavelength_nm: 850
+  tx_power_dBm: { min: -7.3, max: -1 }
+  rx_sensitivity_dBm: -11.1
+  rx_overload_dBm: 0.5
+  source: "https://resource.fs.com/mall/resource/10g-sfp-cable-and-transceiver-modules-data-sheet-20250407151554.pdf (Table 3, p.14)"
+  verified: true
+  notes: "FS's single-product SR datasheets state the -11.1 dBm figure as OMA sensitivity; no separate average-power sensitivity is published."
+  excluded: FS publishes only an OMA sensitivity (-11.1 dBm), no average-power figure; using OMA as average sensitivity would overstate link margin.

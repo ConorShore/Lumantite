@@ -6,3 +6,4 @@ coverage/
 data/
 !catalog/
 config.yaml
+!packages/catalog/data/

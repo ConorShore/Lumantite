@@ -1,0 +1,345 @@
+# FS.com 1G SFP optics (1000BASE-SX/LX/EX/ZX/EZX and 1000BASE-BX BiDi).
+# Hand-transcribed from FS datasheets; see README.md for the row format.
+
+# --- grey duplex ---
+
+- pn: SFP1G-SX-85
+  fs_products: [ 11774 ]
+  title: 1000BASE-SX SFP, 850nm, 550m, MMF
+  form_factor: SFP
+  rate_Gbps: 1
+  reach_km: 0.55
+  media: mmf
+  connector: lc-upc
+  temp: commercial
+  wavelength_nm: 850
+  tx_power_dBm: { min: -9.5, max: -3 }
+  rx_sensitivity_dBm: -17
+  rx_overload_dBm: -3
+  rx_range_nm: [ 760, 860 ]
+  source: "https://resource.fs.com/mall/doc/20231115172041cpq6rr.pdf (Table 3, p.14)"
+  verified: true
+  notes: "Cross-checked with img-en.fs.com/file/datasheet/sfp1g-sx-85.pdf (same Tx/Rx figures; Rx range 760-860nm from there)."
+
+- pn: SFP1G-SX-85-I
+  fs_products: [ 22138 ]
+  title: 1000BASE-SX SFP, 850nm, 550m, MMF, industrial
+  form_factor: SFP
+  rate_Gbps: 1
+  reach_km: 0.55
+  media: mmf
+  connector: lc-upc
+  temp: industrial
+  wavelength_nm: 850
+  tx_power_dBm: { min: -9.5, max: -3 }
+  rx_sensitivity_dBm: -17
+  rx_overload_dBm: -3
+  rx_range_nm: [ 760, 860 ]
+  source: "https://resource.fs.com/mall/file/datasheet/sfp1g-sx-85-i.pdf (IV. Optical Characteristics, p.4-5)"
+  verified: true
+
+- pn: SFP1G-SX-31-I
+  fs_products: [ 190894 ]
+  title: 1000BASE-SX SFP, 1310nm, 2km, MMF, industrial
+  form_factor: SFP
+  rate_Gbps: 1
+  reach_km: 2
+  media: mmf
+  connector: lc-upc
+  temp: industrial
+  wavelength_nm: 1310
+  tx_power_dBm: { min: -9, max: -3 }
+  rx_sensitivity_dBm: -21
+  rx_overload_dBm: -3
+  rx_range_nm: [ 1260, 1600 ]
+  source: "https://img-en.fs.com/file/datasheet/sfp1g-sx-31-i.pdf (Optical Characteristics, p.4)"
+  verified: true
+  notes: "Listing 190894 ('1G SFP 2km 1310nm Industrial'). Multimode fibre, see SFP1G-SX-31."
+
+- pn: SFP1G-LX-31
+  fs_products: [ 11775 ]
+  title: 1000BASE-LX/LH SFP, 1310nm, 10km, SMF
+  form_factor: SFP
+  rate_Gbps: 1
+  reach_km: 10
+  media: smf
+  connector: lc-upc
+  temp: commercial
+  wavelength_nm: 1310
+  tx_power_dBm: { min: -9.5, max: -3 }
+  rx_sensitivity_dBm: -23
+  rx_overload_dBm: -3
+  rx_range_nm: [ 1260, 1600 ]
+  source: "https://resource.fs.com/mall/doc/20231115172041cpq6rr.pdf (Table 3, p.14)"
+  verified: true
+  notes: "Cross-checked with img-en.fs.com/file/datasheet/sfp1g-lx-31-10km.pdf (same figures)."
+
+- pn: SFP1G-LX-31-I
+  fs_products: [ 22139 ]
+  title: 1000BASE-LX SFP, 1310nm, 10km, SMF, industrial
+  form_factor: SFP
+  rate_Gbps: 1
+  reach_km: 10
+  media: smf
+  connector: lc-upc
+  temp: industrial
+  wavelength_nm: 1310
+  tx_power_dBm: { min: -9.5, max: -3 }
+  rx_sensitivity_dBm: -20
+  rx_overload_dBm: -3
+  rx_range_nm: [ 1260, 1600 ]
+  source: "https://resource.fs.com/mall/resource/sfp1g-lx-31-i-datasheet.pdf (Optical Characteristics, p.3-4)"
+  verified: true
+  notes: "Industrial part is specified at -20 dBm sensitivity (commercial SFP1G-LX-31: -23)."
+
+- pn: SFP1G-ELX-31
+  fs_products: [ 48929 ]
+  title: 1000BASE-LX SFP, 1310nm, 20km, SMF
+  form_factor: SFP
+  rate_Gbps: 1
+  reach_km: 20
+  media: smf
+  connector: lc-upc
+  temp: commercial
+  wavelength_nm: 1310
+  tx_power_dBm: { min: -9.5, max: -3 }
+  rx_sensitivity_dBm: -23
+  rx_overload_dBm: -3
+  rx_range_nm: [ 1260, 1600 ]
+  source: "https://resource.fs.com/mall/resource/sfp1g-elx-31-datasheet.pdf (Optical Characteristics, p.3-4)"
+  verified: true
+  notes: "The 20km part. Some FS ordering tables list it as 'SFP1G-LX-31 ... 20km'; the ELX datasheet's own ordering table uses SFP1G-ELX-31. Same figures in resource.fs.com/mall/resource/sfp1g-lx-31-20km-datasheet.pdf."
+
+- pn: SFP1G-LH-31
+  fs_products: [ 15686 ]
+  title: 1000BASE-EX/LH SFP, 1310nm, 40km, SMF
+  form_factor: SFP
+  rate_Gbps: 1
+  reach_km: 40
+  media: smf
+  connector: lc-upc
+  temp: commercial
+  wavelength_nm: 1310
+  tx_power_dBm: { min: -5, max: 0 }
+  rx_sensitivity_dBm: -24
+  rx_overload_dBm: -3
+  rx_range_nm: [ 1260, 1600 ]
+  source: "https://resource.fs.com/mall/doc/20231115172041cpq6rr.pdf (Table 3, p.14)"
+  verified: true
+  notes: "Cross-checked with resource.fs.com/mall/file/datasheet/sfp1g-lh-31-40km.pdf (same figures)."
+
+- pn: SFP1G-EX-55
+  fs_products: [ 49943 ]
+  title: 1000BASE-EX SFP, 1550nm, 40km, SMF
+  form_factor: SFP
+  rate_Gbps: 1
+  reach_km: 40
+  media: smf
+  connector: lc-upc
+  temp: commercial
+  wavelength_nm: 1550
+  tx_power_dBm: { min: -5, max: 0 }
+  rx_sensitivity_dBm: -24
+  rx_overload_dBm: -3
+  rx_range_nm: [ 1260, 1600 ]
+  source: "https://resource.fs.com/mall/doc/20231115172041cpq6rr.pdf (Table 3, p.14)"
+  verified: true
+  notes: "Cross-checked with img-en.fs.com/file/datasheet/sfp1g-ex-55.pdf (same figures)."
+
+- pn: SFP1G-ZX-55
+  fs_products: [ 11776 ]
+  title: 1000BASE-ZX SFP, 1550nm, 80km, SMF
+  form_factor: SFP
+  rate_Gbps: 1
+  reach_km: 80
+  media: smf
+  connector: lc-upc
+  temp: commercial
+  wavelength_nm: 1550
+  tx_power_dBm: { min: 0, max: 5 }
+  rx_sensitivity_dBm: -24
+  rx_overload_dBm: -3
+  rx_range_nm: [ 1260, 1600 ]
+  source: "https://resource.fs.com/mall/doc/20231115172041cpq6rr.pdf (Table 3, p.14)"
+  verified: true
+  notes: "Cross-checked with img-en.fs.com/file/datasheet/sfp1g-zx-55-80km.pdf (same figures)."
+
+- pn: SFP1G-ZX-55-I
+  fs_products: [ 11779 ]
+  title: 1000BASE-ZX SFP, 1550nm, 80km, SMF, industrial
+  form_factor: SFP
+  rate_Gbps: 1
+  reach_km: 80
+  media: smf
+  connector: lc-upc
+  temp: industrial
+  wavelength_nm: 1550
+  tx_power_dBm: { min: 0, max: 5 }
+  rx_sensitivity_dBm: -24
+  rx_overload_dBm: -3
+  rx_range_nm: [ 1260, 1600 ]
+  source: "https://img-en.fs.com/file/datasheet/sfp1g-zx-55-i-80km.pdf (Optical Characteristics, p.3-4)"
+  verified: true
+
+- pn: SFP1G-EZX-55 (100km)
+  id: fs-sfp1g-ezx-55-100km
+  fs_products: [ 48932 ]
+  title: 1000BASE-EZX SFP, 1550nm, 100km, SMF
+  form_factor: SFP
+  rate_Gbps: 1
+  reach_km: 100
+  media: smf
+  connector: lc-upc
+  temp: commercial
+  wavelength_nm: 1550
+  tx_power_dBm: { min: 0, max: 5 }
+  rx_sensitivity_dBm: -32
+  rx_overload_dBm: -3
+  rx_range_nm: [ 1260, 1600 ]
+  source: "https://img-en.fs.com/file/datasheet/sfp1g-ezx-55-100km.pdf (Optical Characteristics, p.3)"
+  verified: true
+  notes: "FS sells 100km and 120km EZX under one P/N (SFP1G-EZX-55); ' (100km)' suffix added for uniqueness. One FS ordering table calls it SFP1G-ZX100-55. Overload -3 dBm here vs -10 dBm on the 120km part."
+
+- pn: SFP1G-EZX-55
+  fs_products: [ 48933 ]
+  title: 1000BASE-EZX SFP, 1550nm, 120km, SMF
+  form_factor: SFP
+  rate_Gbps: 1
+  reach_km: 120
+  media: smf
+  connector: lc-upc
+  temp: commercial
+  wavelength_nm: 1550
+  tx_power_dBm: { min: 0, max: 5 }
+  rx_sensitivity_dBm: -32
+  rx_overload_dBm: -10
+  rx_range_nm: [ 1260, 1600 ]
+  source: "https://resource.fs.com/mall/doc/20231115172041cpq6rr.pdf (Table 3, p.14)"
+  verified: true
+  notes: "Cross-checked with resource.fs.com/mall/file/datasheet/sfp1g-ezx-55-120km.pdf (same figures)."
+
+- pn: SFP1G-ZXC-55
+  fs_products: [ 48934 ]
+  title: 1000BASE-ZXC SFP, 1550nm, 160km, SMF
+  form_factor: SFP
+  rate_Gbps: 1
+  reach_km: 160
+  media: smf
+  connector: lc-upc
+  temp: commercial
+  wavelength_nm: 1550
+  tx_power_dBm: { min: 1, max: 6 }
+  rx_sensitivity_dBm: -33
+  rx_overload_dBm: -10
+  rx_range_nm: [ 1270, 1610 ]
+  source: "https://resource.fs.com/mall/doc/20231115172041cpq6rr.pdf (Table 3, p.14)"
+  verified: true
+  notes: "Cross-checked with img-en.fs.com/file/datasheet/sfp1g-zxc-55-160km.pdf (same figures; Rx range 1270-1610nm from there)."
+
+- pn: SFP-1G34-BX40
+  fs_products: [ 49479 ]
+  title: 1000BASE-BX BiDi SFP, Tx1310/Rx1490, 40km, SMF
+  form_factor: SFP
+  rate_Gbps: 1
+  reach_km: 40
+  media: smf
+  connector: lc-upc
+  temp: commercial
+  bidi: { tx_nm: 1310, rx_nm: 1490 }
+  tx_power_dBm: { min: -3, max: 2 }
+  rx_sensitivity_dBm: -23
+  rx_overload_dBm: -3
+  rx_range_nm: [ 1440, 1540 ]
+  source: "https://img-en.fs.com/file/datasheet/bidi-sfp-1310tx1490rx-40km-transceiver-datasheet.pdf (IV. Optical Characteristics, p.5-6)"
+  verified: true
+  notes: "Mate: SFP-1G43-BX40. Sheet prints P/N SFP-GE-BX40 (variant SFP-GE-BXF34, Tx -3/+2 dBm); SFP-1G34-BX40 from the 2025 ordering tables."
+
+- pn: SFP-1G43-BX40
+  fs_products: [ 39308 ]
+  title: 1000BASE-BX BiDi SFP, Tx1490/Rx1310, 40km, SMF
+  form_factor: SFP
+  rate_Gbps: 1
+  reach_km: 40
+  media: smf
+  connector: lc-upc
+  temp: commercial
+  bidi: { tx_nm: 1490, rx_nm: 1310 }
+  tx_power_dBm: { min: -5, max: 0 }
+  rx_sensitivity_dBm: -23
+  rx_overload_dBm: -3
+  rx_range_nm: [ 1290, 1330 ]
+  source: "https://img-en.fs.com/file/datasheet/bidi-sfp-1490tx1310rx-40km-transceiver-datasheet.pdf (IV. Optical Characteristics, p.5-6)"
+  verified: true
+  notes: "Mate: SFP-1G34-BX40. Variant SFP-GE-BXB43, Tx -5/0 dBm. Cross-checked with resource.fs.com/mall/resource/sfp-ge-bx40-1490-tx-1310-rx-datasheet.pdf (Tx -5/0, Sen -23, OL -3; it gives Rx 1280-1340nm)."
+
+- pn: SFP-1G35-BX40
+  fs_products: [ 36889 ]
+  title: 1000BASE-BX BiDi SFP, Tx1310/Rx1550, 40km, SMF
+  form_factor: SFP
+  rate_Gbps: 1
+  reach_km: 40
+  media: smf
+  connector: lc-upc
+  temp: commercial
+  bidi: { tx_nm: 1310, rx_nm: 1550 }
+  tx_power_dBm: { min: -2, max: 3 }
+  rx_sensitivity_dBm: -23
+  rx_overload_dBm: -3
+  rx_range_nm: [ 1500, 1600 ]
+  source: "https://img-en.fs.com/file/datasheet/bidi-sfp-1310tx1550rx-40km-transceiver-datasheet.pdf (IV. Optical Characteristics, p.5-6)"
+  verified: true
+  notes: "Mate: SFP-1G53-BX40. Sheet prints P/N SFP-GE-BX40 (module MQEL-K40F35, Tx -2/+3 dBm). Same figures in the 2023 combined sheet's SFP-GE-BX40 row."
+
+- pn: SFP-1G53-BX40
+  fs_products: [ 36888 ]
+  title: 1000BASE-BX BiDi SFP, Tx1550/Rx1310, 40km, SMF
+  form_factor: SFP
+  rate_Gbps: 1
+  reach_km: 40
+  media: smf
+  connector: lc-upc
+  temp: commercial
+  bidi: { tx_nm: 1550, rx_nm: 1310 }
+  tx_power_dBm: { min: -5, max: 0 }
+  rx_sensitivity_dBm: -23
+  rx_overload_dBm: -3
+  rx_range_nm: [ 1290, 1330 ]
+  source: "https://img-en.fs.com/file/datasheet/bidi-sfp-1550tx1310rx-40km-transceiver-datasheet.pdf (IV. Optical Characteristics, p.5-6)"
+  verified: true
+  notes: "Mate: SFP-1G35-BX40. Module MQEL-K40B53, Tx -5/0 dBm. Same figures in the 2023 combined sheet's SFP-GE-BX40 row."
+
+- pn: SFP-1G45-BX120
+  fs_products: [ 51422 ]
+  title: 1000BASE-BX BiDi SFP, Tx1490/Rx1550, 120km, SMF
+  form_factor: SFP
+  rate_Gbps: 1
+  reach_km: 120
+  media: smf
+  connector: lc-upc
+  temp: commercial
+  bidi: { tx_nm: 1490, rx_nm: 1550 }
+  tx_power_dBm: { min: -1, max: 4 }
+  rx_sensitivity_dBm: -31
+  rx_overload_dBm: -8
+  rx_range_nm: [ 1530, 1570 ]
+  source: "https://img-en.fs.com/file/datasheet/bidi-sfp-1490tx1550rx-120km-transceiver-datasheet.pdf (IV. Optical Characteristics, p.5-6)"
+  verified: true
+  notes: "Mate: SFP-1G54-BX120. Sheet prints P/N SFP-GE-BX120 (module MQEL-Z12B45). Same figures in the 2023 combined sheet's SFP-GE-BX120 row."
+
+- pn: SFP-1G54-BX120
+  fs_products: [ 51423 ]
+  title: 1000BASE-BX BiDi SFP, Tx1550/Rx1490, 120km, SMF
+  form_factor: SFP
+  rate_Gbps: 1
+  reach_km: 120
+  media: smf
+  connector: lc-upc
+  temp: commercial
+  bidi: { tx_nm: 1550, rx_nm: 1490 }
+  tx_power_dBm: { min: -1, max: 4 }
+  rx_sensitivity_dBm: -31
+  rx_overload_dBm: -8
+  rx_range_nm: [ 1470, 1510 ]
+  source: "https://img-en.fs.com/file/datasheet/bidi-sfp-1550tx1490rx-120km-transceiver-datasheet.pdf (IV. Optical Characteristics, p.5-6)"
+  verified: true
+  notes: "Mate: SFP-1G45-BX120. Module MQEL-Z12B54."
