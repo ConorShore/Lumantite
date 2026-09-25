@@ -79,6 +79,13 @@ export function bbox(rects: Rect[], pad = 0): Rect | null {
   const y1 = Math.max(...rects.map((r) => r.y + r.h)) + pad;
   return { x: x0, y: y0, w: x1 - x0, h: y1 - y0 };
 }
+/** Padding between a file frame's edge and the devices it holds. */
+export const FILE_PAD = 40;
+/** A file frame's rect: its stored rect grown to hold every member (or just the members' box). */
+export function fileFrameRect(stored: Rect | undefined, members: Rect[]): Rect | null {
+  const fit = bbox(members, FILE_PAD);
+  return bbox([stored, fit].filter((r): r is Rect => !!r));
+}
 export const contains = (r: Rect, x: number, y: number) => x >= r.x && x <= r.x + r.w && y >= r.y && y <= r.y + r.h;
 
 /** Smallest rect containing the point. */
@@ -115,16 +122,28 @@ export function buildGraph(model: ProjectModel, catalog: Catalog, opts: BuildOpt
     });
   }
 
-  // ---- auto-place nodes without layout: grid inside their file frame, or right of everything
+  // ---- a node sitting in another file's frame had its file changed (inspector or YAML): re-place it in its own
+  const storedFiles = model.layout.files ?? {};
+  for (const d of dev.values()) {
+    if (!d.placed) continue;
+    const cx = d.rect.x + d.rect.w / 2;
+    const cy = d.rect.y + d.rect.h / 2;
+    const own = storedFiles[d.inst.file];
+    if (own && contains(own, cx, cy)) continue;
+    if (Object.entries(storedFiles).some(([f, r]) => f !== d.inst.file && contains(r, cx, cy))) d.placed = false;
+  }
+
+  // ---- auto-place nodes without layout: grid inside their file frame (below what's there), or right of everything
   const placedRects = [...dev.values()].filter((d) => d.placed).map((d) => d.rect);
-  const extent = bbox([...placedRects, ...Object.values(model.layout.files ?? {})]);
+  const extent = bbox([...placedRects, ...Object.values(storedFiles)]);
   let spill = extent ? extent.x + extent.w + 80 : 0;
   const byFile = new Map<string, Dev[]>();
   for (const d of dev.values()) if (!d.placed) byFile.set(d.inst.file, [...(byFile.get(d.inst.file) ?? []), d]);
   for (const [file, list] of byFile) {
-    const fr = model.layout.files?.[file];
+    const fr = storedFiles[file];
+    const held = bbox([...dev.values()].filter((d) => d.placed && d.inst.file === file).map((d) => d.rect));
     const x0 = fr ? fr.x + 20 : spill;
-    const y0 = fr ? fr.y + 40 : 0;
+    const y0 = fr ? Math.max(fr.y + 40, held ? held.y + held.h + 30 : -Infinity) : 0;
     const cols = fr ? Math.max(1, Math.floor((fr.w - 20) / (NODE_W + 30))) : 3;
     list.forEach((d, i) => { d.rect.x = x0 + (i % cols) * (NODE_W + 30); d.rect.y = y0 + Math.floor(i / cols) * 130; });
     if (!fr) spill += cols * (NODE_W + 30) + 60;
@@ -141,7 +160,7 @@ export function buildGraph(model: ProjectModel, catalog: Catalog, opts: BuildOpt
   let emptyX = spill;
   for (const f of model.files) {
     const members = [...dev.values()].filter((d) => d.inst.file === f.path).map((d) => d.rect);
-    let rect = model.layout.files?.[f.path] ?? bbox(members, 40);
+    let rect = fileFrameRect(model.layout.files?.[f.path], members);
     if (!rect) { rect = { x: emptyX, y: -40, w: 260, h: 160 }; emptyX += 300; }
     fileRects.push({ id: f.path, rect });
   }
