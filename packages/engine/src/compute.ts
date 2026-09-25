@@ -20,6 +20,8 @@ import { buildGraph } from "./graph.js";
 import { attenuationAt, scaleT, addT, statusFromMargin, subT, sumDbm, triple, worst, worstOf } from "./physics.js";
 import { propagate, type TNode } from "./propagate.js";
 import { validateSettings } from "./validate.js";
+import { aggregateRules } from "./rules/aggregate.js";
+import { staticRules } from "./rules/static.js";
 
 export interface ComputeOptions {
   /** From app config; project.margins override per key; DEFAULT_MARGINS fill the rest. */
@@ -90,7 +92,7 @@ function computeInner(model: ProjectModel, catalog: Catalog, opts: ComputeOption
   const margins = resolveMargins(model.project?.margins, opts.defaultMargins);
   const th = opts.warnThreshold_dB ?? 1.0;
   const { graph, issues: gIssues } = buildGraph(model, catalog);
-  issues.push(...gIssues, ...validateSettings(model, graph, catalog));
+  issues.push(...gIssues, ...validateSettings(model, graph, catalog), ...staticRules(graph, catalog, margins));
 
   const prop = propagate(graph, catalog, issues, { warnThreshold: th, maxImbalance: margins.max_channel_imbalance_dB });
   const { signals } = prop;
@@ -127,6 +129,8 @@ function computeInner(model: ProjectModel, catalog: Catalog, opts: ComputeOption
       path: leaf.path.map(toStep),
       powerAtEnd: power,
       cdAtEnd: cd,
+      cdSpread: 0,
+      path_km: leaf.path.reduce((k, n) => k + (n.kind === "fibre" ? graph.fibres.get(n.element)?.length_km ?? 0 : 0), 0),
       terminated: term.kind,
       checks,
       status: "n/a",
@@ -331,6 +335,11 @@ function computeInner(model: ProjectModel, catalog: Catalog, opts: ComputeOption
     if (a.comp.operatingPoints !== undefined) r.operatingPoints = a.comp.operatingPoints;
     return r;
   });
+
+  // ---------------- design rules on computed results (SPEC 7.10)
+  issues.push(
+    ...aggregateRules({ graph, catalog, margins, warnThreshold: th, signals: signalResults, ports: [...portMap.values()], fibres: fibreResults, amplifiers: ampResults }),
+  );
 
   // ---------------- statuses
   const elementStatus: Record<string, CheckStatus> = {};

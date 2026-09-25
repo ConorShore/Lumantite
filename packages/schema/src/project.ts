@@ -9,6 +9,14 @@ export const Margins = z.object({
   connector_ageing_dB: z.number().optional(),
   cd_margin_pct: z.number().optional(),
   max_channel_imbalance_dB: z.number().optional(),
+  /** × path length, added to the Rx penalty (SPEC 7.10 R19). */
+  repair_loss_dB_per_km: z.number().optional(),
+  /** Subtracted from OSNR before the min_osnr comparison (SPEC 7.10 R16). */
+  osnr_margin_dB: z.number().optional(),
+  /** Lowest acceptable per-channel amplifier input (SPEC 7.10 R4). */
+  amp_min_channel_input_dBm: z.number().optional(),
+  /** Minimum signal-to-adjacent-crosstalk ratio at demux ports (SPEC 7.10 R17). */
+  min_crosstalk_ratio_dB: z.number().optional(),
 });
 export type Margins = z.infer<typeof Margins>;
 export type ResolvedMargins = Required<Margins>;
@@ -20,6 +28,10 @@ export const DEFAULT_MARGINS: ResolvedMargins = {
   connector_ageing_dB: 0.0,
   cd_margin_pct: 10,
   max_channel_imbalance_dB: 6,
+  repair_loss_dB_per_km: 0,
+  osnr_margin_dB: 3,
+  amp_min_channel_input_dBm: -25,
+  min_crosstalk_ratio_dB: 20,
 };
 
 export const ProjectMeta = z.object({
@@ -50,6 +62,7 @@ export const NodeSettings = z.object({
   tilt_dB: z.number().optional(),            // linear tilt across band, + = more gain at long λ
   gain_model: z.enum(["parametric", "measured"]).optional(),
   setting_dB: z.number().optional(),         // VOA
+  design_channels: z.number().int().positive().optional(), // amplifier full-load channel count (SPEC 7.10 R2)
   port_side: z.enum(["right", "left", "split"]).optional(), // transceiver canvas only: where tx/rx sit (default right); ignored by the engine
 }).passthrough();
 export type NodeSettings = z.infer<typeof NodeSettings>;
