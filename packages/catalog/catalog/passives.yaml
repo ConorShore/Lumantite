@@ -65,6 +65,7 @@
   description: DCM sized to compensate ~20km of G.652 fibre
   dispersion_ps_nm: -340
   insertion_loss_dB: { min: 2.0, typ: 2.5, max: 3.0 }
+  for_fibre: "ITU-T G.652.D"  # sized to the standard's dispersion slope (SPEC 7.10 R9)
   connector: lc-upc
   source: "typical value (unverified) — representative DCM datasheet range (dispersion set per brief, IL scales with reach class)"
 
@@ -73,6 +74,7 @@
   description: DCM sized to compensate ~40km of G.652 fibre
   dispersion_ps_nm: -680
   insertion_loss_dB: { min: 2.5, typ: 3.0, max: 3.5 }
+  for_fibre: "ITU-T G.652.D"  # sized to the standard's dispersion slope (SPEC 7.10 R9)
   connector: lc-upc
   source: "typical value (unverified) — representative DCM datasheet range (dispersion set per brief, IL scales with reach class)"
 
@@ -81,6 +83,7 @@
   description: DCM sized to compensate ~80km of G.652 fibre
   dispersion_ps_nm: -1360
   insertion_loss_dB: { min: 3.5, typ: 4.0, max: 4.5 }
+  for_fibre: "ITU-T G.652.D"  # sized to the standard's dispersion slope (SPEC 7.10 R9)
   connector: lc-upc
   source: "typical value (unverified) — representative DCM datasheet range (dispersion set per brief, IL scales with reach class)"
 

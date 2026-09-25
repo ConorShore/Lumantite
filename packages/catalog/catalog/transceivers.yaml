@@ -10,6 +10,8 @@
   form_factor: SFP
   rate_Gbps: 1.25
   reach_km: 10
+  detection: direct
+  baud_GBd: 1.25             # 1000BASE-X (8b/10b) line rate
   tx:
     wavelength: { wavelength_nm: 1310 }
     power_dBm: { min: -9.5, typ: -3, max: -3 }
@@ -28,6 +30,8 @@
   form_factor: SFP+
   rate_Gbps: 10
   reach_km: 10
+  detection: direct
+  baud_GBd: 10.3125           # 10GBASE-R (64b/66b) line rate
   tx:
     wavelength: { wavelength_nm: 1310 }
     power_dBm: { min: -8.2, typ: -1, max: 0.5 }
@@ -46,6 +50,8 @@
   form_factor: SFP+
   rate_Gbps: 10
   reach_km: 40
+  detection: direct
+  baud_GBd: 10.3125           # 10GBASE-R (64b/66b) line rate
   tx:
     wavelength: { wavelength_nm: 1550 }
     power_dBm: { min: -4.7, typ: 0, max: 4 }
@@ -64,6 +70,8 @@
   form_factor: SFP+
   rate_Gbps: 10
   reach_km: 80
+  detection: direct           # IM-DD long-reach 10G class, not a coherent "ZR" optic
+  baud_GBd: 10.3125           # 10GBASE-R (64b/66b) line rate
   tx:
     wavelength: { wavelength_nm: 1550 }
     power_dBm: { min: -1, typ: 2, max: 4 }
@@ -83,6 +91,8 @@
   form_factor: SFP+
   rate_Gbps: 10
   reach_km: 80
+  detection: direct
+  baud_GBd: 10.3125           # 10GBASE-R (64b/66b) line rate
   tx:
     wavelength: { plan: cwdm-18, channels: all }
     power_dBm: { min: -2, typ: 3, max: 6 }
@@ -102,6 +112,8 @@
   form_factor: SFP+
   rate_Gbps: 10
   reach_km: 80
+  detection: direct
+  baud_GBd: 10.3125           # 10GBASE-R (64b/66b) line rate
   tx:
     wavelength: { plan: dwdm-c-100ghz-40, channels: all }
     power_dBm: { min: 0, typ: 2, max: 4 }
@@ -117,6 +129,8 @@
 
 - kind: transceiver
   id: example-10g-dwdm-t18
+  detection: direct
+  baud_GBd: 10.3125           # 10GBASE-R (64b/66b) line rate
   description: >-
     Example tunable DWDM SFP+ sized to reproduce SPEC.md test T18 (§12) — used by the
     dwdm-amplified example instead of generic-10g-dwdm-80km, whose -7dBm overload is too low
@@ -150,6 +164,8 @@
   form_factor: SFP+
   rate_Gbps: 10
   reach_km: 80
+  detection: direct
+  baud_GBd: 10.3125           # 10GBASE-R (64b/66b) line rate
   tx:
     wavelength: { plan: dwdm-c-50ghz-80, channels: all }
     power_dBm: { min: -1, typ: 1.5, max: 4 }
@@ -169,6 +185,8 @@
   form_factor: SFP28
   rate_Gbps: 25
   reach_km: 10
+  detection: direct
+  baud_GBd: 25.78125          # 25GBASE-R (64b/66b) NRZ line rate
   tx:
     wavelength: { wavelength_nm: 1310 }
     power_dBm: { min: -4.5, typ: -1, max: 2.4 }
@@ -190,9 +208,12 @@
   form_factor: QSFP28
   rate_Gbps: 100
   reach_km: 10
+  detection: direct
+  baud_GBd: 25.78125          # 4 x 25GBASE-R (64b/66b) NRZ lanes, LAN-WDM
   tx:
     wavelength: { wavelength_nm: 1300 }
     power_dBm: { min: -4.3, typ: 0, max: 4.5 }
+    lanes: 4                  # LR4: 4 parallel lanes on the same fibre (SPEC 7.10 R14)
   rx:
     sensitivity_dBm: -10.6
     overload_dBm: 4.5
@@ -210,6 +231,8 @@
   form_factor: SFP
   rate_Gbps: 1.25
   reach_km: 10
+  detection: direct
+  baud_GBd: 1.25             # 1000BASE-X (8b/10b) line rate
   tx:
     wavelength: { wavelength_nm: 1310 }
     power_dBm: { min: -9, typ: -3, max: -3 }
@@ -230,6 +253,8 @@
   form_factor: SFP
   rate_Gbps: 1.25
   reach_km: 10
+  detection: direct
+  baud_GBd: 1.25             # 1000BASE-X (8b/10b) line rate
   tx:
     wavelength: { wavelength_nm: 1490 }
     power_dBm: { min: -9, typ: -3, max: -3 }

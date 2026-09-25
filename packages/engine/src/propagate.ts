@@ -1,4 +1,4 @@
-import type { Channel, Issue, Triple, WlSpec } from "@lumantite/schema";
+import type { AmplifierModel, Channel, Check, Issue, Triple, WlSpec } from "@lumantite/schema";
 import { txChannel, type Catalog } from "./catalog.js";
 import { computeAmplifier, route, type AmpComputation, type RouteCtx, type RouteSig, type Term } from "./devices/index.js";
 import { junctionName, other, portJointName, type End, type FibreInfo, type Graph, type JointRef } from "./graph.js";
@@ -6,7 +6,21 @@ import { addT, applyLoss, dispersionAt, inTableRange, numOrRange, resolveTriple,
 
 export interface Sig extends RouteSig {
   txPort: string;
+  /** Per lane. */
   launch: Triple;
+  /** Parallel lanes (SPEC 7.10 R14); Σ-power quantities add 10·log10(lanes). */
+  lanes: number;
+  /** Tx OSNR, dB in 0.1 nm (SPEC 7.10 R16); absent = ideal. */
+  osnrTx?: number;
+}
+
+/** OSNR reference: 10·log10(hν·B_ref) at 1550 nm, 12.5 GHz, in dBm → OSNR_i = 58 + Pin_i − NF (SPEC 7.10 R16). */
+export const OSNR_CONST_DB = 58;
+
+/** Linear noise-to-signal triple → OSNR dB (min stays min: it comes from Pin.min). */
+export function osnrOf(nsr: Triple): Triple {
+  const f = (v: number) => -10 * Math.log10(v);
+  return { min: f(nsr.min), typ: f(nsr.typ), max: f(nsr.max) };
 }
 
 /** One element traversal in a signal's trace tree. */
@@ -46,6 +60,13 @@ export interface TNode {
   evaluated: boolean;
   /** Representative signal (branch) id, filled when flattening. */
   sid?: string;
+  /** Checks raised while passing this element; the signal continues (e.g. mux.passband_exceeded). */
+  checks?: Check[];
+  /**
+   * Cumulative linear noise-to-signal ratio (0.1 nm) after this step, per case (min = worst, from
+   * Pin.min). undefined = noiseless so far; null = unknown (an amplifier without noise_figure_dB).
+   */
+  nsr?: Triple | null;
 }
 
 export interface Leaf {
@@ -105,6 +126,18 @@ function jointNode(tree: number, name: string, j: JointRef | undefined): TNode {
 export interface PropagateOptions {
   warnThreshold: number;
   maxImbalance: number;
+  /** margins.amp_min_channel_input_dBm (SPEC 7.10 R4). */
+  minChannelInput?: number;
+}
+
+/** R2 N_design fallback: channels of the plan(s) carried at `in` inside band_nm; undefined for grey-only inputs. */
+function planChannelsInBand(catalog: Catalog, model: AmplifierModel, chs: Channel[]): number | undefined {
+  const plans = new Set(chs.map((c) => c.plan).filter((p) => catalog.plans.has(p)));
+  if (!plans.size) return undefined;
+  const [b0, b1] = model.band_nm;
+  const f = new Set<string>();
+  for (const p of plans) for (const c of catalog.channels(p)) if (c.wavelength_nm >= b0 - 1e-9 && c.wavelength_nm <= b1 + 1e-9) f.add(c.frequency_GHz.toFixed(1));
+  return f.size || undefined;
 }
 
 export function propagate(graph: Graph, catalog: Catalog, issues: Issue[], opts: PropagateOptions): Propagation {
@@ -167,13 +200,18 @@ export function propagate(graph: Graph, catalog: Catalog, issues: Issue[], opts:
     if (!r.channel) continue; // reported by validate
     const ch: Channel = r.channel;
     const ov = n.inst.settings?.tx_power_override_dBm;
-    signals.push({
+    const s: Sig = {
       id: `${n.id}.${n.txPort}:${ch.id}`,
       txNode: n.id,
       txPort: n.txPort,
       channel: ch,
       launch: ov !== undefined ? triple(ov) : numOrRange(m.tx.power_dBm),
-    });
+      lanes: m.tx.lanes ?? 1,
+    };
+    const bw = m.signal_bandwidth_GHz ?? (m.baud_GBd !== undefined ? 1.15 * m.baud_GBd : undefined);
+    if (bw !== undefined) s.bw_GHz = bw;
+    if (m.tx.osnr_dB !== undefined) s.osnrTx = m.tx.osnr_dB;
+    signals.push(s);
   }
 
   // ---- pass 1: topology trace (no powers)
@@ -326,6 +364,7 @@ export function propagate(graph: Graph, catalog: Catalog, issues: Issue[], opts:
               recOut: !!o.outPort,
             }),
           );
+          if (o.check) dn.checks = [o.check];
           if (o.term || !o.outPort) {
             dn.term = o.term ?? { kind: "dead_end", element: sig.txNode };
             continue;
@@ -378,9 +417,12 @@ export function propagate(graph: Graph, catalog: Catalog, issues: Issue[], opts:
   const pending = new Map<string, TNode[]>();
   const work: TNode[] = [];
   roots.forEach((r, i) => {
-    r.before = signals[i].launch;
-    r.after = signals[i].launch;
-    r.agg = signals[i].launch;
+    const s = signals[i];
+    r.before = s.launch;
+    r.after = s.launch;
+    // R14: every Σ-power quantity counts all lanes; per-signal powers stay per lane.
+    r.agg = s.lanes > 1 ? addT(s.launch, triple(10 * Math.log10(s.lanes))) : s.launch;
+    if (s.osnrTx !== undefined) r.nsr = triple(Math.pow(10, -s.osnrTx / 10));
     r.cdAfter = 0;
     r.evaluated = true;
     evaluated.push(r);
@@ -403,6 +445,7 @@ export function propagate(graph: Graph, catalog: Catalog, issues: Issue[], opts:
       }
       n.after = n.loss ? applyLoss(n.before!, n.loss) : n.before;
       n.agg = n.loss ? applyLoss(p.agg!, n.loss) : p.agg;
+      n.nsr = p.nsr;
       n.cdAfter = p.cdAfter + n.cd;
       n.evaluated = true;
       evaluated.push(n);
@@ -418,17 +461,27 @@ export function propagate(graph: Graph, catalog: Catalog, issues: Issue[], opts:
     const info = graph.nodes.get(a)!;
     const model = info.model;
     if (!model || model.kind !== "amplifier") continue;
+    const chs = nodes.map((n) => signals[n.tree].channel);
     const comp = computeAmplifier(
       a,
       model,
       info.inst.settings,
-      nodes.map((n) => ({ channel: signals[n.tree].channel, pin: n.before!, pinAgg: n.parent!.agg! })),
-      opts,
+      nodes.map((n, k) => ({ channel: chs[k], pin: n.before!, pinAgg: n.parent!.agg! })),
+      { ...opts, designChannels: info.inst.settings?.design_channels ?? model.design_channels ?? planChannelsInBand(catalog, model, chs) },
     );
     for (const i of comp.issues) issues.push(i);
+    const nf = model.noise_figure_dB;
     nodes.forEach((n, k) => {
       n.after = comp.pouts[k];
       n.agg = comp.poutsAgg[k];
+      // R16: ASE of this stage, 1/OSNR_i with OSNR_i = 58 + Pin_i − NF, added to the upstream N/S.
+      const up = n.parent!.nsr;
+      if (nf === undefined || up === null) n.nsr = null;
+      else {
+        const ase = (p: number) => Math.pow(10, -(OSNR_CONST_DB + p - nf) / 10);
+        const pin = n.before!;
+        n.nsr = { min: (up?.min ?? 0) + ase(pin.min), typ: (up?.typ ?? 0) + ase(pin.typ), max: (up?.max ?? 0) + ase(pin.max) };
+      }
       n.cdAfter = n.parent!.cdAfter + n.cd;
       n.evaluated = true;
       evaluated.push(n);

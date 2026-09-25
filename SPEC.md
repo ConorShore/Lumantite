@@ -848,7 +848,8 @@ mux typ 3.0 dB).
   → both fail `rx.multiple_signals`; overload uses Σ (two at −6.02 dBm → −3.01 dBm). Same with
   coherent transceivers → no `rx.multiple_signals`, overload per signal.
 - **T27 channel loading (R2).** CoP amp at 17 dBm, 4 lit channels, `design_channels: 40`:
-  full → ΔG = −10·log10(40/4) = −10.00 dB; single → ΔG = +10·log10(4) = +6.02 dB. Constant-gain
+  full → ΔG = −10·log10(40/4) = −10.00 dB; single → ΔG = +10·log10(4) = +6.02 dB (amp
+  `gain_dB` range wide enough not to clamp either scenario). Constant-gain
   amp far from saturation → full-load ΔG = 0 until Pin_total' + G > Pout_max.
 - **T28 per-channel launch (R3).** +6 dBm into 20 km → warn (margin −2); the same into a 2 m
   patch → silent; +4 dBm → pass (warn-only rule).
@@ -872,7 +873,7 @@ mux typ 3.0 dB).
   `rx.reach`, no warn/fail.
 - **T37 monitor tap (R12).** `tap_dB: 13.0103` (95/5) → through loss 0.2228 dB on common,
   both directions.
-- **T38 laser class and lanes (R13, R14).** 1550 nm total +20 dBm → 3R (info); +10 → 1 (silent);
+- **T38 laser class and lanes (R13, R14).** 1550 nm total +15 dBm → 3R, +20 dBm → 3B (info); +10 → 1 (silent);
   1310 nm +8 dBm → 3R (IRA limits −3 dB). LR4: 4 lanes × 0 dBm → fibre total +6.02 dBm, Rx
   checks at 0 dBm per lane.
 - **T39 PMD (R15).** 0.5 ps/√km × 100 km → DGD 5.0 ps, tolerance 10 → pass (margin 5);
@@ -881,9 +882,9 @@ mux typ 3.0 dB).
 - **T40 OSNR (R16).** One amp, Pin −20 dBm/ch, NF 5 → 33.0 dB; two identical amps → 29.99 dB;
   with Tx OSNR 35 → 10·log10(1/(10^-3.5 + 2·10^-3.3)) = 28.80 dB. `min_osnr_dB 27`, margin 3 → fail at 29.99
   − 3 = 26.99 (margin −0.01). Amp without NF → `n/a`.
-- **T41 crosstalk (R17).** Demux isolation 25 dB, C21 at −10 dBm, C22 and C20 at −5 dBm into common,
+- **T41 crosstalk (R17).** Demux isolation 25 dB, C22 at −10 dBm, C21 and C23 at −5 dBm into common,
   IL 3 → crosstalk = 10·log10(2 × 10^((−5 − 3 − 25)/10)) = −29.99 dBm, signal −13 → ratio 16.99
-  < 20 → fail (margin −3.01). Coherent C21 → skipped.
+  < 20 → fail (margin −3.01). Coherent C22 → skipped.
 - **T42 XPM (R18).** Amplified 80 km span with 10G direct C21 and coherent C22 (100 GHz apart) →
   warn; coherent at C25 → silent; unamplified → silent.
 - **T43 repair per km (R19).** 0.01 dB/km × 80 km = 0.8 dB added to the Rx penalty.

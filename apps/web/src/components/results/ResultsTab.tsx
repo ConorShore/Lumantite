@@ -41,6 +41,8 @@ function LinkBudget({ s }: { s: SignalResult }) {
   );
 }
 
+const LASER_RANK = ["1", "3R", "3B", "4"];
+
 export function ResultsTab() {
   const results = useResults((s) => s.results);
   const error = useResults((s) => s.error);
@@ -59,6 +61,9 @@ export function ResultsTab() {
     { key: "msens", header: "margin sens.", value: (s) => margin(s, "rx.power_low"), render: (s) => dB(margin(s, "rx.power_low")), align: "right" },
     { key: "mover", header: "margin overl.", value: (s) => margin(s, "rx.power_high"), render: (s) => dB(margin(s, "rx.power_high")), align: "right" },
     { key: "cd", header: "CD ps/nm", value: (s) => s.cdAtEnd, render: (s) => cd(s.cdAtEnd), align: "right" },
+    { key: "osnr", header: "OSNR min", value: (s) => s.osnr?.min, render: (s) => dB(s.osnr?.min), align: "right" },
+    { key: "dgd", header: "DGD ps", value: (s) => s.dgd_ps, render: (s) => dB(s.dgd_ps), align: "right" },
+    { key: "km", header: "km", value: (s) => s.path_km, render: (s) => dB(s.path_km), align: "right" },
     { key: "steps", header: "steps", value: (s) => s.path.length, align: "right" },
   ], []);
 
@@ -80,6 +85,7 @@ export function ResultsTab() {
     { key: "loss", header: "loss typ dB", value: (f) => f.loss.typ, render: (f) => dB(f.loss.typ), align: "right" },
     { key: "ab", header: "a>b ch / total", value: (f) => f.directions.find((d) => d.direction === "a>b")?.channels.length, render: (f) => { const d = f.directions.find((x) => x.direction === "a>b"); return d ? `${d.channels.length} / ${dB(d.totalPower?.typ)}` : "–"; }, align: "right" },
     { key: "ba", header: "b>a ch / total", value: (f) => f.directions.find((d) => d.direction === "b>a")?.channels.length, render: (f) => { const d = f.directions.find((x) => x.direction === "b>a"); return d ? `${d.channels.length} / ${dB(d.totalPower?.typ)}` : "–"; }, align: "right" },
+    { key: "laser", header: "laser class", value: (f) => Math.max(-1, ...f.directions.map((d) => LASER_RANK.indexOf(d.laserClass ?? ""))), render: (f) => f.directions.map((d) => d.laserClass).filter(Boolean).join(" / ") || "–" },
   ], []);
 
   const ampCols = useMemo<Column<AmplifierResult>[]>(() => [
@@ -94,6 +100,9 @@ export function ResultsTab() {
     { key: "imbIn", header: "imb. in", value: (a) => a.imbalanceIn_dB, render: (a) => dB(a.imbalanceIn_dB), align: "right" },
     { key: "imbOut", header: "imb. out", value: (a) => a.imbalanceOut_dB, render: (a) => dB(a.imbalanceOut_dB), align: "right" },
     { key: "ch", header: "channels", value: (a) => a.perChannel.length, align: "right" },
+    { key: "load", header: "design ch", value: (a) => a.loading?.designChannels, render: (a) => (a.loading ? String(a.loading.designChannels) : "–"), align: "right" },
+    { key: "full", header: "Δ full load", value: (a) => a.loading?.full_dB, render: (a) => dB(a.loading?.full_dB), align: "right" },
+    { key: "single", header: "Δ single ch", value: (a) => a.loading?.single_dB, render: (a) => dB(a.loading?.single_dB), align: "right" },
   ], []);
 
   if (!results) return <div className="p-6 text-muted">{error ? `Compute failed: ${error}` : "No results yet."}</div>;
@@ -112,8 +121,8 @@ export function ResultsTab() {
         {sub === "fibres" && <DataTable rows={results.fibres} columns={fibreCols} rowKey={(f) => f.id} onRowClick={(f) => select([{ kind: "fibre", id: f.id }])} />}
         {sub === "amplifiers" && <DataTable rows={results.amplifiers} columns={ampCols} rowKey={(a) => a.id} onRowClick={(a) => select([{ kind: "node", id: a.id }])} renderExpanded={(a) => (
           <table className="text-[11px] tabular-nums">
-            <thead><tr className="text-muted"><th className="pr-3 text-left">channel</th><th className="pr-3 text-right">pin typ</th><th className="pr-3 text-right">gain min/typ/max</th><th className="text-right">pout typ</th></tr></thead>
-            <tbody>{a.perChannel.map((c) => <tr key={c.signalId}><td className="pr-3">{c.channel.id}</td><td className="pr-3 text-right">{dB(c.pin.typ)}</td><td className="pr-3 text-right">{dB(c.gain.min)} / {dB(c.gain.typ)} / {dB(c.gain.max)}</td><td className="text-right">{dB(c.pout.typ)}</td></tr>)}</tbody>
+            <thead><tr className="text-muted"><th className="pr-3 text-left">channel</th><th className="pr-3 text-right">pin typ</th><th className="pr-3 text-right">gain min/typ/max</th><th className="pr-3 text-right">pout typ</th><th className="text-right">OSNR out min</th></tr></thead>
+            <tbody>{a.perChannel.map((c) => <tr key={c.signalId}><td className="pr-3">{c.channel.id}</td><td className="pr-3 text-right">{dB(c.pin.typ)}</td><td className="pr-3 text-right">{dB(c.gain.min)} / {dB(c.gain.typ)} / {dB(c.gain.max)}</td><td className="pr-3 text-right">{dB(c.pout.typ)}</td><td className="text-right">{dB(c.osnrOut?.min)}</td></tr>)}</tbody>
           </table>
         )} />}
       </div>

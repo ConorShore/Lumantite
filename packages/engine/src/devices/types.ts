@@ -20,6 +20,8 @@ export interface RouteSig {
   id: string;
   txNode: string;
   channel: Channel;
+  /** Occupied optical bandwidth, GHz (SPEC 7.10 R10); absent when the Tx declares neither bandwidth nor baud. */
+  bw_GHz?: number;
 }
 
 export interface RouteCtx {
@@ -41,6 +43,8 @@ export interface RouteOut {
   amp?: boolean;
   note?: string;
   term?: Term;
+  /** Non-terminating check attached to the signal (the signal continues), e.g. mux.passband_exceeded. */
+  check?: Check;
 }
 
 export function failTerm(kind: TermKind, code: Check["code"], message: string, element: string, port?: string): Term {

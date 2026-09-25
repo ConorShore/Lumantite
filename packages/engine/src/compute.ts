@@ -15,10 +15,10 @@ import type {
   Triple,
 } from "@lumantite/schema";
 import type { Catalog } from "./catalog.js";
-import { checkIssue, resolveMargins, rxChecks } from "./checks.js";
+import { checkIssue, dgdTolerance, resolveMargins, rxChecks, rxPenalty } from "./checks.js";
 import { buildGraph } from "./graph.js";
-import { attenuationAt, scaleT, addT, statusFromMargin, subT, sumDbm, triple, worst, worstOf } from "./physics.js";
-import { propagate, type TNode } from "./propagate.js";
+import { attenuationAt, scaleT, addT, EPS, statusFromMargin, subT, sumDbm, triple, worst, worstOf } from "./physics.js";
+import { osnrOf, propagate, type Leaf, type TNode } from "./propagate.js";
 import { validateSettings } from "./validate.js";
 import { aggregateRules } from "./rules/aggregate.js";
 import { staticRules } from "./rules/static.js";
@@ -94,8 +94,26 @@ function computeInner(model: ProjectModel, catalog: Catalog, opts: ComputeOption
   const { graph, issues: gIssues } = buildGraph(model, catalog);
   issues.push(...gIssues, ...validateSettings(model, graph, catalog), ...staticRules(graph, catalog, margins));
 
-  const prop = propagate(graph, catalog, issues, { warnThreshold: th, maxImbalance: margins.max_channel_imbalance_dB });
+  const prop = propagate(graph, catalog, issues, {
+    warnThreshold: th,
+    maxImbalance: margins.max_channel_imbalance_dB,
+    minChannelInput: margins.amp_min_channel_input_dBm,
+  });
   const { signals } = prop;
+  const ampById = new Map(prop.amps.map((a) => [a.id, a]));
+  const f2 = (v: number) => v.toFixed(2);
+
+  // R1: every branch arriving at each Rx port (a direct-detect photodiode sees all of them).
+  const atRx = new Map<string, Leaf[]>();
+  for (const leaf of prop.leaves) {
+    const rx = leaf.term.kind === "rx" ? leaf.term.rx : undefined;
+    if (!rx) continue;
+    const k = `${rx.node}.${rx.port}`;
+    const l = atRx.get(k) ?? [];
+    l.push(leaf);
+    atRx.set(k, l);
+  }
+  const endPower = (l: Leaf) => l.path[l.path.length - 1].after!;
 
   // ---------------- signals
   const signalResults: SignalResult[] = [];
@@ -121,6 +139,38 @@ function computeInner(model: ProjectModel, catalog: Catalog, opts: ComputeOption
     const cd = last.cdAfter;
     let checks: Check[] = [];
     const term = leaf.term;
+    // Path accumulations: length, CD uncertainty (R9), PMD in quadrature (R15).
+    let km = 0;
+    let spread = 0;
+    let pmd2: number | undefined;
+    for (const n of leaf.path) {
+      if (n.kind !== "fibre") continue;
+      const f = graph.fibres.get(n.element);
+      if (!f) continue;
+      km += f.length_km;
+      spread += (f.type?.dispersion_uncertainty_ps_nm_km ?? 0) * f.length_km;
+      const pmd = f.type?.pmd_ps_per_sqrt_km;
+      if (pmd !== undefined) pmd2 = (pmd2 ?? 0) + pmd * pmd * f.length_km;
+    }
+    const dgd = pmd2 !== undefined ? Math.sqrt(pmd2) : undefined;
+    const osnr = last.nsr === null ? null : last.nsr ? osnrOf(last.nsr) : undefined;
+    // R2: Σ ΔG from the last constant-output-power amplifier (inclusive) to the end.
+    const ampNodes = leaf.path.filter((n) => n.amp && n.evaluated);
+    let loading: SignalResult["loading"];
+    if (ampNodes.length) {
+      let from = 0;
+      ampNodes.forEach((n, k) => {
+        if (ampById.get(n.amp!)?.comp.mode === "constant_output_power") from = k;
+      });
+      loading = { full_dB: 0, single_dB: 0 };
+      for (const n of ampNodes.slice(from)) {
+        const l = ampById.get(n.amp!)?.comp.loading;
+        if (!l) continue;
+        loading.full_dB += l.full_dB;
+        loading.single_dB += l.single_dB;
+      }
+    }
+    const pathChecks = leaf.path.flatMap((n) => n.checks ?? []);
     const res: SignalResult = {
       id: leaf.id,
       tx: { node: sig.txNode, port: sig.txPort },
@@ -129,12 +179,15 @@ function computeInner(model: ProjectModel, catalog: Catalog, opts: ComputeOption
       path: leaf.path.map(toStep),
       powerAtEnd: power,
       cdAtEnd: cd,
-      cdSpread: 0,
-      path_km: leaf.path.reduce((k, n) => k + (n.kind === "fibre" ? graph.fibres.get(n.element)?.length_km ?? 0 : 0), 0),
+      cdSpread: spread,
+      path_km: km,
       terminated: term.kind,
       checks,
       status: "n/a",
     };
+    if (osnr) res.osnr = osnr;
+    if (dgd !== undefined) res.dgd_ps = dgd;
+    if (loading) res.loading = loading;
     if (term.kind === "rx" && term.rx) {
       res.rx = term.rx;
       rxHit.add(`${term.rx.node}.${term.rx.port}`);
@@ -142,14 +195,75 @@ function computeInner(model: ProjectModel, catalog: Catalog, opts: ComputeOption
       const m = rxNode.model;
       if (m?.kind === "transceiver") {
         const nConn = leaf.path.reduce((k, n) => k + (n.kind === "joint" && n.connector ? 1 : 0), 0);
-        checks = rxChecks(m.rx, power, cd, sig.channel.wavelength_nm, nConn, margins, th);
+        const key = `${term.rx.node}.${term.rx.port}`;
+        const group = atRx.get(key) ?? [leaf];
+        const direct = (m.detection ?? "direct") === "direct";
+        const multi = direct && group.length > 1;
+        checks = rxChecks(m.rx, power, cd, sig.channel.wavelength_nm, nConn, margins, th, {
+          pathKm: km,
+          cdSpread: spread,
+          powerHigh: multi ? sumDbm(group.map((l) => endPower(l).max)) : undefined,
+          dgd,
+          dgdTolerance: dgdTolerance(m),
+          osnr,
+        });
+        if (multi) {
+          const others = group.filter((l) => l !== leaf).map((l) => l.id);
+          checks.unshift({
+            code: "rx.multiple_signals",
+            status: "fail",
+            values: { signals: group.length, others: others.join(", ") },
+            message: `${group.length} signals reach direct-detect receiver ${key} (also ${others.join(", ")}); it cannot select a channel`,
+          });
+        }
+        if (loading) {
+          const pen = rxPenalty(margins, nConn, km);
+          if (Math.abs(loading.full_dB) > EPS) {
+            const p = power.min + loading.full_dB;
+            const mg = p - pen - m.rx.sensitivity_dBm;
+            checks.push({
+              code: "amp.channel_loading",
+              status: statusFromMargin(mg, th),
+              margin: mg,
+              values: { case: "full", delta_dB: loading.full_dB, power_min: p, penalty_dB: pen, sensitivity_dBm: m.rx.sensitivity_dBm },
+              message: `At full channel load gain drops ${f2(-loading.full_dB)} dB: Rx power (min) ${f2(p)} dBm − margins ${f2(pen)} dB vs sensitivity ${m.rx.sensitivity_dBm} dBm`,
+            });
+          }
+          if (Math.abs(loading.single_dB) > EPS) {
+            const p = power.max + loading.single_dB;
+            const mg = m.rx.overload_dBm - p;
+            checks.push({
+              code: "amp.channel_loading",
+              status: statusFromMargin(mg, th),
+              margin: mg,
+              values: { case: "single", delta_dB: loading.single_dB, power_max: p, overload_dBm: m.rx.overload_dBm },
+              message: `With a single channel lit gain rises ${f2(loading.single_dB)} dB: Rx power (max) ${f2(p)} dBm vs overload ${m.rx.overload_dBm} dBm`,
+            });
+          }
+        }
+        checks.push(...pathChecks);
+        // R11: nominal reach is informational only.
+        const txm = graph.nodes.get(sig.txNode)?.model;
+        if (txm?.kind === "transceiver" && txm.reach_km !== undefined && km > txm.reach_km + EPS) {
+          const low = checks.find((c) => c.code === "rx.power_low")?.margin;
+          issues.push({
+            severity: "info",
+            code: "rx.reach",
+            element: term.rx.node,
+            port: term.rx.port,
+            channel: sig.channel.id,
+            message: `${leaf.id}: path ${km.toFixed(1)} km exceeds the ${txm.reach_km} km reach class of ${txm.id}; the budget decides${low !== undefined ? ` (Rx margin ${f2(low)} dB)` : ""}`,
+            values: { signal: leaf.id, path_km: km, reach_km: txm.reach_km, ...(low !== undefined ? { margin: low } : {}) },
+          });
+        }
         for (const c of checks) {
+          if (pathChecks.includes(c)) continue; // raised at the element
           const i = checkIssue(c, term.rx.node, { port: term.rx.port, channel: sig.channel.id, values: { signal: leaf.id } });
           if (i) issues.push(i);
         }
       }
     } else if (term.check) {
-      checks = [term.check];
+      checks = [term.check, ...pathChecks];
       if (!term.silent) {
         const i = checkIssue(term.check, term.element ?? sig.txNode, { channel: sig.channel.id, values: { signal: leaf.id } });
         if (i) {
@@ -158,6 +272,7 @@ function computeInner(model: ProjectModel, catalog: Catalog, opts: ComputeOption
         }
       }
     }
+    if (!checks.length) checks = pathChecks;
     res.checks = checks;
     res.status = worstOf(checks.map((c) => c.status));
     signalResults.push(res);
@@ -327,9 +442,11 @@ function computeInner(model: ProjectModel, catalog: Catalog, opts: ComputeOption
         gain: a.comp.gains[k],
         pin: n.before!,
         pout: n.after!,
+        ...(n.nsr ? { osnrOut: osnrOf(n.nsr) } : {}),
       })),
       status: a.comp.status,
     };
+    if (a.comp.loading) r.loading = a.comp.loading;
     if (a.comp.imbalanceIn_dB !== undefined) r.imbalanceIn_dB = a.comp.imbalanceIn_dB;
     if (a.comp.imbalanceOut_dB !== undefined) r.imbalanceOut_dB = a.comp.imbalanceOut_dB;
     if (a.comp.operatingPoints !== undefined) r.operatingPoints = a.comp.operatingPoints;
