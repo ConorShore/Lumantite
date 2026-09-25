@@ -36,3 +36,10 @@ npm run start        # server (after build)
 cp config.example.yaml config.yaml
 docker compose -f docker/docker-compose.yaml up --build
 ```
+
+## License and disclaimer
+
+Lumantite is released under the [Apache License 2.0](LICENSE). It is a planning aid only:
+its calculations and exports may be wrong and are provided without warranty. The author
+accepts no liability for decisions made on the basis of its output. Read
+[DISCLAIMER.md](DISCLAIMER.md) before relying on any result.

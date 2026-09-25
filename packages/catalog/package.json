@@ -4,12 +4,21 @@
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "exports": { ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js" } },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "vitest run"
   },
-  "dependencies": { "@lumantite/schema": "0.1.0", "yaml": "^2.8.1" },
-  "devDependencies": {}
+  "dependencies": {
+    "@lumantite/schema": "0.1.0",
+    "yaml": "^2.8.1"
+  },
+  "devDependencies": {},
+  "license": "Apache-2.0"
 }
