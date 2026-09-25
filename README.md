@@ -106,6 +106,32 @@ npx lumantite export projects/dwdm-amplified/project.yaml --format all --out rep
 amplifier operating points and all issues, and exits non-zero on any error, which makes it
 suitable for CI on a repository of designs.
 
+### MCP server
+
+`apps/mcp` is a [Model Context Protocol](https://modelcontextprotocol.io) server (stdio) that lets
+an AI assistant such as Claude Code check projects, read link budgets, search the catalog, export
+reports and edit projects. Edits are applied atomically and saved with comments and ordering kept.
+
+| Tool | What it does |
+| --- | --- |
+| `check_project` | Pass/warn/fail summary, one line per signal, amplifier operating points, issues |
+| `get_signal` | Element-by-element link budget and checks for one signal |
+| `get_results` | Port, fibre, amplifier or issue results, optionally for one element |
+| `get_project_model` | Parsed sites, nodes, fibres, margins and files |
+| `search_catalog`, `get_catalog_model` | Find catalog models and wavelength plans, show a resolved definition |
+| `export_project` | Markdown report or CSV (ports / signals), returned or written to a directory |
+| `edit_project` | Add, update, delete, rename or move nodes, fibres and sites; set margins (supports `dry_run`) |
+| `create_project`, `list_examples` | Start a new project; find the bundled examples |
+
+After `npm run build`, the repository's `.mcp.json` registers it with Claude Code automatically.
+For other clients, or from elsewhere:
+
+```bash
+claude mcp add lumantite -- node /path/to/Lumantite/apps/mcp/dist/index.js
+```
+
+Relative project paths are resolved against the server's working directory.
+
 ## How a network is described
 
 Three tiers: a **device class** (built in: transceiver, fibre, joint, mux, amplifier, attenuator,
@@ -186,6 +212,7 @@ packages/project   comment-preserving YAML sessions for projects and the catalog
 packages/catalog   starter catalog (67 models, 3 wavelength plans) and example projects
 apps/server        Fastify file API with etag conflict detection + static hosting
 apps/cli           lumantite check | export
+apps/mcp           MCP server exposing checks, results, catalog, exports and edits as tools
 apps/web           React 19 + React Flow + Monaco, dark theme
 docker/            Dockerfile and docker-compose.yaml
 scripts/           screenshots.mjs (Playwright)
