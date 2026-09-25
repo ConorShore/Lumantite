@@ -18,7 +18,8 @@ export function TopBar() {
 
   return (
     <header className="flex items-center gap-3 h-9 px-3 border-b border-line bg-surface text-fg">
-      <span className="flex items-baseline gap-1.5 select-none">
+      <span className="flex items-center gap-2 select-none">
+        <img src="/logo.svg" alt="" width={16} height={16} aria-hidden="true" />
         <span className="text-[14px] font-semibold tracking-tight text-accent">Lumantite</span>
         <span className="font-mono text-[10px] text-muted">optical planner</span>
       </span>
