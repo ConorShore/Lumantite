@@ -8,18 +8,22 @@ const out = new URL("../docs/screenshots/", import.meta.url).pathname;
 mkdirSync(out, { recursive: true });
 
 const shots = [
-  { name: "canvas", q: "project=dwdm-amplified/project.yaml&tab=canvas&select=A-sfp-c21", after: fit },
+  { name: "canvas", q: "project=dwdm-amplified/project.yaml&tab=canvas", after: (p) => selectOnCanvas(p, "A-sfp-c21") },
   { name: "results", q: "project=dwdm-amplified/project.yaml&tab=results", after: expandFirstRow },
   { name: "yaml", q: "project=dwdm-amplified/project.yaml&tab=yaml" },
   { name: "catalog", q: "project=dwdm-amplified/project.yaml&tab=catalog" },
   { name: "margins", q: "project=dwdm-amplified/project.yaml&tab=margins" },
-  { name: "cwdm-ring", q: "project=cwdm-ring/project.yaml&tab=canvas&select=site1-sfp", after: fit },
+  { name: "cwdm-ring", q: "project=cwdm-ring/project.yaml&tab=canvas", after: (p) => selectOnCanvas(p, "site1-sfp") },
 ];
 
-async function fit(page) {
-  const btn = page.getByRole("button", { name: /^fit$/i });
-  if (await btn.count()) await btn.first().click();
-  await page.waitForTimeout(600);
+// Select by clicking the device once the fibres have rendered: loading with `select=` in the URL
+// can leave the canvas without any edges.
+async function selectOnCanvas(page, id) {
+  await page.waitForSelector(".react-flow__edge path", { timeout: 15000 }).catch(() => {});
+  await page.getByRole("button", { name: /^fit$/i }).first().click();
+  await page.waitForTimeout(800);
+  await page.locator(`.react-flow__node[data-id="${id}"]`).click({ position: { x: 20, y: 8 } });
+  await page.waitForTimeout(1000);
 }
 async function expandFirstRow(page) {
   const row = page.locator("table tbody tr").first();
