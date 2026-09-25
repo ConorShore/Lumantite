@@ -96,6 +96,16 @@ describe("lumantite mcp", () => {
     expect(readFileSync(path, "utf8")).toBe(after);
   });
 
+  it("creates a project and refuses to overwrite one", async () => {
+    const path = join(tmp, "new", "project.yaml");
+    const r = (await call("create_project", { path, name: "New" })).json();
+    expect(r.created).toBe(path);
+    expect((await call("check_project", { project: path })).json().project).toBe("New");
+    const again = await call("create_project", { path, name: "Other" });
+    expect(again.isError).toBe(true);
+    expect(again.text).toContain("already exists");
+  });
+
   it("reports a missing project as a tool error", async () => {
     const r = await call("check_project", { project: join(tmp, "missing.yaml") });
     expect(r.isError).toBe(true);

@@ -122,9 +122,13 @@ export function editProject(l: Loaded, ops: Op[], dryRun: boolean) {
 
 export function createProject(path: string, name: string): string {
   const abs = resolve(path);
-  if (existsSync(abs)) throw new Error(`${abs} already exists`);
   mkdirSync(dirname(abs), { recursive: true });
-  writeFileSync(abs, newProjectText(name));
+  // "wx" creates exclusively, so the existence check and the write are one atomic step.
+  try { writeFileSync(abs, newProjectText(name), { flag: "wx" }); }
+  catch (e) {
+    if ((e as NodeJS.ErrnoException).code === "EEXIST") throw new Error(`${abs} already exists`);
+    throw e;
+  }
   return abs;
 }
 
