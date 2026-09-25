@@ -5,7 +5,7 @@ import { api } from "../api/client";
 import { useProject, lastProject } from "./projectStore";
 import { useCatalog } from "./catalogStore";
 import { useConfig } from "./configStore";
-import { useUi, type SelItem } from "./uiStore";
+import { TABS, useUi, type SelItem, type Tab } from "./uiStore";
 import { signalTxNode } from "./selectors";
 import { storageOf } from "../lib/paths";
 
@@ -13,9 +13,24 @@ export async function bootstrap(): Promise<void> {
   api.getConfig().then((c) => useConfig.getState().setConfig(c)).catch(() => { /* defaults */ });
   await Promise.all([useProject.getState().loadProjects(), useCatalog.getState().load()]);
   const { projects } = useProject.getState();
-  const last = lastProject();
+  const link = deepLink();
+  const last = link.project ?? lastProject();
   const id = projects.find((p) => p.id === last)?.id ?? projects[0]?.id;
   if (id) await useProject.getState().open(id);
+  if (link.tab) useUi.getState().setTab(link.tab);
+  if (link.select) useUi.getState().select([{ kind: "node", id: link.select }]);
+}
+
+/** Deep links: `?project=<id>&tab=<tab>&select=<nodeId>`. */
+function deepLink(): { project?: string; tab?: Tab; select?: string } {
+  if (typeof window === "undefined") return {};
+  const q = new URLSearchParams(window.location.search);
+  const tab = q.get("tab");
+  return {
+    project: q.get("project") ?? undefined,
+    tab: TABS.some((t) => t.id === tab) ? (tab as Tab) : undefined,
+    select: q.get("select") ?? undefined,
+  };
 }
 
 /** Map an issue's `element` to something selectable. */

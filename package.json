@@ -13,7 +13,8 @@
     "typecheck": "npm run typecheck --workspaces --if-present",
     "dev": "npm run dev --workspace=apps/web",
     "start": "node apps/server/dist/index.js",
-    "build:packages": "npm run build -w packages/schema && npm run build -w packages/catalog -w packages/engine -w packages/project"
+    "build:packages": "npm run build -w packages/schema && npm run build -w packages/catalog -w packages/engine -w packages/project",
+    "screenshots": "node scripts/screenshots.mjs"
   },
   "devDependencies": {
     "typescript": "^5.9.2",
