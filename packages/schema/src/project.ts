@@ -50,6 +50,7 @@ export const NodeSettings = z.object({
   tilt_dB: z.number().optional(),            // linear tilt across band, + = more gain at long λ
   gain_model: z.enum(["parametric", "measured"]).optional(),
   setting_dB: z.number().optional(),         // VOA
+  port_side: z.enum(["right", "left", "split"]).optional(), // transceiver canvas only: where tx/rx sit (default right); ignored by the engine
 }).passthrough();
 export type NodeSettings = z.infer<typeof NodeSettings>;
 

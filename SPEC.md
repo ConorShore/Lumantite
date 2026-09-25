@@ -156,7 +156,8 @@ ports:
 # BiDi variant: one port `bidi: { direction: bidi }` with tx and rx on different wavelengths.
 ```
 
-Instance settings: `channel` (tunable only), optional `tx_power_override_dBm`, `host` (a
+Instance settings: `channel` (tunable only), optional `tx_power_override_dBm`, `port_side`
+(`right` default | `left` | `split`; canvas only — where Tx/Rx ports sit on the node), `host` (a
 `host` node for grouping/labelling, e.g. `A-sw1`).
 
 ### 5.2 `fibre`
