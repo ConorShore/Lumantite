@@ -2,7 +2,9 @@
   <img src="docs/screenshots/cwdm-ring.png" alt="Lumantite canvas showing a four-site CWDM ring with add/drop modules and a highlighted signal path" width="900">
 </p>
 
-<h1 align="center">Lumantite</h1>
+<h1 align="center">
+  <img src="apps/web/public/logo.svg" alt="" width="36" height="36" align="top">&nbsp;Lumantite
+</h1>
 
 <p align="center">
   <em>Optical network planner: power budgets, chromatic dispersion and wavelength-aware routing, edited on a canvas and stored as YAML.</em>
