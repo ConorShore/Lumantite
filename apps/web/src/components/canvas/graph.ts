@@ -122,16 +122,28 @@ export function buildGraph(model: ProjectModel, catalog: Catalog, opts: BuildOpt
     });
   }
 
-  // ---- auto-place nodes without layout: grid inside their file frame, or right of everything
+  // ---- a node sitting in another file's frame had its file changed (inspector or YAML): re-place it in its own
+  const storedFiles = model.layout.files ?? {};
+  for (const d of dev.values()) {
+    if (!d.placed) continue;
+    const cx = d.rect.x + d.rect.w / 2;
+    const cy = d.rect.y + d.rect.h / 2;
+    const own = storedFiles[d.inst.file];
+    if (own && contains(own, cx, cy)) continue;
+    if (Object.entries(storedFiles).some(([f, r]) => f !== d.inst.file && contains(r, cx, cy))) d.placed = false;
+  }
+
+  // ---- auto-place nodes without layout: grid inside their file frame (below what's there), or right of everything
   const placedRects = [...dev.values()].filter((d) => d.placed).map((d) => d.rect);
-  const extent = bbox([...placedRects, ...Object.values(model.layout.files ?? {})]);
+  const extent = bbox([...placedRects, ...Object.values(storedFiles)]);
   let spill = extent ? extent.x + extent.w + 80 : 0;
   const byFile = new Map<string, Dev[]>();
   for (const d of dev.values()) if (!d.placed) byFile.set(d.inst.file, [...(byFile.get(d.inst.file) ?? []), d]);
   for (const [file, list] of byFile) {
-    const fr = model.layout.files?.[file];
+    const fr = storedFiles[file];
+    const held = bbox([...dev.values()].filter((d) => d.placed && d.inst.file === file).map((d) => d.rect));
     const x0 = fr ? fr.x + 20 : spill;
-    const y0 = fr ? fr.y + 40 : 0;
+    const y0 = fr ? Math.max(fr.y + 40, held ? held.y + held.h + 30 : -Infinity) : 0;
     const cols = fr ? Math.max(1, Math.floor((fr.w - 20) / (NODE_W + 30))) : 3;
     list.forEach((d, i) => { d.rect.x = x0 + (i % cols) * (NODE_W + 30); d.rect.y = y0 + Math.floor(i / cols) * 130; });
     if (!fr) spill += cols * (NODE_W + 30) + 60;
