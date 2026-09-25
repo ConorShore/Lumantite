@@ -1,0 +1,177 @@
+# FS.com 1G CWDM / DWDM SFP optics. Format and conventions: README.md in this directory.
+# Primary source: FS "1G/2.5G SFP Cable and Transceiver Modules Data Sheet" (2023-11 edition,
+# https://resource.fs.com/mall/doc/20231115172041cpq6rr.pdf), Table 3 "Optical specifications"
+# (p.16). The 2023-01 and 2022 editions carry identical figures for the parts they list.
+# Single-product datasheets were used for the 20km/40km/120km CWDM parts (not in the combined
+# sheet), for receiver wavelength ranges, and as cross-checks; each such use is stated in `notes`.
+#
+# FS prints the same P/N for several reaches (CWDM-SFP1G-ZX = 20/40/80km, CWDM-SFP1G-EZX =
+# 100/120km). The unsuffixed pn is the reach the combined datasheet lists it at; other reaches get
+# a " (NNkm)" suffix so pn stays unique.
+
+# ---------------------------------------------------------------- CWDM
+- pn: CWDM-SFP1G-ZX (20km)
+  id: fs-cwdm-sfp1g-zx-20km
+  fs_products: [ 52770 ]
+  title: 1000BASE-CWDM SFP, 1270-1610nm, 20km, SMF
+  form_factor: SFP
+  rate_Gbps: 1
+  reach_km: 20
+  media: smf
+  connector: lc-upc
+  temp: commercial
+  channels:
+    plan: cwdm-18
+    ids: [ "1271", "1291", "1311", "1331", "1351", "1371", "1391", "1411", "1431", "1451", "1471", "1491", "1511", "1531", "1551", "1571", "1591", "1611" ]
+    tunable: false
+  tx_power_dBm: { min: -5, max: 0 }
+  rx_sensitivity_dBm: -24
+  rx_overload_dBm: -8
+  rx_range_nm: [ 1260, 1620 ]
+  source: "https://img-en.fs.com/file/datasheet/cwdm-sfp1g-zx-20km.pdf (sec. V Optical Characteristics, p.4)"
+  verified: true
+  notes: "Not in the combined 1G datasheet. The single-product datasheet prints P/N CWDM-SFP1G-ZX (same as the 80km part); its ordering table lists the 20/40/80km variants under that one P/N. Total system budget 19 dB per datasheet."
+
+- pn: CWDM-SFP1G-ZX (40km)
+  id: fs-cwdm-sfp1g-zx-40km
+  fs_products: [ 32342 ]
+  title: 1000BASE-CWDM SFP, 1270-1610nm, 40km, SMF
+  form_factor: SFP
+  rate_Gbps: 1
+  reach_km: 40
+  media: smf
+  connector: lc-upc
+  temp: commercial
+  channels:
+    plan: cwdm-18
+    ids: [ "1271", "1291", "1311", "1331", "1351", "1371", "1391", "1411", "1431", "1451", "1471", "1491", "1511", "1531", "1551", "1571", "1591", "1611" ]
+    tunable: false
+  tx_power_dBm: { min: -5, max: 0 }
+  rx_sensitivity_dBm: -24
+  rx_overload_dBm: -8
+  rx_range_nm: [ 1260, 1620 ]
+  source: "https://img-en.fs.com/file/datasheet/cwdm-sfp1g-zx-40km.pdf (sec. V Optical Characteristics, p.4)"
+  verified: true
+  notes: "Not in the combined 1G datasheet. Printed P/N is CWDM-SFP1G-ZX (shared with the 20/80km parts). FS's 40km datasheet gives exactly the same optical figures as the 20km one (Tx -5..0 dBm, Rx -24 dBm, 19 dB budget) — transcribed as printed."
+
+- pn: CWDM-SFP1G-EZX
+  fs_products: [ 33235 ]
+  title: 1000BASE-CWDM SFP, 1270-1610nm, 100km, SMF
+  form_factor: SFP
+  rate_Gbps: 1
+  reach_km: 100
+  media: smf
+  connector: lc-upc
+  temp: commercial
+  channels:
+    plan: cwdm-18
+    ids: [ "1271", "1291", "1311", "1331", "1351", "1371", "1391", "1411", "1431", "1451", "1471", "1491", "1511", "1531", "1551", "1571", "1591", "1611" ]
+    tunable: false
+  tx_power_dBm: { min: 0, max: 4 }
+  rx_sensitivity_dBm: -32
+  rx_overload_dBm: -8
+  source: "https://resource.fs.com/mall/doc/20231115172041cpq6rr.pdf (Table 3, p.16)"
+  verified: true
+
+- pn: CWDM-SFP1G-EZX (120km)
+  id: fs-cwdm-sfp1g-ezx-120km
+  fs_products: [ 81380 ]
+  title: 1000BASE-CWDM SFP, 1470-1610nm, 120km, SMF
+  form_factor: SFP
+  rate_Gbps: 1
+  reach_km: 120
+  media: smf
+  connector: lc-upc
+  temp: commercial
+  channels:
+    plan: cwdm-18
+    ids: [ "1471", "1491", "1511", "1531", "1551", "1571", "1591", "1611" ]
+    tunable: false
+  tx_power_dBm: { min: 0, max: 4 }
+  rx_sensitivity_dBm: -32
+  rx_overload_dBm: -8
+  rx_range_nm: [ 1260, 1620 ]
+  source: "https://img-en.fs.com/file/datasheet/cwdm-sfp1g-ezx-120km.pdf (sec. IV Optical Characteristics, p.4)"
+  verified: true
+  notes: "Not in the combined 1G datasheet. Printed P/N is CWDM-SFP1G-EZX (shared with the 100km part); total system budget 32 dB. The datasheet says 18 wavelengths 1270-1610nm are available, but FS's listing sells this 120km family only on 1470-1610nm, so only those 8 channels are listed."
+
+- pn: CWxx-SFP1G-ZXC
+  fs_products: [ 176451 ]
+  title: 1000BASE-CWDM SFP, 1470-1610nm, 160km, SMF
+  form_factor: SFP
+  rate_Gbps: 1
+  reach_km: 160
+  media: smf
+  connector: lc-upc
+  temp: commercial
+  channels:
+    plan: cwdm-18
+    ids: [ "1471", "1491", "1511", "1531", "1551", "1571", "1591", "1611" ]
+    tunable: false
+  tx_power_dBm: { min: 1, max: 6 }
+  rx_sensitivity_dBm: -33
+  rx_overload_dBm: -10
+  source: "https://resource.fs.com/mall/doc/20231115172041cpq6rr.pdf (Table 3, p.16)"
+  verified: true
+  notes: "In the plain-text extraction the ZXC and 120-I figure rows appear swapped; the page layout (checked with a layout-preserving extraction, and matching the 2023 1g25g edition) puts 1/6/-33/-10 on CWxx-SFP1G-ZXC."
+
+- pn: DWDM-SFP1G-EZX
+  fs_products: [ 54150 ]
+  title: 1000BASE-DWDM SFP 100GHz, C17-C61, 100km, SMF
+  form_factor: SFP
+  rate_Gbps: 1
+  reach_km: 100
+  media: smf
+  connector: lc-upc
+  temp: commercial
+  channels:
+    plan: dwdm-c-100ghz-45
+    ids: [ "C17", "C18", "C19", "C20", "C21", "C22", "C23", "C24", "C25", "C26", "C27", "C28", "C29", "C30", "C31", "C32", "C33", "C34", "C35", "C36", "C37", "C38", "C39", "C40", "C41", "C42", "C43", "C44", "C45", "C46", "C47", "C48", "C49", "C50", "C51", "C52", "C53", "C54", "C55", "C56", "C57", "C58", "C59", "C60", "C61" ]
+    tunable: false
+  tx_power_dBm: { min: 0, max: 5 }
+  rx_sensitivity_dBm: -32
+  rx_overload_dBm: -8
+  rx_range_nm: [ 1480, 1580 ]
+  source: "https://resource.fs.com/mall/doc/20231115172041cpq6rr.pdf (Table 3, p.16)"
+  verified: true
+  notes: "Single-product datasheet https://resource.fs.com/mall/resource/dwdm-sfp1g-ezx-100km-datasheet.pdf agrees (Tx 0..+5, Rx -32/-8 dBm, 32 dB budget) and gives rx_range_nm."
+
+- pn: DWxxx-SFP1G-120
+  fs_products: [ 169367 ]
+  title: 1000BASE-DWDM SFP 100GHz, C17-C61, 120km, SMF
+  form_factor: SFP
+  rate_Gbps: 1
+  reach_km: 120
+  media: smf
+  connector: lc-upc
+  temp: commercial
+  channels:
+    plan: dwdm-c-100ghz-45
+    ids: [ "C17", "C18", "C19", "C20", "C21", "C22", "C23", "C24", "C25", "C26", "C27", "C28", "C29", "C30", "C31", "C32", "C33", "C34", "C35", "C36", "C37", "C38", "C39", "C40", "C41", "C42", "C43", "C44", "C45", "C46", "C47", "C48", "C49", "C50", "C51", "C52", "C53", "C54", "C55", "C56", "C57", "C58", "C59", "C60", "C61" ]
+    tunable: false
+  tx_power_dBm: { min: 0, max: 5 }
+  rx_sensitivity_dBm: -30
+  rx_overload_dBm: -10
+  source: "https://resource.fs.com/mall/doc/20231115172041cpq6rr.pdf (Table 3, p.16)"
+  verified: true
+  notes: "As printed: sensitivity -30 dBm is worse than the 100km part's -32 dBm (budget 30 dB). No single-product datasheet found to cross-check."
+
+- pn: DWCxx-SFP1G-ZXC
+  fs_products: [ 172285 ]
+  title: 1000BASE-DWDM SFP 100GHz, C17-C61, 160km, SMF
+  form_factor: SFP
+  rate_Gbps: 1
+  reach_km: 160
+  media: smf
+  connector: lc-upc
+  temp: commercial
+  channels:
+    plan: dwdm-c-100ghz-45
+    ids: [ "C17", "C18", "C19", "C20", "C21", "C22", "C23", "C24", "C25", "C26", "C27", "C28", "C29", "C30", "C31", "C32", "C33", "C34", "C35", "C36", "C37", "C38", "C39", "C40", "C41", "C42", "C43", "C44", "C45", "C46", "C47", "C48", "C49", "C50", "C51", "C52", "C53", "C54", "C55", "C56", "C57", "C58", "C59", "C60", "C61" ]
+    tunable: false
+  tx_power_dBm: { min: 1, max: 6 }
+  rx_sensitivity_dBm: -33
+  rx_overload_dBm: -10
+  source: "https://resource.fs.com/mall/doc/20231115172041cpq6rr.pdf (Table 3, p.16)"
+  verified: true
+  notes: "Same figures in the 2023-01 edition (https://resource.fs.com/mall/doc/20230107110116sk5r6r.pdf)."

@@ -1,0 +1,60 @@
+# Rows excluded from the generated catalog (see ../README.md, "Exclusions"). Moved from 100m.yaml.
+# Each keeps its transcribed values plus an `excluded` reason; the generator does not read this directory.
+
+
+- pn: SFP-100LX-31
+  fs_products: [ 12676, 15467 ]
+  title: 100BASE-LX SFP, 1310nm, 10/15km, SMF
+  form_factor: SFP
+  rate_Gbps: 0.1
+  reach_km: 15
+  media: smf
+  connector: lc-upc
+  temp: commercial
+  wavelength_nm: 1310
+  tx_power_dBm: { min: -15, max: -8 }
+  rx_sensitivity_dBm: -34
+  rx_overload_dBm: -3
+  rx_range_nm: [ 1100, 1670 ]
+  source: "https://img-en.fs.com/file/datasheet/sfp-100lx-31-datesheet-10km.pdf (Optical Characteristics, p.5)"
+  verified: true
+  notes: "FS sells SFP-100LX-31 under one P/N as both 10km (12676) and 15km (15467); combined sheet 20221117141608w9mivl.pdf lists it as '10/15km', link 15km. The combined Table 3 gives Rx min -36 dBm, which matches the single sheet's 'Optical Input Power' min (-36); the single sheet's explicit 'RX Sensitivity' row is -34 dBm, used here. The 2022/2025-footer combined sheet (100m-sfp-transceiver-modules-data-sheet.pdf) has a garbled SFP-100LX-31 row ('-1 ... 5 -8 -36 -3'); ignored."
+  excluded: "FS sources disagree: Rx sensitivity -36 dBm (combined sheet) vs -34 dBm (single-product sheet); another edition's row is garbled."
+
+- pn: SFP-FE35-BX20
+  fs_products: [ 15534 ]
+  title: 100BASE-BX BiDi SFP, Tx1310/Rx1550, 20km, SMF
+  form_factor: SFP
+  rate_Gbps: 0.1
+  reach_km: 20
+  media: smf
+  connector: lc-upc
+  temp: commercial
+  bidi: { tx_nm: 1310, rx_nm: 1550 }
+  tx_power_dBm: { min: -15, max: -8 }
+  rx_sensitivity_dBm: -34
+  rx_overload_dBm: -3
+  rx_range_nm: [ 1480, 1580 ]
+  source: "https://img-en.fs.com/file/datasheet/100base-bx-bidi-sfp-20km-1310-1550--transceiver-datasheet.pdf (Optical Characteristics, p.4-5)"
+  verified: true
+  notes: "Mate: SFP-FE53-BX20. The datasheet itself prints P/N SFP-FE-BX; SFP-FE35-BX20 is the per-direction P/N from the 2025 SFP-FE35-BX10/FE53-BX10 ordering tables. Case temperature 'Extended' -5 to 85C; recorded as commercial. Sheet prints RX Sensitivity as '3 -34 5' (stray note refs); -34 matches the Optical Input Power min."
+  excluded: Datasheet sensitivity row is garbled ('3 -34 5'); value had to be inferred.
+
+- pn: SFP-FE53-BX20
+  fs_products: [ 39132 ]
+  title: 100BASE-BX BiDi SFP, Tx1550/Rx1310, 20km, SMF
+  form_factor: SFP
+  rate_Gbps: 0.1
+  reach_km: 20
+  media: smf
+  connector: lc-upc
+  temp: commercial
+  bidi: { tx_nm: 1550, rx_nm: 1310 }
+  tx_power_dBm: { min: -15, max: -8 }
+  rx_sensitivity_dBm: -34
+  rx_overload_dBm: -3
+  rx_range_nm: [ 1270, 1360 ]
+  source: "https://img-en.fs.com/file/datasheet/100base-bx-bidi-sfp-20km-1550-1310---transceiver-datasheet.pdf (Optical Characteristics, p.4-5)"
+  verified: true
+  notes: "Mate: SFP-FE35-BX20. The datasheet itself prints P/N SFP-FE-BX; SFP-FE53-BX20 is the per-direction P/N from the 2025 ordering tables. Case temperature 'Extended' -5 to 85C; recorded as commercial."
+  excluded: BiDi mate SFP-FE35-BX20 excluded.

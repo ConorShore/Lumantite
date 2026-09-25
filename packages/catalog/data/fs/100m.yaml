@@ -1,0 +1,125 @@
+# FS.com 100M SFP optics (100BASE-FX/LX/EX/ZX and 100BASE-BX BiDi).
+# Hand-transcribed from FS datasheets; see README.md for the row format.
+
+- pn: SFP-100FX-31
+  fs_products: [ 39313 ]
+  title: 100BASE-FX SFP, 1310nm, 2km, MMF
+  form_factor: SFP
+  rate_Gbps: 0.1
+  reach_km: 2
+  media: mmf
+  connector: lc-upc
+  temp: commercial
+  wavelength_nm: 1310
+  tx_power_dBm: { min: -15, max: -8 }
+  rx_sensitivity_dBm: -32
+  rx_overload_dBm: -3
+  source: "https://resource.fs.com/mall/doc/20221117141608w9mivl.pdf (Table 3, p.7)"
+  verified: true
+  notes: "Same figures in the 2022 combined sheet (resource.fs.com/mall/resource/100m-sfp-transceiver-modules-data-sheet.pdf, Table 3)."
+
+- pn: SFP-GE-100FX
+  fs_products: [ 12672 ]
+  title: 100BASE-FX SFP for GE ports, 1310nm, 2km, MMF
+  form_factor: SFP
+  rate_Gbps: 0.1
+  reach_km: 2
+  media: mmf
+  connector: lc-upc
+  temp: commercial
+  wavelength_nm: 1310
+  tx_power_dBm: { min: -15, max: -8 }
+  rx_sensitivity_dBm: -32
+  rx_overload_dBm: -3
+  rx_range_nm: [ 1100, 1670 ]
+  source: "https://resource.fs.com/mall/doc/20221117141608w9mivl.pdf (Table 3, p.7)"
+  verified: true
+  notes: "Cross-checked against the single-product 100BASE-FX SFP SGMII datasheet (img-en.fs.com/file/datasheet/100base-fx-sfp-transceiver-datasheet.pdf, p.4-5): Pout -15/-8, Sen -32, overload -3, Rx 1100-1670nm."
+
+- pn: SFP-100LX-31-I
+  fs_products: [ 12714 ]
+  title: 100BASE-LX SFP, 1310nm, 10km, SMF, industrial
+  form_factor: SFP
+  rate_Gbps: 0.1
+  reach_km: 10
+  media: smf
+  connector: lc-upc
+  temp: industrial
+  wavelength_nm: 1310
+  tx_power_dBm: { min: -15, max: -8 }
+  rx_sensitivity_dBm: -32.5
+  rx_overload_dBm: -3
+  source: "https://resource.fs.com/mall/doc/20221117141608w9mivl.pdf (Table 3, p.7; Table 4 -40 to 85C)"
+  verified: true
+
+- pn: SFP-100EX-31
+  fs_products: [ 12678 ]
+  title: 100BASE-EX SFP, 1310nm, 40km, SMF
+  form_factor: SFP
+  rate_Gbps: 0.1
+  reach_km: 40
+  media: smf
+  connector: lc-upc
+  temp: commercial
+  wavelength_nm: 1310
+  tx_power_dBm: { min: -5, max: 0 }
+  rx_sensitivity_dBm: -36
+  rx_overload_dBm: -3
+  source: "https://resource.fs.com/mall/doc/20221117141608w9mivl.pdf (Table 3, p.7)"
+  verified: true
+
+- pn: SFP-100ZX-55
+  fs_products: [ 12679 ]
+  title: 100BASE-ZX SFP, 1550nm, 80km, SMF
+  form_factor: SFP
+  rate_Gbps: 0.1
+  reach_km: 80
+  media: smf
+  connector: lc-upc
+  temp: commercial
+  wavelength_nm: 1550
+  tx_power_dBm: { min: -5, max: 0 }
+  rx_sensitivity_dBm: -36
+  rx_overload_dBm: -3
+  source: "https://resource.fs.com/mall/doc/20221117141608w9mivl.pdf (Table 3, p.7)"
+  verified: true
+
+# --- 100BASE-BX BiDi. The combined sheet lists every variant as SFP-FE-BX; the
+# 2025 single-product datasheets' ordering tables give per-direction P/Ns
+# (SFP-FE35-BX10 = Tx1310/Rx1550, SFP-FE53-BX10 = Tx1550/Rx1310, ...), used here.
+
+- pn: SFP-FE35-BX10
+  fs_products: [ 39317 ]
+  title: 100BASE-BX BiDi SFP, Tx1310/Rx1550, 10km, SMF
+  form_factor: SFP
+  rate_Gbps: 0.1
+  reach_km: 10
+  media: smf
+  connector: lc-upc
+  temp: commercial
+  bidi: { tx_nm: 1310, rx_nm: 1550 }
+  tx_power_dBm: { min: -15, max: -8 }
+  rx_sensitivity_dBm: -34
+  rx_overload_dBm: -3
+  rx_range_nm: [ 1480, 1580 ]
+  source: "https://resource.fs.com/mall/resource/cn_sfp-fe35-bx10-datasheet-20251208094335.pdf (Optical Characteristics, p.4)"
+  verified: true
+  notes: "Mate: SFP-FE53-BX10. Datasheet case temperature is 'Extended' -5 to 85C; recorded as commercial. Matches the combined sheet's SFP-FE-BX row (-15/-8, -34/-3)."
+
+- pn: SFP-FE53-BX10
+  fs_products: [ 39316 ]
+  title: 100BASE-BX BiDi SFP, Tx1550/Rx1310, 10km, SMF
+  form_factor: SFP
+  rate_Gbps: 0.1
+  reach_km: 10
+  media: smf
+  connector: lc-upc
+  temp: commercial
+  bidi: { tx_nm: 1550, rx_nm: 1310 }
+  tx_power_dBm: { min: -15, max: -8 }
+  rx_sensitivity_dBm: -34
+  rx_overload_dBm: -3
+  rx_range_nm: [ 1270, 1360 ]
+  source: "https://resource.fs.com/mall/resource/sfp-fe53-bx10-datasheet-20251208094619.pdf (Optical Characteristics, p.4)"
+  verified: true
+  notes: "Mate: SFP-FE35-BX10. Datasheet lists Extended (-5 to 85C) and Industrial (-40 to 85C) case temperatures; recorded as commercial (listing product is not industrial)."
