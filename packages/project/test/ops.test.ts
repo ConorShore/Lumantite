@@ -166,7 +166,7 @@ fibres:
     expect(text(s, "project.yaml")).toBe(replaceOnce(replaceOnce(PROJECT_YAML,
       "  - { id: siteB, name: Exchange B }   # receive end\n", ""),
       ", siteB: { x: 800, y: 0, w: 400, h: 300 }", ""));
-    expect(text(s, "sites/b.yaml")).toBe(SITE_B_YAML.replace(/\n    site: siteB/g, ""));
+    expect(text(s, "sites/b.yaml")).toBe(SITE_B_YAML.replace(/\n {4}site: siteB/g, ""));
     expect(s.model.nodes.filter((n) => n.site === "siteB")).toEqual([]);
   });
 
@@ -417,7 +417,7 @@ layout:`));
     const s = openProject("project.yaml", files);
     // an x: extension map replaced by a scalar-only map
     expect(s.apply([{ op: "setMargins", margins: {} }])).toEqual([]);
-    expect(text(s, "project.yaml")).toBe(PROJECT_YAML.replace(/  margins:[^\n]*\n(    [^\n]*\n)+/, ""));
+    expect(text(s, "project.yaml")).toBe(PROJECT_YAML.replace(/ {2}margins:[^\n]*\n( {4}[^\n]*\n)+/, ""));
     expect(s.model.project.margins).toBeUndefined();
   });
 

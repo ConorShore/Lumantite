@@ -77,7 +77,6 @@ function CanvasInner() {
       const selected = selectedNodeIds.has(n.id);
       return p?.dragging ? { ...n, position: p.position, dragging: true, selected } : { ...n, selected };
     }));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [graph, selectedNodeIds]);
   useEffect(() => {
     setEdges((graph?.edges ?? []).map((e) => ({ ...e, selected: selectedFibres.has(e.id) })));

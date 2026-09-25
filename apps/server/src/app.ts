@@ -83,7 +83,6 @@ export async function buildServer(config: AppConfig, opts: BuildServerOptions = 
       return respondPutResult(await putFiles(localCatalogDir, body), reply);
     }
     if (rest.endsWith("/files")) {
-      const id = rest.slice(0, -"/files".length);
       return respondPutResult(await putFiles(projectsDir, body), reply);
     }
     reply.code(404);

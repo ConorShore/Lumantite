@@ -47,14 +47,20 @@ export function safeResolve(baseDir: string, relPath: string): string {
 }
 
 /** Read a file, returning undefined (instead of throwing) if it does not exist. */
+/** ENOENT/ENOTDIR: the path (or one of its parents) does not exist as expected. */
+function isMissing(err: unknown): boolean {
+  const code = (err as NodeJS.ErrnoException | undefined)?.code;
+  return code === "ENOENT" || code === "ENOTDIR";
+}
+
 export async function readFileIfExists(p: string): Promise<string | undefined> {
   try {
     return await fs.readFile(p, "utf8");
-  } catch (err: any) {
+  } catch (err) {
     // ENOENT: no such path. ENOTDIR: a path component (e.g. a parent) is actually a file, as
     // happens for a bogus nested request like `/api/projects/existing-file.yaml/extra`.
     // Both mean "there is no such file" from the caller's point of view.
-    if (err?.code === "ENOENT" || err?.code === "ENOTDIR") return undefined;
+    if (isMissing(err)) return undefined;
     throw err;
   }
 }
@@ -72,8 +78,8 @@ export async function atomicWrite(p: string, text: string): Promise<void> {
 export async function removeFile(p: string): Promise<void> {
   try {
     await fs.unlink(p);
-  } catch (err: any) {
-    if (err?.code === "ENOENT" || err?.code === "ENOTDIR") throw new FileApiError(404, `file not found: ${toPosix(p)}`);
+  } catch (err) {
+    if (isMissing(err)) throw new FileApiError(404, `file not found: ${toPosix(p)}`);
     throw err;
   }
 }
@@ -103,8 +109,8 @@ export async function isDirEmpty(p: string): Promise<boolean> {
   try {
     const entries = await fs.readdir(p);
     return entries.length === 0;
-  } catch (err: any) {
-    if (err?.code === "ENOENT" || err?.code === "ENOTDIR") return true;
+  } catch (err) {
+    if (isMissing(err)) return true;
     throw err;
   }
 }

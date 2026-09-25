@@ -104,7 +104,7 @@ const PROJECT_PACKAGE = "@lumantite/project";
 /** Import `@lumantite/project`'s `newProjectText` if it builds; otherwise fall back to a minimal parent file. */
 export async function newProjectText(name: string): Promise<string> {
   try {
-    const mod: any = await import(PROJECT_PACKAGE);
+    const mod = (await import(PROJECT_PACKAGE)) as { newProjectText?: unknown };
     if (typeof mod.newProjectText === "function") {
       return mod.newProjectText(name) as string;
     }
