@@ -77,7 +77,7 @@ function run(rootFile: string, opts: { catalog?: string[]; quiet?: boolean }): {
   return { results, ok: errors.length === 0, model: session.model };
 }
 
-const program = new Command().name("lumantite").description("Optical network planner CLI").version("0.1.0");
+const program = new Command().name("lumantite").description("Lumantite optical network planner CLI. Results are estimates provided without warranty; see DISCLAIMER.md.").version("0.1.0");
 
 program
   .command("check")
