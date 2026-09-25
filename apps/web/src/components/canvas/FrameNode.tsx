@@ -23,7 +23,7 @@ function FrameNodeImpl({ data, selected, width, height }: NodeProps<Node<FrameDa
       >
         <div
           className={`frame-grip inline-flex items-center gap-1 cursor-move rounded-br px-1.5 py-0.5 text-[10px] ${isFile ? "bg-aqua/12 text-aqua" : "bg-raised text-muted border-r border-b border-line"}`}
-          title={isFile ? "File frame: drop elements inside to move them into this file" : "Site frame"}
+          title={isFile ? "File frame: grows to hold its elements. Change an element's file in the inspector or YAML" : "Site frame"}
         >
           <span>{isFile ? "📄" : "▣"}</span>
           <span className="font-semibold">{data.label}</span>

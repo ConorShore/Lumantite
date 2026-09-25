@@ -8,7 +8,7 @@
     "apps/*"
   ],
   "scripts": {
-    "build": "npm run build -w packages/schema && npm run build -w packages/catalog -w packages/engine -w packages/project && npm run build -w apps/server -w apps/cli -w apps/web",
+    "build": "npm run build -w packages/schema && npm run build -w packages/catalog -w packages/engine -w packages/project && npm run build -w apps/server -w apps/cli -w apps/mcp -w apps/web",
     "test": "npm run test --workspaces --if-present",
     "typecheck": "npm run typecheck --workspaces --if-present",
     "dev": "npm run dev --workspace=apps/web",

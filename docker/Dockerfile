@@ -17,6 +17,7 @@ COPY packages/project/package.json packages/project/package.json
 COPY packages/catalog/package.json packages/catalog/package.json
 COPY apps/server/package.json apps/server/package.json
 COPY apps/cli/package.json apps/cli/package.json
+COPY apps/mcp/package.json apps/mcp/package.json
 COPY apps/web/package.json apps/web/package.json
 
 RUN npm ci --no-audit --no-fund

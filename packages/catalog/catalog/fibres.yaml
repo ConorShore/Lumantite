@@ -91,6 +91,48 @@
   default_joint: lc-upc
   source: "ISO/IEC 11801 / TIA-492AAAD OM4 maximum attenuation limits (850nm/1300nm)"
 
+- kind: fibre
+  id: om3
+  standard: OM3
+  multimode: true
+  description: OM3 laser-optimised 50/125 um multimode fibre (loss-only, no CD model)
+  attenuation_dB_per_km:
+    - { nm: 850, value: 3.5 }
+    - { nm: 1300, value: 1.5 }
+  dispersion:
+    model: none
+  max_power_dBm: 20
+  default_joint: lc-upc
+  source: "ISO/IEC 11801 cabled multimode attenuation limits (3.5 dB/km @850nm, 1.5 dB/km @1300nm)"
+
+- kind: fibre
+  id: om2
+  standard: OM2
+  multimode: true
+  description: OM2 50/125 um multimode fibre (loss-only, no CD model)
+  attenuation_dB_per_km:
+    - { nm: 850, value: 3.5 }
+    - { nm: 1300, value: 1.5 }
+  dispersion:
+    model: none
+  max_power_dBm: 20
+  default_joint: lc-upc
+  source: "ISO/IEC 11801 cabled multimode attenuation limits (3.5 dB/km @850nm, 1.5 dB/km @1300nm)"
+
+- kind: fibre
+  id: om1
+  standard: OM1
+  multimode: true
+  description: OM1 62.5/125 um multimode fibre (loss-only, no CD model)
+  attenuation_dB_per_km:
+    - { nm: 850, value: 3.5 }
+    - { nm: 1300, value: 1.5 }
+  dispersion:
+    model: none
+  max_power_dBm: 20
+  default_joint: lc-upc
+  source: "ISO/IEC 11801 cabled multimode attenuation limits (3.5 dB/km @850nm, 1.5 dB/km @1300nm)"
+
 # ---- patch cords: extend a base fibre type with default_length_km / default_joint ----
 
 - kind: fibre

@@ -10,10 +10,13 @@ catalog/                bundled starter catalog, SPEC.md §8.2
   joints.yaml
   fibres.yaml
   transceivers.yaml
+  transceivers-fs.yaml   GENERATED — see scripts/gen-fs-transceivers.ts
   muxes.yaml
   amplifiers.yaml
   passives.yaml
 scripts/gen-plans.ts     regenerates wavelength-plans.yaml (npx tsx scripts/gen-plans.ts)
+scripts/gen-fs-transceivers.ts  regenerates transceivers-fs.yaml from data/fs/*.yaml
+data/fs/                 FS.com datasheet rows (generator input, not loaded as catalog)
 examples/                example projects (SPEC.md §6)
   simple-link/
   dwdm-amplified/
@@ -33,6 +36,7 @@ schema validation — see the test for the resolution algorithm.
 |---|---|---|
 | `cwdm-18` | 18, 1271-1611nm, 20nm steps | ITU-T G.694.2 |
 | `dwdm-c-100ghz-40` | 40, C21-C60, 192100-196000 GHz, 100GHz steps | ITU-T G.694.1 |
+| `dwdm-c-100ghz-45` | 45, C17-C61, 191700-196100 GHz, 100GHz steps (FS fixed DWDM grid) | ITU-T G.694.1 |
 | `dwdm-c-50ghz-80` | 80, C21-C60.5, 192100-196050 GHz, 50GHz steps | ITU-T G.694.1 |
 
 `wavelength_nm` is derived from `frequency_GHz` with `299792458 / frequency_GHz`, rounded to 3
@@ -60,6 +64,7 @@ decimals. Regenerate with `npx tsx packages/catalog/scripts/gen-plans.ts`; do no
 | `g655` | ITU-T G.655 (NZDSF) | 0.21 | linear, D0=4.0@1550, slope 0.085 | ITU-T G.655 dispersion limits; attenuation typical (unverified) |
 | `g657a1` | ITU-T G.657.A1 | 0.20 | g652, λ0=1310, S0=0.092 | ITU-T G.657.A1 (G.652.D-compatible) |
 | `om4` | OM4 (multimode) | 3.0@850 / 1.0@1300 | none (loss-only) | ISO/IEC 11801 / TIA-492AAAD OM4 limits |
+| `om3` / `om2` / `om1` | OM3 / OM2 / OM1 (multimode) | 3.5@850 / 1.5@1300 | none (loss-only) | ISO/IEC 11801 cabled multimode limits |
 | `lc-patch` | extends `g657a1` | — | — | generic patch cord, LC/UPC, 2m |
 | `lc-apc-patch` | extends `g657a1` | — | — | generic patch cord, LC/APC, 2m |
 | `sc-patch` | extends `g657a1` | — | — | generic patch cord, SC/UPC, 2m |
@@ -98,6 +103,24 @@ Vendor models (`extends` a generic base):
 | `cisco-dwdm-sfp10g-c` | Cisco | `generic-10g-dwdm-tunable` | cisco.com datasheet (launch power -1..+4dBm and CD tolerance 1600ps/nm confirmed; rest typical) |
 | `finisar-ftlx1471d3bcl` | Finisar/Coherent | `generic-10g-lr` | Mouser-hosted datasheet PDF — confirms this is 10GBASE-LR 1310nm, **not** 1471nm CWDM |
 | `finisar-ftlx1671d3bcl` | Finisar/Coherent | `generic-10g-er` | Mouser-hosted datasheet PDF — confirms 10GBASE-ER 1550nm/40km, Tx -3..+3dBm, Rx -14.1..-1.0dBm, **not** 1671nm CWDM |
+
+## FS.com SFP / SFP+ (`transceivers-fs.yaml`, generated)
+
+FS.com 100M, 1G and 10G SFP/SFP+ optics — grey, BiDi, CWDM, fixed DWDM and tunable DWDM —
+generated from hand-transcribed FS datasheet rows in `data/fs/*.yaml` (format, sources and
+conventions in `data/fs/README.md`). Regenerate with
+`npx tsx packages/catalog/scripts/gen-fs-transceivers.ts`; do not hand-edit.
+
+- Ids are `fs-<FS part number>` (e.g. `fs-sfp-10glr-31`). Fixed-channel WDM families produce a
+  family model (channel chosen per instance) plus one fixed model per channel
+  (`fs-cwdm-sfp10g-40l-1471`, `fs-dw-sfp10g80-xx-c21`). (FS's tunable DWDM SFP+ parts are currently all excluded — see below.)
+- Physical/optical characteristics only; brand compatibility coding is out of scope. RJ-45
+  copper, DAC/AOC and CSFP parts are excluded.
+- Accuracy over coverage: every value is read from an FS datasheet, and any part whose FS
+  sources disagree, whose datasheet is garbled/ambiguous, or which has values copied from a
+  sibling part is left out — see `data/fs/README.md` "Exclusions" and `data/fs/excluded/`.
+- The six hand-written `fs-sfp-10g-*` models in `transceivers.yaml` predate this and are kept
+  unchanged because tests, examples and the README reference their ids.
 
 ## Muxes / demux / OADM (`muxes.yaml`)
 

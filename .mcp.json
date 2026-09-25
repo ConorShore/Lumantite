@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "lumantite": {
+      "command": "node",
+      "args": ["apps/mcp/dist/index.js"]
+    }
+  }
+}

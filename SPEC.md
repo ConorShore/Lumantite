@@ -156,7 +156,8 @@ ports:
 # BiDi variant: one port `bidi: { direction: bidi }` with tx and rx on different wavelengths.
 ```
 
-Instance settings: `channel` (tunable only), optional `tx_power_override_dBm`, `host` (a
+Instance settings: `channel` (tunable only), optional `tx_power_override_dBm`, `port_side`
+(`right` default | `left` | `split`; canvas only — where Tx/Rx ports sit on the node), `host` (a
 `host` node for grouping/labelling, e.g. `A-sw1`).
 
 ### 5.2 `fibre`
@@ -551,8 +552,10 @@ Tabs:
    creates a fibre (type and joints chosen in a popover). Positions are stored under
    `layout:`; layout-only edits do not trigger recompute.
    **File frames**: each project file (parent and every fragment) is drawn as a dashed,
-   labelled frame, toggleable. Dropping an element inside a frame assigns it to that file;
-   elements outside every frame belong to the parent. "New file" on the canvas creates an
+   labelled frame, toggleable. Dragging never changes an element's file: its frame grows to
+   hold it, stretching live as it is dragged. The file is changed only in the inspector or
+   the YAML, and the element is then re-placed inside its new file's frame. A new element
+   dropped from the palette goes into the file whose frame it lands in. "New file" on the canvas creates an
    empty fragment and adds it to `includes:`. The inspector shows and lets you change the
    file of the selected elements. Fibres belong to a file independently of their end nodes.
 2. **YAML** — Monaco editor with one sub-tab per project file, schema validation, autocomplete for

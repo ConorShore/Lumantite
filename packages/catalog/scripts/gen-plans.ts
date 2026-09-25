@@ -4,6 +4,8 @@
 // cwdm-18:            1271 .. 1611 nm, 20 nm spacing (ITU-T G.694.2), ids are the nominal nm.
 // dwdm-c-100ghz-40:   C21 .. C60 = 192100 .. 196000 GHz, 100 GHz spacing (ITU-T G.694.1).
 // dwdm-c-50ghz-80:    192100 .. 196050 GHz, 50 GHz spacing; ids C21, C21.5, C22 ... C60, C60.5.
+// dwdm-c-100ghz-45:   C17 .. C61 = 191700 .. 196100 GHz, 100 GHz spacing — the wider grid FS.com's
+//                     fixed-channel DWDM SFP/SFP+ families are sold on.
 //
 // Frequency (GHz) is canonical for DWDM; wavelength_nm is derived with c = 299 792 458 m/s
 // and rounded to 3 decimals: wavelength_nm = 299792458 / frequency_GHz.
@@ -36,6 +38,17 @@ for (let i = 0; i < 40; i++) {
   const id = `C${21 + i}`;
   const nm = round3(ghzToNm(freq));
   dwdm40Channels.push(
+    `  - { id: ${id}, frequency_GHz: ${freq}, wavelength_nm: ${nm.toFixed(3)}, label: "${id} (${(freq / 1000).toFixed(2)} THz)" }`,
+  );
+}
+
+// ---------- dwdm-c-100ghz-45 ----------
+const dwdm45Channels: string[] = [];
+for (let i = 0; i < 45; i++) {
+  const freq = 191700 + 100 * i;
+  const id = `C${17 + i}`;
+  const nm = round3(ghzToNm(freq));
+  dwdm45Channels.push(
     `  - { id: ${id}, frequency_GHz: ${freq}, wavelength_nm: ${nm.toFixed(3)}, label: "${id} (${(freq / 1000).toFixed(2)} THz)" }`,
   );
 }
@@ -77,6 +90,14 @@ ${cwdmChannels.join("\n")}
 ${dwdm40Channels.join("\n")}
 
 - kind: wavelength-plan
+  id: dwdm-c-100ghz-45
+  name: DWDM C-band 100 GHz (45 channels, C17-C61)
+  description: ITU-T G.694.1 fixed DWDM grid, C-band, 100 GHz spacing, C17-C61 (191.7-196.1 THz). The grid FS.com's fixed-channel DWDM SFP/SFP+ optics are sold on.
+  source: "ITU-T G.694.1 (2020), Table 1 — 100 GHz nominal central frequency grid"
+  channels:
+${dwdm45Channels.join("\n")}
+
+- kind: wavelength-plan
   id: dwdm-c-50ghz-80
   name: DWDM C-band 50 GHz (80 channels)
   description: ITU-T G.694.1 fixed DWDM grid, C-band, 50 GHz spacing, C21-C60.5 (192.10-196.05 THz).
@@ -89,4 +110,5 @@ writeFileSync(OUT_FILE, out, "utf8");
 console.log(`wrote ${OUT_FILE}`);
 console.log(`  cwdm-18: ${cwdmChannels.length} channels`);
 console.log(`  dwdm-c-100ghz-40: ${dwdm40Channels.length} channels`);
+console.log(`  dwdm-c-100ghz-45: ${dwdm45Channels.length} channels`);
 console.log(`  dwdm-c-50ghz-80: ${dwdm80Channels.length} channels`);

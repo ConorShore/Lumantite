@@ -78,6 +78,58 @@
   - { id: C60, frequency_GHz: 196000, wavelength_nm: 1529.553, label: "C60 (196.00 THz)" }
 
 - kind: wavelength-plan
+  id: dwdm-c-100ghz-45
+  name: DWDM C-band 100 GHz (45 channels, C17-C61)
+  description: ITU-T G.694.1 fixed DWDM grid, C-band, 100 GHz spacing, C17-C61 (191.7-196.1 THz). The grid FS.com's fixed-channel DWDM SFP/SFP+ optics are sold on.
+  source: "ITU-T G.694.1 (2020), Table 1 — 100 GHz nominal central frequency grid"
+  channels:
+  - { id: C17, frequency_GHz: 191700, wavelength_nm: 1563.863, label: "C17 (191.70 THz)" }
+  - { id: C18, frequency_GHz: 191800, wavelength_nm: 1563.047, label: "C18 (191.80 THz)" }
+  - { id: C19, frequency_GHz: 191900, wavelength_nm: 1562.233, label: "C19 (191.90 THz)" }
+  - { id: C20, frequency_GHz: 192000, wavelength_nm: 1561.419, label: "C20 (192.00 THz)" }
+  - { id: C21, frequency_GHz: 192100, wavelength_nm: 1560.606, label: "C21 (192.10 THz)" }
+  - { id: C22, frequency_GHz: 192200, wavelength_nm: 1559.794, label: "C22 (192.20 THz)" }
+  - { id: C23, frequency_GHz: 192300, wavelength_nm: 1558.983, label: "C23 (192.30 THz)" }
+  - { id: C24, frequency_GHz: 192400, wavelength_nm: 1558.173, label: "C24 (192.40 THz)" }
+  - { id: C25, frequency_GHz: 192500, wavelength_nm: 1557.363, label: "C25 (192.50 THz)" }
+  - { id: C26, frequency_GHz: 192600, wavelength_nm: 1556.555, label: "C26 (192.60 THz)" }
+  - { id: C27, frequency_GHz: 192700, wavelength_nm: 1555.747, label: "C27 (192.70 THz)" }
+  - { id: C28, frequency_GHz: 192800, wavelength_nm: 1554.940, label: "C28 (192.80 THz)" }
+  - { id: C29, frequency_GHz: 192900, wavelength_nm: 1554.134, label: "C29 (192.90 THz)" }
+  - { id: C30, frequency_GHz: 193000, wavelength_nm: 1553.329, label: "C30 (193.00 THz)" }
+  - { id: C31, frequency_GHz: 193100, wavelength_nm: 1552.524, label: "C31 (193.10 THz)" }
+  - { id: C32, frequency_GHz: 193200, wavelength_nm: 1551.721, label: "C32 (193.20 THz)" }
+  - { id: C33, frequency_GHz: 193300, wavelength_nm: 1550.918, label: "C33 (193.30 THz)" }
+  - { id: C34, frequency_GHz: 193400, wavelength_nm: 1550.116, label: "C34 (193.40 THz)" }
+  - { id: C35, frequency_GHz: 193500, wavelength_nm: 1549.315, label: "C35 (193.50 THz)" }
+  - { id: C36, frequency_GHz: 193600, wavelength_nm: 1548.515, label: "C36 (193.60 THz)" }
+  - { id: C37, frequency_GHz: 193700, wavelength_nm: 1547.715, label: "C37 (193.70 THz)" }
+  - { id: C38, frequency_GHz: 193800, wavelength_nm: 1546.917, label: "C38 (193.80 THz)" }
+  - { id: C39, frequency_GHz: 193900, wavelength_nm: 1546.119, label: "C39 (193.90 THz)" }
+  - { id: C40, frequency_GHz: 194000, wavelength_nm: 1545.322, label: "C40 (194.00 THz)" }
+  - { id: C41, frequency_GHz: 194100, wavelength_nm: 1544.526, label: "C41 (194.10 THz)" }
+  - { id: C42, frequency_GHz: 194200, wavelength_nm: 1543.730, label: "C42 (194.20 THz)" }
+  - { id: C43, frequency_GHz: 194300, wavelength_nm: 1542.936, label: "C43 (194.30 THz)" }
+  - { id: C44, frequency_GHz: 194400, wavelength_nm: 1542.142, label: "C44 (194.40 THz)" }
+  - { id: C45, frequency_GHz: 194500, wavelength_nm: 1541.349, label: "C45 (194.50 THz)" }
+  - { id: C46, frequency_GHz: 194600, wavelength_nm: 1540.557, label: "C46 (194.60 THz)" }
+  - { id: C47, frequency_GHz: 194700, wavelength_nm: 1539.766, label: "C47 (194.70 THz)" }
+  - { id: C48, frequency_GHz: 194800, wavelength_nm: 1538.976, label: "C48 (194.80 THz)" }
+  - { id: C49, frequency_GHz: 194900, wavelength_nm: 1538.186, label: "C49 (194.90 THz)" }
+  - { id: C50, frequency_GHz: 195000, wavelength_nm: 1537.397, label: "C50 (195.00 THz)" }
+  - { id: C51, frequency_GHz: 195100, wavelength_nm: 1536.609, label: "C51 (195.10 THz)" }
+  - { id: C52, frequency_GHz: 195200, wavelength_nm: 1535.822, label: "C52 (195.20 THz)" }
+  - { id: C53, frequency_GHz: 195300, wavelength_nm: 1535.036, label: "C53 (195.30 THz)" }
+  - { id: C54, frequency_GHz: 195400, wavelength_nm: 1534.250, label: "C54 (195.40 THz)" }
+  - { id: C55, frequency_GHz: 195500, wavelength_nm: 1533.465, label: "C55 (195.50 THz)" }
+  - { id: C56, frequency_GHz: 195600, wavelength_nm: 1532.681, label: "C56 (195.60 THz)" }
+  - { id: C57, frequency_GHz: 195700, wavelength_nm: 1531.898, label: "C57 (195.70 THz)" }
+  - { id: C58, frequency_GHz: 195800, wavelength_nm: 1531.116, label: "C58 (195.80 THz)" }
+  - { id: C59, frequency_GHz: 195900, wavelength_nm: 1530.334, label: "C59 (195.90 THz)" }
+  - { id: C60, frequency_GHz: 196000, wavelength_nm: 1529.553, label: "C60 (196.00 THz)" }
+  - { id: C61, frequency_GHz: 196100, wavelength_nm: 1528.773, label: "C61 (196.10 THz)" }
+
+- kind: wavelength-plan
   id: dwdm-c-50ghz-80
   name: DWDM C-band 50 GHz (80 channels)
   description: ITU-T G.694.1 fixed DWDM grid, C-band, 50 GHz spacing, C21-C60.5 (192.10-196.05 THz).

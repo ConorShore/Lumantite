@@ -1,0 +1,208 @@
+# FS.com 10G CWDM / DWDM (fixed and tunable) SFP+ optics. Format and conventions: README.md in this directory.
+# Primary source: FS "10G SFP+ Cable and Transceiver Modules Data Sheet" (2025-04-07 edition),
+# Table 3 "Optical specifications" (pp.17-18). The 2025-04-03 and 2022 editions carry identical
+# Table 3 figures. For DWDM, the current single-product datasheets (FS renamed DWDM-SFP10G-40/80
+# to DW-SFP10G40-xx / DW-SFP10G80-xx) are used where they exist; single-product datasheets also
+# give receiver ranges and CD tolerance. Each such use is stated in `notes`.
+
+# ---------------------------------------------------------------- CWDM
+- pn: CWDM-SFP10G-10SP
+  fs_products: [ 64476 ]
+  title: 10G CWDM SFP+, 1270-1330nm, 10km, SMF
+  form_factor: SFP+
+  rate_Gbps: 10
+  reach_km: 10
+  media: smf
+  connector: lc-upc
+  temp: commercial
+  channels:
+    plan: cwdm-18
+    ids: [ "1271", "1291", "1311", "1331" ]
+    tunable: false
+  tx_power_dBm: { min: -8.2, max: 0.5 }
+  rx_sensitivity_dBm: -14.4
+  rx_overload_dBm: 0.5
+  source: "https://resource.fs.com/mall/resource/10g-sfp-cable-and-transceiver-modules-data-sheet-20250407151554.pdf (Table 3, p.17)"
+  verified: true
+
+- pn: CWDM-SFP10G-10M
+  fs_products: [ 64480 ]
+  title: 10G CWDM SFP+, 1350-1610nm, 10km, SMF
+  form_factor: SFP+
+  rate_Gbps: 10
+  reach_km: 10
+  media: smf
+  connector: lc-upc
+  temp: commercial
+  channels:
+    plan: cwdm-18
+    ids: [ "1351", "1371", "1391", "1411", "1431", "1451", "1471", "1491", "1511", "1531", "1551", "1571", "1591", "1611" ]
+    tunable: false
+  tx_power_dBm: { min: -8.2, max: 0.5 }
+  rx_sensitivity_dBm: -14.4
+  rx_overload_dBm: 0.5
+  source: "https://resource.fs.com/mall/resource/10g-sfp-cable-and-transceiver-modules-data-sheet-20250407151554.pdf (Table 3, p.17)"
+  verified: true
+
+- pn: CWxx-10GSFP-10-I
+  fs_products: [ 168441 ]
+  title: 10G CWDM SFP+, 1270-1570nm, 10km, SMF
+  form_factor: SFP+
+  rate_Gbps: 10
+  reach_km: 10
+  media: smf
+  connector: lc-upc
+  temp: industrial
+  channels:
+    plan: cwdm-18
+    ids: [ "1271", "1291", "1311", "1331", "1351", "1371", "1391", "1411", "1431", "1451", "1471", "1491", "1511", "1531", "1551", "1571" ]
+    tunable: false
+  tx_power_dBm: { min: -2, max: 5 }
+  rx_sensitivity_dBm: -16
+  rx_overload_dBm: 0
+  source: "https://resource.fs.com/mall/resource/10g-sfp-cable-and-transceiver-modules-data-sheet-20250407151554.pdf (Table 3, p.17)"
+  verified: true
+  notes: "The datasheet describes this part as 1270nm-1610nm; FS's listing sells it on 1270-1570nm only, so 1590/1610nm are not listed."
+
+- pn: CWDM-SFP10G-20L
+  fs_products: [ 44997 ]
+  title: 10G CWDM SFP+, 1470-1610nm, 20km, SMF
+  form_factor: SFP+
+  rate_Gbps: 10
+  reach_km: 20
+  media: smf
+  connector: lc-upc
+  temp: commercial
+  channels:
+    plan: cwdm-18
+    ids: [ "1471", "1491", "1511", "1531", "1551", "1571", "1591", "1611" ]
+    tunable: false
+  tx_power_dBm: { min: -1, max: 4 }
+  rx_sensitivity_dBm: -14.4
+  rx_overload_dBm: 0.5
+  source: "https://resource.fs.com/mall/resource/10g-sfp-cable-and-transceiver-modules-data-sheet-20250407151554.pdf (Table 3, p.17)"
+  verified: true
+  notes: "Single-product datasheet ordering tables describe CWDM-SFP10G-20L as 1350nm-1610nm; the combined datasheet and FS's listing say 1470-1610nm, used here."
+
+- pn: CWDM-SFP10G-40S
+  fs_products: [ 22168 ]
+  title: 10G CWDM SFP+, 1270-1450nm, 40km, SMF
+  form_factor: SFP+
+  rate_Gbps: 10
+  reach_km: 40
+  media: smf
+  connector: lc-upc
+  temp: commercial
+  channels:
+    plan: cwdm-18
+    ids: [ "1271", "1291", "1311", "1331", "1351", "1371", "1391", "1411", "1431", "1451" ]
+    tunable: false
+  tx_power_dBm: { min: 0, max: 5 }
+  rx_sensitivity_dBm: -16
+  rx_overload_dBm: -0.5
+  source: "https://resource.fs.com/mall/resource/10g-sfp-cable-and-transceiver-modules-data-sheet-20250407151554.pdf (Table 3, p.17)"
+  verified: true
+  notes: "Single-product datasheet https://img-en.fs.com/file/datasheet/cwdm-sfp-plus-1270nm-1450nm-40km-transceiver-datasheet.pdf agrees (Tx 0..+5, Rx -16 / -0.5 dBm, 14 dB budget). Its receiver range is printed as 1260-1420nm, which excludes the family's own 1430/1450nm channels — treated as a typo and omitted."
+
+- pn: CWDM-SFP10G-40L
+  fs_products: [ 15385 ]
+  title: 10G CWDM SFP+, 1470-1610nm, 40km, SMF
+  form_factor: SFP+
+  rate_Gbps: 10
+  reach_km: 40
+  media: smf
+  connector: lc-upc
+  temp: commercial
+  channels:
+    plan: cwdm-18
+    ids: [ "1471", "1491", "1511", "1531", "1551", "1571", "1591", "1611" ]
+    tunable: false
+  tx_power_dBm: { min: -1, max: 4 }
+  rx_sensitivity_dBm: -16
+  rx_overload_dBm: -8
+  rx_range_nm: [ 1260, 1620 ]
+  cd_tolerance_ps_nm: 800
+  source: "https://resource.fs.com/mall/resource/10g-sfp-cable-and-transceiver-modules-data-sheet-20250407151554.pdf (Table 3, p.17)"
+  verified: true
+  notes: "Single-product datasheet https://resource.fs.com/mall/doc/20221201112843ikce76.pdf agrees (Tx -1..+4, Rx -16 / -8 dBm) and gives the Rx range and 800 ps/nm dispersion tolerance."
+
+- pn: CWDM-SFP10G-40-I
+  fs_products: [ 112392 ]
+  title: 10G CWDM SFP+, 1270-1610nm, 40km, SMF
+  form_factor: SFP+
+  rate_Gbps: 10
+  reach_km: 40
+  media: smf
+  connector: lc-upc
+  temp: industrial
+  channels:
+    plan: cwdm-18
+    ids: [ "1271", "1291", "1311", "1331", "1351", "1371", "1391", "1411", "1431", "1451", "1471", "1491", "1511", "1531", "1551", "1571", "1591", "1611" ]
+    tunable: false
+  tx_power_dBm: { min: -1, max: 4 }
+  rx_sensitivity_dBm: -16
+  rx_overload_dBm: 0
+  source: "https://resource.fs.com/mall/resource/10g-sfp-cable-and-transceiver-modules-data-sheet-20250407151554.pdf (Table 3, p.17)"
+  verified: true
+
+- pn: CWDM-SFP10G-80L
+  fs_products: [ 19367 ]
+  title: 10G CWDM SFP+, 1470-1610nm, 80km, SMF
+  form_factor: SFP+
+  rate_Gbps: 10
+  reach_km: 80
+  media: smf
+  connector: lc-upc
+  temp: commercial
+  channels:
+    plan: cwdm-18
+    ids: [ "1471", "1491", "1511", "1531", "1551", "1571", "1591", "1611" ]
+    tunable: false
+  tx_power_dBm: { min: 0, max: 4 }
+  rx_sensitivity_dBm: -23
+  rx_overload_dBm: -8
+  rx_range_nm: [ 1260, 1620 ]
+  cd_tolerance_ps_nm: 1600
+  source: "https://resource.fs.com/mall/resource/10g-sfp-cable-and-transceiver-modules-data-sheet-20250407151554.pdf (Table 3, p.17)"
+  verified: true
+  notes: "Single-product datasheet https://img-en.fs.com/file/datasheet/cwdm-sfp-plus-1470nm-1610nm-80km-transceiver-datasheet.pdf agrees (Tx 0..+4, Rx -23 / -8 dBm, 23 dB budget) and gives the Rx range and 1600 ps/nm dispersion tolerance."
+
+- pn: CWDM-SFP10G-80-I
+  fs_products: [ 154524 ]
+  title: 10G CWDM SFP+, 1470-1610nm, 80km, SMF
+  form_factor: SFP+
+  rate_Gbps: 10
+  reach_km: 80
+  media: smf
+  connector: lc-upc
+  temp: industrial
+  channels:
+    plan: cwdm-18
+    ids: [ "1471", "1491", "1511", "1531", "1551", "1571", "1591", "1611" ]
+    tunable: false
+  tx_power_dBm: { min: 0, max: 5 }
+  rx_sensitivity_dBm: -23
+  rx_overload_dBm: -6
+  source: "https://resource.fs.com/mall/resource/10g-sfp-cable-and-transceiver-modules-data-sheet-20250407151554.pdf (Table 3, p.18)"
+  verified: true
+
+- pn: DW-SFP10G40-xx-I
+  fs_products: [ 113511 ]
+  title: 10G DWDM SFP+ 100GHz, C17-C61, 40km, SMF
+  form_factor: SFP+
+  rate_Gbps: 10
+  reach_km: 40
+  media: smf
+  connector: lc-upc
+  temp: industrial
+  channels:
+    plan: dwdm-c-100ghz-45
+    ids: [ "C17", "C18", "C19", "C20", "C21", "C22", "C23", "C24", "C25", "C26", "C27", "C28", "C29", "C30", "C31", "C32", "C33", "C34", "C35", "C36", "C37", "C38", "C39", "C40", "C41", "C42", "C43", "C44", "C45", "C46", "C47", "C48", "C49", "C50", "C51", "C52", "C53", "C54", "C55", "C56", "C57", "C58", "C59", "C60", "C61" ]
+    tunable: false
+  tx_power_dBm: { min: -1, max: 4 }
+  rx_sensitivity_dBm: -16
+  rx_overload_dBm: 0
+  rx_range_nm: [ 1260, 1620 ]
+  source: "https://resource.fs.com/mall/resource/dwdm-sfp10g40-xx-i-data-sheet.pdf (sec. III Optical Characteristics, p.3)"
+  verified: true
+  notes: "Datasheet header prints DWDM-SFP10G40-xx-I; FS's current ordering tables use DW-SFP10G40-xx-I. Sensitivity -16 dBm back-to-back (-14 dBm with 40km fiber). 2025 combined datasheet (as DWDM-SFP10G-40-I) agrees: -1..+4 / -16 / 0 dBm."
