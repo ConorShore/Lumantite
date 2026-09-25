@@ -1,0 +1,31 @@
+# Inter-site spans: 60km + 20km of G.652.D with a fusion splice between the two sections,
+# in both directions (A->B on span-AB-*, B->A on span-BA-*). LC/UPC at the amp/demux ends.
+# attenuation_dB_per_km: 0.2 overrides the G.652.D table (which is ~0.203 dB/km at the
+# C21-C24 wavelengths, 1558-1561nm) with the flat 0.20 dB/km SPEC.md test T18 assumes, so the
+# 80km total (16.0 dB) + 2 x LC/UPC (0.2 typ) matches T18's worked numbers.
+fibres:
+  - id: span-AB-1
+    type: g652d
+    length_km: 60
+    attenuation_dB_per_km: 0.2
+    a: { joint: lc-upc, to: A-boost.out }
+    b: { joint: fusion-splice, to: span-AB-2.a }
+  - id: span-AB-2
+    type: g652d
+    length_km: 20
+    attenuation_dB_per_km: 0.2
+    a: { joint: fusion-splice, to: span-AB-1.b }
+    b: { joint: lc-upc, to: B-demux.common }
+
+  - id: span-BA-1
+    type: g652d
+    length_km: 60
+    attenuation_dB_per_km: 0.2
+    a: { joint: lc-upc, to: B-boost.out }
+    b: { joint: fusion-splice, to: span-BA-2.a }
+  - id: span-BA-2
+    type: g652d
+    length_km: 20
+    attenuation_dB_per_km: 0.2
+    a: { joint: fusion-splice, to: span-BA-1.b }
+    b: { joint: lc-upc, to: A-demux.common }

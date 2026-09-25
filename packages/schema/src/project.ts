@@ -127,9 +127,9 @@ export interface ProjectModel {
   layout: Layout;
 }
 
-/** Parse "node.port" | "fibre.a" | "fibre.b". Element ids may not contain '.'. */
+/** Parse "node.port" | "fibre.a" | "fibre.b". Element ids may not contain '.'; ports may (e.g. mux port "C21.5"). */
 export function parseEndpoint(to: string): { element: string; port: string } | null {
-  const i = to.lastIndexOf(".");
+  const i = to.indexOf(".");
   if (i <= 0 || i === to.length - 1) return null;
   return { element: to.slice(0, i), port: to.slice(i + 1) };
 }

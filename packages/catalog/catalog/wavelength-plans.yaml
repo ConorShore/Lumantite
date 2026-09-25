@@ -1,0 +1,165 @@
+# GENERATED FILE — do not hand-edit. Regenerate with:
+#   npx tsx packages/catalog/scripts/gen-plans.ts
+#
+# Built-in wavelength plans (SPEC.md §4.6). Frequency in GHz is canonical for DWDM;
+# wavelength_nm is derived with c = 299 792 458 m/s and rounded to 3 decimals.
+# CWDM channels are defined by nominal wavelength (ITU-T G.694.2) so only wavelength_nm is given.
+
+- kind: wavelength-plan
+  id: cwdm-18
+  name: CWDM 18-channel
+  description: ITU-T G.694.2 coarse WDM grid, 1271-1611 nm, 20 nm spacing.
+  source: "ITU-T G.694.2 (2003), Table 1 — CWDM wavelength grid"
+  channels:
+  - { id: "1271", wavelength_nm: 1271, label: "1271 nm" }
+  - { id: "1291", wavelength_nm: 1291, label: "1291 nm" }
+  - { id: "1311", wavelength_nm: 1311, label: "1311 nm" }
+  - { id: "1331", wavelength_nm: 1331, label: "1331 nm" }
+  - { id: "1351", wavelength_nm: 1351, label: "1351 nm" }
+  - { id: "1371", wavelength_nm: 1371, label: "1371 nm" }
+  - { id: "1391", wavelength_nm: 1391, label: "1391 nm" }
+  - { id: "1411", wavelength_nm: 1411, label: "1411 nm" }
+  - { id: "1431", wavelength_nm: 1431, label: "1431 nm" }
+  - { id: "1451", wavelength_nm: 1451, label: "1451 nm" }
+  - { id: "1471", wavelength_nm: 1471, label: "1471 nm" }
+  - { id: "1491", wavelength_nm: 1491, label: "1491 nm" }
+  - { id: "1511", wavelength_nm: 1511, label: "1511 nm" }
+  - { id: "1531", wavelength_nm: 1531, label: "1531 nm" }
+  - { id: "1551", wavelength_nm: 1551, label: "1551 nm" }
+  - { id: "1571", wavelength_nm: 1571, label: "1571 nm" }
+  - { id: "1591", wavelength_nm: 1591, label: "1591 nm" }
+  - { id: "1611", wavelength_nm: 1611, label: "1611 nm" }
+
+- kind: wavelength-plan
+  id: dwdm-c-100ghz-40
+  name: DWDM C-band 100 GHz (40 channels)
+  description: ITU-T G.694.1 fixed DWDM grid, C-band, 100 GHz spacing, C21-C60 (192.1-196.0 THz).
+  source: "ITU-T G.694.1 (2020), Table 1 — 100 GHz nominal central frequency grid"
+  channels:
+  - { id: C21, frequency_GHz: 192100, wavelength_nm: 1560.606, label: "C21 (192.10 THz)" }
+  - { id: C22, frequency_GHz: 192200, wavelength_nm: 1559.794, label: "C22 (192.20 THz)" }
+  - { id: C23, frequency_GHz: 192300, wavelength_nm: 1558.983, label: "C23 (192.30 THz)" }
+  - { id: C24, frequency_GHz: 192400, wavelength_nm: 1558.173, label: "C24 (192.40 THz)" }
+  - { id: C25, frequency_GHz: 192500, wavelength_nm: 1557.363, label: "C25 (192.50 THz)" }
+  - { id: C26, frequency_GHz: 192600, wavelength_nm: 1556.555, label: "C26 (192.60 THz)" }
+  - { id: C27, frequency_GHz: 192700, wavelength_nm: 1555.747, label: "C27 (192.70 THz)" }
+  - { id: C28, frequency_GHz: 192800, wavelength_nm: 1554.940, label: "C28 (192.80 THz)" }
+  - { id: C29, frequency_GHz: 192900, wavelength_nm: 1554.134, label: "C29 (192.90 THz)" }
+  - { id: C30, frequency_GHz: 193000, wavelength_nm: 1553.329, label: "C30 (193.00 THz)" }
+  - { id: C31, frequency_GHz: 193100, wavelength_nm: 1552.524, label: "C31 (193.10 THz)" }
+  - { id: C32, frequency_GHz: 193200, wavelength_nm: 1551.721, label: "C32 (193.20 THz)" }
+  - { id: C33, frequency_GHz: 193300, wavelength_nm: 1550.918, label: "C33 (193.30 THz)" }
+  - { id: C34, frequency_GHz: 193400, wavelength_nm: 1550.116, label: "C34 (193.40 THz)" }
+  - { id: C35, frequency_GHz: 193500, wavelength_nm: 1549.315, label: "C35 (193.50 THz)" }
+  - { id: C36, frequency_GHz: 193600, wavelength_nm: 1548.515, label: "C36 (193.60 THz)" }
+  - { id: C37, frequency_GHz: 193700, wavelength_nm: 1547.715, label: "C37 (193.70 THz)" }
+  - { id: C38, frequency_GHz: 193800, wavelength_nm: 1546.917, label: "C38 (193.80 THz)" }
+  - { id: C39, frequency_GHz: 193900, wavelength_nm: 1546.119, label: "C39 (193.90 THz)" }
+  - { id: C40, frequency_GHz: 194000, wavelength_nm: 1545.322, label: "C40 (194.00 THz)" }
+  - { id: C41, frequency_GHz: 194100, wavelength_nm: 1544.526, label: "C41 (194.10 THz)" }
+  - { id: C42, frequency_GHz: 194200, wavelength_nm: 1543.730, label: "C42 (194.20 THz)" }
+  - { id: C43, frequency_GHz: 194300, wavelength_nm: 1542.936, label: "C43 (194.30 THz)" }
+  - { id: C44, frequency_GHz: 194400, wavelength_nm: 1542.142, label: "C44 (194.40 THz)" }
+  - { id: C45, frequency_GHz: 194500, wavelength_nm: 1541.349, label: "C45 (194.50 THz)" }
+  - { id: C46, frequency_GHz: 194600, wavelength_nm: 1540.557, label: "C46 (194.60 THz)" }
+  - { id: C47, frequency_GHz: 194700, wavelength_nm: 1539.766, label: "C47 (194.70 THz)" }
+  - { id: C48, frequency_GHz: 194800, wavelength_nm: 1538.976, label: "C48 (194.80 THz)" }
+  - { id: C49, frequency_GHz: 194900, wavelength_nm: 1538.186, label: "C49 (194.90 THz)" }
+  - { id: C50, frequency_GHz: 195000, wavelength_nm: 1537.397, label: "C50 (195.00 THz)" }
+  - { id: C51, frequency_GHz: 195100, wavelength_nm: 1536.609, label: "C51 (195.10 THz)" }
+  - { id: C52, frequency_GHz: 195200, wavelength_nm: 1535.822, label: "C52 (195.20 THz)" }
+  - { id: C53, frequency_GHz: 195300, wavelength_nm: 1535.036, label: "C53 (195.30 THz)" }
+  - { id: C54, frequency_GHz: 195400, wavelength_nm: 1534.250, label: "C54 (195.40 THz)" }
+  - { id: C55, frequency_GHz: 195500, wavelength_nm: 1533.465, label: "C55 (195.50 THz)" }
+  - { id: C56, frequency_GHz: 195600, wavelength_nm: 1532.681, label: "C56 (195.60 THz)" }
+  - { id: C57, frequency_GHz: 195700, wavelength_nm: 1531.898, label: "C57 (195.70 THz)" }
+  - { id: C58, frequency_GHz: 195800, wavelength_nm: 1531.116, label: "C58 (195.80 THz)" }
+  - { id: C59, frequency_GHz: 195900, wavelength_nm: 1530.334, label: "C59 (195.90 THz)" }
+  - { id: C60, frequency_GHz: 196000, wavelength_nm: 1529.553, label: "C60 (196.00 THz)" }
+
+- kind: wavelength-plan
+  id: dwdm-c-50ghz-80
+  name: DWDM C-band 50 GHz (80 channels)
+  description: ITU-T G.694.1 fixed DWDM grid, C-band, 50 GHz spacing, C21-C60.5 (192.10-196.05 THz).
+  source: "ITU-T G.694.1 (2020), Table 1 — 50 GHz nominal central frequency grid"
+  channels:
+  - { id: "C21", frequency_GHz: 192100, wavelength_nm: 1560.606, label: "C21 (192.100 THz)" }
+  - { id: "C21.5", frequency_GHz: 192150, wavelength_nm: 1560.200, label: "C21.5 (192.150 THz)" }
+  - { id: "C22", frequency_GHz: 192200, wavelength_nm: 1559.794, label: "C22 (192.200 THz)" }
+  - { id: "C22.5", frequency_GHz: 192250, wavelength_nm: 1559.389, label: "C22.5 (192.250 THz)" }
+  - { id: "C23", frequency_GHz: 192300, wavelength_nm: 1558.983, label: "C23 (192.300 THz)" }
+  - { id: "C23.5", frequency_GHz: 192350, wavelength_nm: 1558.578, label: "C23.5 (192.350 THz)" }
+  - { id: "C24", frequency_GHz: 192400, wavelength_nm: 1558.173, label: "C24 (192.400 THz)" }
+  - { id: "C24.5", frequency_GHz: 192450, wavelength_nm: 1557.768, label: "C24.5 (192.450 THz)" }
+  - { id: "C25", frequency_GHz: 192500, wavelength_nm: 1557.363, label: "C25 (192.500 THz)" }
+  - { id: "C25.5", frequency_GHz: 192550, wavelength_nm: 1556.959, label: "C25.5 (192.550 THz)" }
+  - { id: "C26", frequency_GHz: 192600, wavelength_nm: 1556.555, label: "C26 (192.600 THz)" }
+  - { id: "C26.5", frequency_GHz: 192650, wavelength_nm: 1556.151, label: "C26.5 (192.650 THz)" }
+  - { id: "C27", frequency_GHz: 192700, wavelength_nm: 1555.747, label: "C27 (192.700 THz)" }
+  - { id: "C27.5", frequency_GHz: 192750, wavelength_nm: 1555.343, label: "C27.5 (192.750 THz)" }
+  - { id: "C28", frequency_GHz: 192800, wavelength_nm: 1554.940, label: "C28 (192.800 THz)" }
+  - { id: "C28.5", frequency_GHz: 192850, wavelength_nm: 1554.537, label: "C28.5 (192.850 THz)" }
+  - { id: "C29", frequency_GHz: 192900, wavelength_nm: 1554.134, label: "C29 (192.900 THz)" }
+  - { id: "C29.5", frequency_GHz: 192950, wavelength_nm: 1553.731, label: "C29.5 (192.950 THz)" }
+  - { id: "C30", frequency_GHz: 193000, wavelength_nm: 1553.329, label: "C30 (193.000 THz)" }
+  - { id: "C30.5", frequency_GHz: 193050, wavelength_nm: 1552.926, label: "C30.5 (193.050 THz)" }
+  - { id: "C31", frequency_GHz: 193100, wavelength_nm: 1552.524, label: "C31 (193.100 THz)" }
+  - { id: "C31.5", frequency_GHz: 193150, wavelength_nm: 1552.122, label: "C31.5 (193.150 THz)" }
+  - { id: "C32", frequency_GHz: 193200, wavelength_nm: 1551.721, label: "C32 (193.200 THz)" }
+  - { id: "C32.5", frequency_GHz: 193250, wavelength_nm: 1551.319, label: "C32.5 (193.250 THz)" }
+  - { id: "C33", frequency_GHz: 193300, wavelength_nm: 1550.918, label: "C33 (193.300 THz)" }
+  - { id: "C33.5", frequency_GHz: 193350, wavelength_nm: 1550.517, label: "C33.5 (193.350 THz)" }
+  - { id: "C34", frequency_GHz: 193400, wavelength_nm: 1550.116, label: "C34 (193.400 THz)" }
+  - { id: "C34.5", frequency_GHz: 193450, wavelength_nm: 1549.715, label: "C34.5 (193.450 THz)" }
+  - { id: "C35", frequency_GHz: 193500, wavelength_nm: 1549.315, label: "C35 (193.500 THz)" }
+  - { id: "C35.5", frequency_GHz: 193550, wavelength_nm: 1548.915, label: "C35.5 (193.550 THz)" }
+  - { id: "C36", frequency_GHz: 193600, wavelength_nm: 1548.515, label: "C36 (193.600 THz)" }
+  - { id: "C36.5", frequency_GHz: 193650, wavelength_nm: 1548.115, label: "C36.5 (193.650 THz)" }
+  - { id: "C37", frequency_GHz: 193700, wavelength_nm: 1547.715, label: "C37 (193.700 THz)" }
+  - { id: "C37.5", frequency_GHz: 193750, wavelength_nm: 1547.316, label: "C37.5 (193.750 THz)" }
+  - { id: "C38", frequency_GHz: 193800, wavelength_nm: 1546.917, label: "C38 (193.800 THz)" }
+  - { id: "C38.5", frequency_GHz: 193850, wavelength_nm: 1546.518, label: "C38.5 (193.850 THz)" }
+  - { id: "C39", frequency_GHz: 193900, wavelength_nm: 1546.119, label: "C39 (193.900 THz)" }
+  - { id: "C39.5", frequency_GHz: 193950, wavelength_nm: 1545.720, label: "C39.5 (193.950 THz)" }
+  - { id: "C40", frequency_GHz: 194000, wavelength_nm: 1545.322, label: "C40 (194.000 THz)" }
+  - { id: "C40.5", frequency_GHz: 194050, wavelength_nm: 1544.924, label: "C40.5 (194.050 THz)" }
+  - { id: "C41", frequency_GHz: 194100, wavelength_nm: 1544.526, label: "C41 (194.100 THz)" }
+  - { id: "C41.5", frequency_GHz: 194150, wavelength_nm: 1544.128, label: "C41.5 (194.150 THz)" }
+  - { id: "C42", frequency_GHz: 194200, wavelength_nm: 1543.730, label: "C42 (194.200 THz)" }
+  - { id: "C42.5", frequency_GHz: 194250, wavelength_nm: 1543.333, label: "C42.5 (194.250 THz)" }
+  - { id: "C43", frequency_GHz: 194300, wavelength_nm: 1542.936, label: "C43 (194.300 THz)" }
+  - { id: "C43.5", frequency_GHz: 194350, wavelength_nm: 1542.539, label: "C43.5 (194.350 THz)" }
+  - { id: "C44", frequency_GHz: 194400, wavelength_nm: 1542.142, label: "C44 (194.400 THz)" }
+  - { id: "C44.5", frequency_GHz: 194450, wavelength_nm: 1541.746, label: "C44.5 (194.450 THz)" }
+  - { id: "C45", frequency_GHz: 194500, wavelength_nm: 1541.349, label: "C45 (194.500 THz)" }
+  - { id: "C45.5", frequency_GHz: 194550, wavelength_nm: 1540.953, label: "C45.5 (194.550 THz)" }
+  - { id: "C46", frequency_GHz: 194600, wavelength_nm: 1540.557, label: "C46 (194.600 THz)" }
+  - { id: "C46.5", frequency_GHz: 194650, wavelength_nm: 1540.162, label: "C46.5 (194.650 THz)" }
+  - { id: "C47", frequency_GHz: 194700, wavelength_nm: 1539.766, label: "C47 (194.700 THz)" }
+  - { id: "C47.5", frequency_GHz: 194750, wavelength_nm: 1539.371, label: "C47.5 (194.750 THz)" }
+  - { id: "C48", frequency_GHz: 194800, wavelength_nm: 1538.976, label: "C48 (194.800 THz)" }
+  - { id: "C48.5", frequency_GHz: 194850, wavelength_nm: 1538.581, label: "C48.5 (194.850 THz)" }
+  - { id: "C49", frequency_GHz: 194900, wavelength_nm: 1538.186, label: "C49 (194.900 THz)" }
+  - { id: "C49.5", frequency_GHz: 194950, wavelength_nm: 1537.792, label: "C49.5 (194.950 THz)" }
+  - { id: "C50", frequency_GHz: 195000, wavelength_nm: 1537.397, label: "C50 (195.000 THz)" }
+  - { id: "C50.5", frequency_GHz: 195050, wavelength_nm: 1537.003, label: "C50.5 (195.050 THz)" }
+  - { id: "C51", frequency_GHz: 195100, wavelength_nm: 1536.609, label: "C51 (195.100 THz)" }
+  - { id: "C51.5", frequency_GHz: 195150, wavelength_nm: 1536.216, label: "C51.5 (195.150 THz)" }
+  - { id: "C52", frequency_GHz: 195200, wavelength_nm: 1535.822, label: "C52 (195.200 THz)" }
+  - { id: "C52.5", frequency_GHz: 195250, wavelength_nm: 1535.429, label: "C52.5 (195.250 THz)" }
+  - { id: "C53", frequency_GHz: 195300, wavelength_nm: 1535.036, label: "C53 (195.300 THz)" }
+  - { id: "C53.5", frequency_GHz: 195350, wavelength_nm: 1534.643, label: "C53.5 (195.350 THz)" }
+  - { id: "C54", frequency_GHz: 195400, wavelength_nm: 1534.250, label: "C54 (195.400 THz)" }
+  - { id: "C54.5", frequency_GHz: 195450, wavelength_nm: 1533.858, label: "C54.5 (195.450 THz)" }
+  - { id: "C55", frequency_GHz: 195500, wavelength_nm: 1533.465, label: "C55 (195.500 THz)" }
+  - { id: "C55.5", frequency_GHz: 195550, wavelength_nm: 1533.073, label: "C55.5 (195.550 THz)" }
+  - { id: "C56", frequency_GHz: 195600, wavelength_nm: 1532.681, label: "C56 (195.600 THz)" }
+  - { id: "C56.5", frequency_GHz: 195650, wavelength_nm: 1532.290, label: "C56.5 (195.650 THz)" }
+  - { id: "C57", frequency_GHz: 195700, wavelength_nm: 1531.898, label: "C57 (195.700 THz)" }
+  - { id: "C57.5", frequency_GHz: 195750, wavelength_nm: 1531.507, label: "C57.5 (195.750 THz)" }
+  - { id: "C58", frequency_GHz: 195800, wavelength_nm: 1531.116, label: "C58 (195.800 THz)" }
+  - { id: "C58.5", frequency_GHz: 195850, wavelength_nm: 1530.725, label: "C58.5 (195.850 THz)" }
+  - { id: "C59", frequency_GHz: 195900, wavelength_nm: 1530.334, label: "C59 (195.900 THz)" }
+  - { id: "C59.5", frequency_GHz: 195950, wavelength_nm: 1529.944, label: "C59.5 (195.950 THz)" }
+  - { id: "C60", frequency_GHz: 196000, wavelength_nm: 1529.553, label: "C60 (196.000 THz)" }
+  - { id: "C60.5", frequency_GHz: 196050, wavelength_nm: 1529.163, label: "C60.5 (196.050 THz)" }

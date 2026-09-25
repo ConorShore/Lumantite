@@ -1,0 +1,64 @@
+# Exchange B: mirror of Exchange A. 4 tunable DWDM SFPs (C21-C24), one per channel, each with
+# its Tx patched into the outbound mux and its Rx patched from the inbound demux.
+sites:
+  - { id: siteB, name: Exchange B }
+
+nodes:
+  - { id: B-sw1, model: generic-host, site: siteB }
+
+  - id: B-sfp-c21
+    model: example-10g-dwdm-t18
+    site: siteB
+    host: B-sw1
+    slot: Eth1/1
+    settings: { channel: C21, tx_power_override_dBm: 3 }
+  - id: B-sfp-c22
+    model: example-10g-dwdm-t18
+    site: siteB
+    host: B-sw1
+    slot: Eth1/2
+    settings: { channel: C22, tx_power_override_dBm: 0 }
+  - id: B-sfp-c23
+    model: example-10g-dwdm-t18
+    site: siteB
+    host: B-sw1
+    slot: Eth1/3
+    settings: { channel: C23, tx_power_override_dBm: -3 }
+  - id: B-sfp-c24
+    model: example-10g-dwdm-t18
+    site: siteB
+    host: B-sw1
+    slot: Eth1/4
+    settings: { channel: C24, tx_power_override_dBm: -6 }
+
+  # outgoing (B -> A)
+  - { id: B-mux, model: generic-dwdm-40ch-100ghz, site: siteB }
+  - id: B-boost
+    model: generic-edfa-booster
+    site: siteB
+    settings: { mode: constant_gain, gain_dB: 20 }
+
+  # incoming (A -> B)
+  - { id: B-demux, model: generic-dwdm-40ch-100ghz, site: siteB }
+
+fibres:
+  - { id: p-b-tx21, type: lc-patch, a: { to: B-sfp-c21.tx }, b: { to: B-mux.C21 } }
+  - { id: p-b-tx22, type: lc-patch, a: { to: B-sfp-c22.tx }, b: { to: B-mux.C22 } }
+  - { id: p-b-tx23, type: lc-patch, a: { to: B-sfp-c23.tx }, b: { to: B-mux.C23 } }
+  - { id: p-b-tx24, type: lc-patch, a: { to: B-sfp-c24.tx }, b: { to: B-mux.C24 } }
+  - { id: p-b-mux-boost, type: lc-patch, a: { to: B-mux.common }, b: { to: B-boost.in } }
+  - { id: p-b-rx21, type: lc-patch, a: { to: B-demux.C21 }, b: { to: B-sfp-c21.rx } }
+  - { id: p-b-rx22, type: lc-patch, a: { to: B-demux.C22 }, b: { to: B-sfp-c22.rx } }
+  - { id: p-b-rx23, type: lc-patch, a: { to: B-demux.C23 }, b: { to: B-sfp-c23.rx } }
+  - { id: p-b-rx24, type: lc-patch, a: { to: B-demux.C24 }, b: { to: B-sfp-c24.rx } }
+
+layout:
+  nodes:
+    B-sw1:     { x: 1280, y: 20 }
+    B-sfp-c21: { x: 1280, y: 80 }
+    B-sfp-c22: { x: 1280, y: 120 }
+    B-sfp-c23: { x: 1280, y: 160 }
+    B-sfp-c24: { x: 1280, y: 200 }
+    B-mux:     { x: 1140, y: 140 }
+    B-boost:   { x: 1020, y: 140 }
+    B-demux:   { x: 1140, y: 360 }

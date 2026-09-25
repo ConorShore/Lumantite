@@ -1,0 +1,42 @@
+# dwdm-amplified: SPEC.md test T18 as a real project. Four DWDM channels (C21-C24) at
+# +3/0/-3/-6 dBm typ, one SFP per channel per end (Tx into the mux, Rx from the demux — no
+# dangling ports), combined by a 40ch/100GHz mux, boosted by an EDFA (constant_gain 20dB,
+# saturates at Pout_max 20dBm), sent over 80km (60km + 20km spliced G.652.D, flat 0.2dB/km
+# override), split by a matching demux and received by four Rx. Uses example-10g-dwdm-t18
+# (Rx sensitivity -14dBm / overload -1dBm / CD tolerance +-1600ps/nm) instead of the generic
+# 80km DWDM SFP, whose -7dBm overload is too low for T18's post-amplifier channel powers.
+# The same topology runs in the reverse direction (site B -> site A) on its own pair of
+# fibres. Split across one file per site plus spans.
+optiplanner: 1
+
+includes:
+  - { file: sites/exchange-a.yaml, label: Exchange A }
+  - { file: sites/exchange-b.yaml, label: Exchange B }
+  - { file: spans.yaml,            label: Inter-site spans (60km + 20km, both directions) }
+
+project:
+  name: DWDM amplified link (T18)
+  description: >-
+    Four unbalanced DWDM channels through a booster EDFA and an 80km span, both directions.
+    Mirrors SPEC.md test T18: Tx typ C21 +3, C22 0, C23 -3, C24 -6 dBm; mux 3.0dB typ;
+    booster EDFA constant_gain 20dB into Pout_max 20dBm (saturates); 80km G.652.D + 2x LC.
+    Rx typ per SPEC T18: C21 -2.24, C22 -5.24, C23 -8.24, C24 -11.24 dBm; C24 fails Rx
+    sensitivity -14dBm + 3dB system margin.
+  wavelength_plans: [dwdm-c-100ghz-40]
+  margins:
+    system_margin_dB: 3.0
+    ageing_dB: 1.0
+    repair_splices: 2
+    repair_splice_loss_dB: 0.1
+    connector_ageing_dB: 0.0
+    cd_margin_pct: 10
+    max_channel_imbalance_dB: 6
+
+layout:
+  sites:
+    siteA: { x: 0, y: 0, w: 380, h: 480 }
+    siteB: { x: 900, y: 0, w: 380, h: 480 }
+  files:
+    sites/exchange-a.yaml: { x: -20, y: -20, w: 420, h: 520 }
+    sites/exchange-b.yaml: { x: 880, y: -20, w: 420, h: 520 }
+    spans.yaml:             { x: 380, y: -20, w: 520, h: 200 }

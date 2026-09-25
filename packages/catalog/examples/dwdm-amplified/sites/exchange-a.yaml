@@ -1,0 +1,66 @@
+# Exchange A: 4 tunable DWDM SFPs (C21-C24), one per channel, each with its Tx patched into
+# the outbound mux and its Rx patched from the inbound demux (one SFP per end, SPEC.md §5.1/§6 —
+# no dangling tx-only/rx-only nodes). Outbound side feeds a 40ch/100GHz mux and a booster EDFA;
+# inbound side is a matching demux receiving from B.
+sites:
+  - { id: siteA, name: Exchange A }
+
+nodes:
+  - { id: A-sw1, model: generic-host, site: siteA }
+
+  - id: A-sfp-c21
+    model: example-10g-dwdm-t18
+    site: siteA
+    host: A-sw1
+    slot: Eth1/1
+    settings: { channel: C21, tx_power_override_dBm: 3 }
+  - id: A-sfp-c22
+    model: example-10g-dwdm-t18
+    site: siteA
+    host: A-sw1
+    slot: Eth1/2
+    settings: { channel: C22, tx_power_override_dBm: 0 }
+  - id: A-sfp-c23
+    model: example-10g-dwdm-t18
+    site: siteA
+    host: A-sw1
+    slot: Eth1/3
+    settings: { channel: C23, tx_power_override_dBm: -3 }
+  - id: A-sfp-c24
+    model: example-10g-dwdm-t18
+    site: siteA
+    host: A-sw1
+    slot: Eth1/4
+    settings: { channel: C24, tx_power_override_dBm: -6 }
+
+  # outgoing (A -> B)
+  - { id: A-mux, model: generic-dwdm-40ch-100ghz, site: siteA }
+  - id: A-boost
+    model: generic-edfa-booster
+    site: siteA
+    settings: { mode: constant_gain, gain_dB: 20 }
+
+  # incoming (B -> A)
+  - { id: A-demux, model: generic-dwdm-40ch-100ghz, site: siteA }
+
+fibres:
+  - { id: p-a-tx21, type: lc-patch, a: { to: A-sfp-c21.tx }, b: { to: A-mux.C21 } }
+  - { id: p-a-tx22, type: lc-patch, a: { to: A-sfp-c22.tx }, b: { to: A-mux.C22 } }
+  - { id: p-a-tx23, type: lc-patch, a: { to: A-sfp-c23.tx }, b: { to: A-mux.C23 } }
+  - { id: p-a-tx24, type: lc-patch, a: { to: A-sfp-c24.tx }, b: { to: A-mux.C24 } }
+  - { id: p-a-mux-boost, type: lc-patch, a: { to: A-mux.common }, b: { to: A-boost.in } }
+  - { id: p-a-rx21, type: lc-patch, a: { to: A-demux.C21 }, b: { to: A-sfp-c21.rx } }
+  - { id: p-a-rx22, type: lc-patch, a: { to: A-demux.C22 }, b: { to: A-sfp-c22.rx } }
+  - { id: p-a-rx23, type: lc-patch, a: { to: A-demux.C23 }, b: { to: A-sfp-c23.rx } }
+  - { id: p-a-rx24, type: lc-patch, a: { to: A-demux.C24 }, b: { to: A-sfp-c24.rx } }
+
+layout:
+  nodes:
+    A-sw1:     { x: 20,  y: 20 }
+    A-sfp-c21: { x: 20,  y: 80 }
+    A-sfp-c22: { x: 20,  y: 120 }
+    A-sfp-c23: { x: 20,  y: 160 }
+    A-sfp-c24: { x: 20,  y: 200 }
+    A-mux:     { x: 180, y: 140 }
+    A-boost:   { x: 300, y: 140 }
+    A-demux:   { x: 180, y: 360 }

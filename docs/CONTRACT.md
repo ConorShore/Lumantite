@@ -73,7 +73,7 @@ export type Op =
   | { op: "addNode";    file: string; node: NodeInst; position?: XY }
   | { op: "updateNode"; id: string; patch: Partial<NodeInst> }          // key: undefined → delete key
   | { op: "deleteNode"; id: string }                                      // also detaches fibre ends pointing at it
-  | { op: "addFibre";   file: string; fibre: FibreInst }
+  | { op: "addFibre";   file: string; fibre: NewFibre }   // FibreInst with optional a/b
   | { op: "updateFibre"; id: string; patch: Partial<FibreInst> }        // a/b patches are merged one level deep
   | { op: "deleteFibre"; id: string }                                     // also clears the far end's `to` if it pointed here
   | { op: "addSite";    file: string; site: Site; rect?: Rect }
@@ -118,6 +118,21 @@ export interface CatalogSession {
 /** Catalog files are either a top-level YAML sequence or multi-document (`---`) streams of entries. */
 export function openCatalog(files: Record<string, string>): CatalogSession;
 ```
+
+Conventions (as implemented):
+- `XY`, `Rect`, `NewFibre` types are exported by `@optiplanner/project` (schema only exports the zod values).
+- Two path forms: *storage paths* (keys of the `files` map, e.g. `metro/sites/a.yaml`) are used by
+  `files()`, `changedFiles()`, `serialize()`, `markSaved()` and as `Issue.element` for file issues;
+  *model paths* (`rootFile` for the parent, the include path as written, normalised, for fragments) are
+  used in `model.files`, `element.file`, and `layout.files` keys. Op `file` arguments and
+  `getFileText`/`setFileText` accept either form. They coincide when the parent is at the top level.
+- Issue codes from sessions: `project.parse_error` (YAML syntax, also for catalog files),
+  `project.schema_error` (zod validation of a file; message = `path: zodPath: message`),
+  `project.file_unknown` (missing include / unknown file), `project.duplicate_id`,
+  `project.invalid_op` (an op's precondition failed: unknown id, non-empty `removeFile`, …),
+  `catalog.invalid_model` (catalog entry without `kind`/`id`).
+- A file with YAML syntax errors keeps its last good content in the model; ops touching it are refused.
+- A missing include is listed in `files()` with text `""` and left out of `serialize()` until an op writes to it.
 
 ## @optiplanner/catalog
 

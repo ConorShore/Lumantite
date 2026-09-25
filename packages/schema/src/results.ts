@@ -11,6 +11,7 @@ export type IssueCode =
   | "project.duplicate_id" | "project.unknown_endpoint" | "project.unknown_port" | "project.endpoint_asymmetric"
   | "project.endpoint_reused" | "project.joint_family_mismatch" | "project.unknown_site" | "project.unknown_host"
   | "project.invalid_settings" | "project.file_unknown"
+  | "project.parse_error" | "project.schema_error" | "project.invalid_op"
   | "topology.unterminated_tx" | "topology.rx_no_signal" | "topology.loop" | "topology.amplified_loop"
   | "topology.duplicate_channel" | "topology.direction_conflict"
   | "mux.wrong_channel" | "mux.channel_dropped"

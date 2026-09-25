@@ -1,0 +1,27 @@
+# Site 3: adds 1511nm (destined for Site 1, via Site 4's express path) and drops 1471nm
+# (Site 1's channel, arriving via Site 2's express path). See site1.yaml for the OADM chaining.
+sites:
+  - { id: site3, name: Site 3 }
+
+nodes:
+  - { id: site3-host, model: generic-host, site: site3 }
+  - id: site3-sfp
+    model: generic-10g-cwdm-80km
+    site: site3
+    host: site3-host
+    slot: Eth1/1
+    settings: { channel: "1511" }
+  - { id: site3-oadm-out, model: generic-cwdm-oadm-8ch, site: site3 }
+  - { id: site3-oadm-in, model: generic-cwdm-oadm-8ch, site: site3 }
+
+fibres:
+  - { id: p-site3-tx, type: lc-patch, a: { to: site3-sfp.tx }, b: { to: site3-oadm-out.1511 } }
+  - { id: p-site3-rx, type: lc-patch, a: { to: site3-oadm-in.1471 }, b: { to: site3-sfp.rx } }
+  - { id: p-site3-express, type: lc-patch, a: { to: site3-oadm-in.express }, b: { to: site3-oadm-out.express } }
+
+layout:
+  nodes:
+    site3-host:     { x: 370, y: 520 }
+    site3-sfp:       { x: 370, y: 570 }
+    site3-oadm-in:  { x: 370, y: 620 }
+    site3-oadm-out: { x: 490, y: 620 }

@@ -1,0 +1,120 @@
+# Attenuators, DCMs, splitters, passthrough and host. SPEC.md §5.6 / §5.7.
+
+# ---------------- fixed attenuators ----------------
+
+- kind: attenuator
+  id: att-1db
+  description: Fixed attenuator, 1 dB
+  loss_dB: 1
+  connector: lc-upc
+  source: "generic fixed attenuator (nominal rating, not vendor-specific)"
+
+- kind: attenuator
+  id: att-2db
+  description: Fixed attenuator, 2 dB
+  loss_dB: 2
+  connector: lc-upc
+  source: "generic fixed attenuator (nominal rating, not vendor-specific)"
+
+- kind: attenuator
+  id: att-3db
+  description: Fixed attenuator, 3 dB
+  loss_dB: 3
+  connector: lc-upc
+  source: "generic fixed attenuator (nominal rating, not vendor-specific)"
+
+- kind: attenuator
+  id: att-5db
+  description: Fixed attenuator, 5 dB
+  loss_dB: 5
+  connector: lc-upc
+  source: "generic fixed attenuator (nominal rating, not vendor-specific)"
+
+- kind: attenuator
+  id: att-10db
+  description: Fixed attenuator, 10 dB
+  loss_dB: 10
+  connector: lc-upc
+  source: "generic fixed attenuator (nominal rating, not vendor-specific)"
+
+- kind: attenuator
+  id: att-15db
+  description: Fixed attenuator, 15 dB
+  loss_dB: 15
+  connector: lc-upc
+  source: "generic fixed attenuator (nominal rating, not vendor-specific)"
+
+- kind: attenuator
+  id: att-20db
+  description: Fixed attenuator, 20 dB
+  loss_dB: 20
+  connector: lc-upc
+  source: "generic fixed attenuator (nominal rating, not vendor-specific)"
+
+- kind: attenuator
+  id: voa-0-20db
+  description: Variable optical attenuator, 0-20 dB (instance sets settings.setting_dB)
+  range_dB: { min: 0, max: 20 }
+  connector: lc-upc
+  source: "generic VOA (typical adjustable range for a mechanical/MEMS VOA), unverified against a specific vendor datasheet"
+
+# ---------------- dispersion compensation modules ----------------
+
+- kind: dcm
+  id: dcm-20km
+  description: DCM sized to compensate ~20km of G.652 fibre
+  dispersion_ps_nm: -340
+  insertion_loss_dB: { min: 2.0, typ: 2.5, max: 3.0 }
+  connector: lc-upc
+  source: "typical value (unverified) — representative DCM datasheet range (dispersion set per brief, IL scales with reach class)"
+
+- kind: dcm
+  id: dcm-40km
+  description: DCM sized to compensate ~40km of G.652 fibre
+  dispersion_ps_nm: -680
+  insertion_loss_dB: { min: 2.5, typ: 3.0, max: 3.5 }
+  connector: lc-upc
+  source: "typical value (unverified) — representative DCM datasheet range (dispersion set per brief, IL scales with reach class)"
+
+- kind: dcm
+  id: dcm-80km
+  description: DCM sized to compensate ~80km of G.652 fibre
+  dispersion_ps_nm: -1360
+  insertion_loss_dB: { min: 3.5, typ: 4.0, max: 4.5 }
+  connector: lc-upc
+  source: "typical value (unverified) — representative DCM datasheet range (dispersion set per brief, IL scales with reach class)"
+
+# ---------------- splitters ----------------
+
+- kind: splitter
+  id: splitter-50-50
+  description: 1x2 fused fibre splitter, 50/50
+  ratio: [50, 50]
+  excess_loss_dB: 0.3
+  connector: lc-upc
+  source: "generic FBT/PLC splitter (theoretical split loss 10*log10(100/pct) plus typical 0.3dB excess loss)"
+
+- kind: splitter
+  id: splitter-90-10
+  description: 1x2 fused fibre splitter, 90/10
+  ratio: [90, 10]
+  excess_loss_dB: 0.3
+  connector: lc-upc
+  source: "generic FBT/PLC splitter (theoretical split loss 10*log10(100/pct) plus typical 0.3dB excess loss)"
+
+# ---------------- passthrough / host ----------------
+
+- kind: passthrough
+  id: patch-panel
+  description: >-
+    Patch panel / ODF passthrough. Zero insertion loss here — the connector loss is carried by
+    the joints on either side of it, per SPEC.md §5.6/§6.
+  insertion_loss_dB: 0
+  connector: lc-upc
+  source: "definitional (loss modelled at the joints, not the panel)"
+
+- kind: host
+  id: generic-host
+  description: Generic switch/router chassis with 8 SFP/SFP+ slots, for grouping and labelling only
+  slots: [Eth1/1, Eth1/2, Eth1/3, Eth1/4, Eth1/5, Eth1/6, Eth1/7, Eth1/8]
+  source: "organisational only — no physical parameters (SPEC.md §5.7)"

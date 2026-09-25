@@ -1,0 +1,19 @@
+server:
+  port: 8080
+paths:
+  projects: /data/projects       # each subdirectory or *.yaml is a project
+  catalog: /data/catalog         # shared catalog; project may add a local `catalog/` too
+defaults:
+  wavelength_plan: dwdm-c-100ghz-40
+  margins:
+    system_margin_dB: 3.0
+    ageing_dB: 1.0
+    repair_splices: 2
+    repair_splice_loss_dB: 0.1
+    cd_margin_pct: 10
+    max_channel_imbalance_dB: 6
+ui:
+  warn_threshold_dB: 1.0         # "warn" if pass margin is below this
+  power_display: dBm             # dBm | mW
+export:
+  csv_delimiter: ","

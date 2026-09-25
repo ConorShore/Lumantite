@@ -1,0 +1,31 @@
+# Site 1: adds 1471nm (its own channel, destined for Site 3, two hops clockwise via Site 2's
+# express path) and drops 1511nm (Site 3's channel, arriving via Site 4's express path).
+# Two chained OADMs per site (line-in / line-out) per SPEC.md §5.4: the "-in" OADM's common
+# faces the previous hop, drops the locally-destined channel to the local Rx, and expresses
+# everything else onward via a local jumper into the "-out" OADM's express port, which
+# combines it with the locally-added channel onto the "-out" OADM's common, facing the next hop.
+sites:
+  - { id: site1, name: Site 1 }
+
+nodes:
+  - { id: site1-host, model: generic-host, site: site1 }
+  - id: site1-sfp
+    model: generic-10g-cwdm-80km
+    site: site1
+    host: site1-host
+    slot: Eth1/1
+    settings: { channel: "1471" }
+  - { id: site1-oadm-out, model: generic-cwdm-oadm-8ch, site: site1 }
+  - { id: site1-oadm-in, model: generic-cwdm-oadm-8ch, site: site1 }
+
+fibres:
+  - { id: p-site1-tx, type: lc-patch, a: { to: site1-sfp.tx }, b: { to: site1-oadm-out.1471 } }
+  - { id: p-site1-rx, type: lc-patch, a: { to: site1-oadm-in.1511 }, b: { to: site1-sfp.rx } }
+  - { id: p-site1-express, type: lc-patch, a: { to: site1-oadm-in.express }, b: { to: site1-oadm-out.express } }
+
+layout:
+  nodes:
+    site1-host:     { x: 220, y: 20 }
+    site1-sfp:       { x: 220, y: 70 }
+    site1-oadm-in:  { x: 220, y: 120 }
+    site1-oadm-out: { x: 340, y: 120 }

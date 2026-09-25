@@ -1,0 +1,86 @@
+# Mux / demux / OADM. SPEC.md §5.4. A mux is direction-agnostic: `common` <-> channel ports.
+# `channel_ports: all` generates one port per channel of `plan`; an explicit list (e.g. for an
+# OADM) generates only those. insertion_loss_dB is the default channel-port <-> common loss;
+# express_port (if present) carries channels not dropped locally.
+
+- kind: mux
+  id: generic-cwdm-8ch
+  description: Generic 8-channel CWDM mux/demux, thin-film-filter, channels 1471-1611nm
+  plan: cwdm-18
+  channel_ports: ["1471", "1491", "1511", "1531", "1551", "1571", "1591", "1611"]
+  insertion_loss_dB: { min: 1.5, typ: 2.0, max: 3.0 }
+  isolation_dB: 25
+  connector: lc-upc
+  source: "typical value (unverified) — representative thin-film-filter CWDM 8ch mux datasheet range"
+
+- kind: mux
+  id: generic-cwdm-18ch
+  description: Generic 18-channel CWDM mux/demux (full grid), thin-film-filter cascade
+  plan: cwdm-18
+  channel_ports: all
+  insertion_loss_dB: { min: 2.5, typ: 3.5, max: 4.5 }
+  isolation_dB: 25
+  connector: lc-upc
+  source: "typical value (unverified) — representative thin-film-filter CWDM 18ch mux datasheet range (higher IL than 8ch due to more cascaded filter stages)"
+
+- kind: mux
+  id: generic-cwdm-oadm-8ch
+  description: >-
+    Generic 8-channel CWDM OADM (thin-film-filter add/drop) with an express path — the
+    cwdm-ring example chains one of these per line direction at each site so channels not
+    dropped locally continue around the ring through the express port.
+  plan: cwdm-18
+  channel_ports: ["1471", "1491", "1511", "1531", "1551", "1571", "1591", "1611"]
+  insertion_loss_dB: { min: 1.0, typ: 1.5, max: 2.5 }
+  express_port: { insertion_loss_dB: { typ: 1.0, max: 1.5 } }
+  isolation_dB: 25
+  connector: lc-upc
+  source: "typical value (unverified) — representative thin-film-filter CWDM 8-skip-0 OADM datasheet range; express_port IL same class as generic-dwdm-oadm-4ch"
+
+- kind: mux
+  id: generic-dwdm-40ch-100ghz
+  description: Generic 40-channel 100 GHz DWDM mux/demux, C-band, AWG
+  plan: dwdm-c-100ghz-40
+  channel_ports: all
+  insertion_loss_dB: { min: 2.5, typ: 3.0, max: 3.5 }
+  isolation_dB: 30
+  passband_ghz: 50
+  monitor_port: { tap_dB: 20 }
+  connector: lc-upc
+  source: "SPEC.md §5.4 worked example values (typical AWG-based 40ch 100GHz DWDM mux)"
+
+- kind: mux
+  id: generic-dwdm-80ch-50ghz
+  description: Generic 80-channel 50 GHz DWDM mux/demux, C-band, AWG
+  plan: dwdm-c-50ghz-80
+  channel_ports: all
+  insertion_loss_dB: { min: 4.0, typ: 4.5, max: 5.5 }
+  isolation_dB: 25
+  passband_ghz: 25
+  monitor_port: { tap_dB: 20 }
+  connector: lc-upc
+  source: "typical value (unverified) — representative AWG-based 80ch 50GHz DWDM mux datasheet range (higher IL/tighter passband than the 40ch/100GHz grid)"
+
+- kind: mux
+  id: generic-dwdm-oadm-4ch
+  description: Generic 4-channel DWDM OADM (thin-film-filter add/drop), C21-C24, with express path
+  plan: dwdm-c-100ghz-40
+  channel_ports: [C21, C22, C23, C24]
+  insertion_loss_dB: { min: 1.0, typ: 1.5, max: 2.5 }
+  express_port: { insertion_loss_dB: { typ: 1.0, max: 1.5 } }
+  isolation_dB: 30
+  passband_ghz: 50
+  connector: lc-upc
+  source: "typical value (unverified) — representative thin-film-filter 4-skip-0 OADM datasheet range; express_port IL per brief (typ 1.0 / max 1.5 dB)"
+
+- kind: mux
+  id: generic-dwdm-oadm-8ch
+  description: Generic 8-channel DWDM OADM (thin-film-filter add/drop), C21-C28, with express path
+  plan: dwdm-c-100ghz-40
+  channel_ports: [C21, C22, C23, C24, C25, C26, C27, C28]
+  insertion_loss_dB: { min: 1.2, typ: 1.8, max: 2.8 }
+  express_port: { insertion_loss_dB: { typ: 1.3, max: 2.0 } }
+  isolation_dB: 30
+  passband_ghz: 50
+  connector: lc-upc
+  source: "typical value (unverified) — representative thin-film-filter 8-skip-0 OADM datasheet range (more cascaded stages than the 4ch OADM, so slightly higher IL)"

@@ -1,0 +1,118 @@
+# Fibre types. SPEC.md §5.2. attenuation_dB_per_km is a wavelength table (linear interpolation,
+# errors if a signal falls outside the table range). dispersion.model:
+#   g652   D(nm) = S0/4 * (nm - zero_dispersion_nm^4 / nm^3)
+#   linear D(nm) = d0 + slope * (nm - at_nm)                (NZDSF)
+#   none                                                     (loss-only, e.g. multimode)
+
+- kind: fibre
+  id: g652d
+  standard: ITU-T G.652.D
+  description: ITU-T G.652.D standard single-mode fibre
+  attenuation_dB_per_km:
+    - { nm: 1310, value: 0.35 }
+    - { nm: 1383, value: 0.35 }
+    - { nm: 1490, value: 0.24 }
+    - { nm: 1550, value: 0.20 }
+    - { nm: 1625, value: 0.22 }
+  dispersion:
+    model: g652
+    zero_dispersion_nm: 1310
+    zero_dispersion_slope_ps_nm2_km: 0.092
+  max_power_dBm: 20
+  default_joint: fusion-splice
+  source: "ITU-T G.652 (2016) Table 1 limits; attenuation values per common G.652.D datasheet (e.g. Corning SMF-28e+)"
+
+- kind: fibre
+  id: g652d-low-loss
+  standard: ITU-T G.652.D
+  description: Low-loss ITU-T G.652.D single-mode fibre (e.g. Corning SMF-28 ULL class)
+  attenuation_dB_per_km:
+    - { nm: 1310, value: 0.32 }
+    - { nm: 1383, value: 0.31 }
+    - { nm: 1490, value: 0.21 }
+    - { nm: 1550, value: 0.17 }
+    - { nm: 1625, value: 0.19 }
+  dispersion:
+    model: g652
+    zero_dispersion_nm: 1310
+    zero_dispersion_slope_ps_nm2_km: 0.092
+  max_power_dBm: 20
+  default_joint: fusion-splice
+  source: "0.17 dB/km @1550nm per low-loss G.652.D datasheets (e.g. Corning SMF-28 ULL); other wavelengths are typical values (unverified)"
+
+- kind: fibre
+  id: g655
+  standard: ITU-T G.655
+  description: ITU-T G.655 non-zero dispersion-shifted fibre (NZDSF)
+  attenuation_dB_per_km:
+    - { nm: 1310, value: 0.40 }
+    - { nm: 1383, value: 0.30 }
+    - { nm: 1490, value: 0.25 }
+    - { nm: 1550, value: 0.21 }
+    - { nm: 1625, value: 0.25 }
+  dispersion:
+    model: linear
+    d0_ps_nm_km: 4.0
+    at_nm: 1550
+    slope_ps_nm2_km: 0.085
+  max_power_dBm: 20
+  default_joint: fusion-splice
+  source: "ITU-T G.655 (2009) dispersion limits (4-8 ps/nm/km typ. @1550); attenuation values are typical values (unverified)"
+
+- kind: fibre
+  id: g657a1
+  standard: ITU-T G.657.A1
+  description: ITU-T G.657.A1 bend-insensitive single-mode fibre, G.652.D compatible
+  attenuation_dB_per_km:
+    - { nm: 1310, value: 0.35 }
+    - { nm: 1383, value: 0.35 }
+    - { nm: 1490, value: 0.24 }
+    - { nm: 1550, value: 0.20 }
+    - { nm: 1625, value: 0.22 }
+  dispersion:
+    model: g652
+    zero_dispersion_nm: 1310
+    zero_dispersion_slope_ps_nm2_km: 0.092
+  max_power_dBm: 20
+  default_joint: fusion-splice
+  source: "ITU-T G.657.A1 (2016) — fully backward compatible with G.652.D attenuation/dispersion"
+
+- kind: fibre
+  id: om4
+  standard: OM4
+  multimode: true
+  description: OM4 laser-optimised 50/125 um multimode fibre (loss-only, no CD model)
+  attenuation_dB_per_km:
+    - { nm: 850, value: 3.0 }
+    - { nm: 1300, value: 1.0 }
+  dispersion:
+    model: none
+  max_power_dBm: 20
+  default_joint: lc-upc
+  source: "ISO/IEC 11801 / TIA-492AAAD OM4 maximum attenuation limits (850nm/1300nm)"
+
+# ---- patch cords: extend a base fibre type with default_length_km / default_joint ----
+
+- kind: fibre
+  id: lc-patch
+  extends: g657a1
+  description: LC/UPC patch cord, 2 m default length
+  default_length_km: 0.002
+  default_joint: lc-upc
+  source: "generic patch cord (bend-insensitive G.657.A1 fibre, LC/UPC both ends)"
+
+- kind: fibre
+  id: lc-apc-patch
+  extends: g657a1
+  description: LC/APC patch cord, 2 m default length
+  default_length_km: 0.002
+  default_joint: lc-apc
+  source: "generic patch cord (bend-insensitive G.657.A1 fibre, LC/APC both ends)"
+
+- kind: fibre
+  id: sc-patch
+  extends: g657a1
+  description: SC/UPC patch cord, 2 m default length
+  default_length_km: 0.002
+  default_joint: sc-upc
+  source: "generic patch cord (bend-insensitive G.657.A1 fibre, SC/UPC both ends)"

@@ -1,0 +1,376 @@
+# Transceivers. SPEC.md §5.1. Generic base models carry IEEE/MSA-typical grey or WDM optics;
+# vendor models `extends` a generic base and override with datasheet values plus a `source` URL.
+# Where an exact datasheet number could not be confirmed, `source` says "typical value (unverified)".
+
+# ============================== generic grey optics ==============================
+
+- kind: transceiver
+  id: generic-1g-lx
+  description: Generic 1000BASE-LX SFP, 1310nm, 10km
+  form_factor: SFP
+  rate_Gbps: 1.25
+  reach_km: 10
+  tx:
+    wavelength: { wavelength_nm: 1310 }
+    power_dBm: { min: -9.5, typ: -3, max: -3 }
+  rx:
+    sensitivity_dBm: -20
+    overload_dBm: -3
+    wavelength_range_nm: [1270, 1355]
+  ports:
+    tx: { direction: out, connector: lc-upc }
+    rx: { direction: in, connector: lc-upc }
+  source: "IEEE 802.3-2018 clause 38 (1000BASE-LX) optical parameter table"
+
+- kind: transceiver
+  id: generic-10g-lr
+  description: Generic 10GBASE-LR SFP+, 1310nm, 10km
+  form_factor: SFP+
+  rate_Gbps: 10
+  reach_km: 10
+  tx:
+    wavelength: { wavelength_nm: 1310 }
+    power_dBm: { min: -8.2, typ: -1, max: 0.5 }
+  rx:
+    sensitivity_dBm: -14.4
+    overload_dBm: 0.5
+    wavelength_range_nm: [1260, 1355]
+  ports:
+    tx: { direction: out, connector: lc-upc }
+    rx: { direction: in, connector: lc-upc }
+  source: "IEEE 802.3-2018 clause 52 (10GBASE-LR) optical parameter table"
+
+- kind: transceiver
+  id: generic-10g-er
+  description: Generic 10GBASE-ER SFP+, 1550nm, 40km
+  form_factor: SFP+
+  rate_Gbps: 10
+  reach_km: 40
+  tx:
+    wavelength: { wavelength_nm: 1550 }
+    power_dBm: { min: -4.7, typ: 0, max: 4 }
+  rx:
+    sensitivity_dBm: -23.5
+    overload_dBm: -7
+    wavelength_range_nm: [1530, 1565]
+  ports:
+    tx: { direction: out, connector: lc-upc }
+    rx: { direction: in, connector: lc-upc }
+  source: "IEEE 802.3-2018 clause 52 (10GBASE-ER) optical parameter table"
+
+- kind: transceiver
+  id: generic-10g-zr
+  description: Generic 10GBASE-ZR (MSA, not IEEE) SFP+, 1550nm, 80km
+  form_factor: SFP+
+  rate_Gbps: 10
+  reach_km: 80
+  tx:
+    wavelength: { wavelength_nm: 1550 }
+    power_dBm: { min: -1, typ: 2, max: 4 }
+  rx:
+    sensitivity_dBm: -23
+    overload_dBm: -7
+    cd_tolerance_ps_nm: { min: -1600, max: 1600 }
+    wavelength_range_nm: [1530, 1565]
+  ports:
+    tx: { direction: out, connector: lc-upc }
+    rx: { direction: in, connector: lc-upc }
+  source: "typical value (unverified) — informal 10GBASE-ZR MSA class values, no single controlling standard"
+
+- kind: transceiver
+  id: generic-10g-cwdm-80km
+  description: Generic CWDM SFP+, tunable across the 18-channel CWDM grid, 80km (high-power/EZX class)
+  form_factor: SFP+
+  rate_Gbps: 10
+  reach_km: 80
+  tx:
+    wavelength: { plan: cwdm-18, channels: all }
+    power_dBm: { min: -2, typ: 3, max: 6 }
+  rx:
+    sensitivity_dBm: -24
+    overload_dBm: -3
+    cd_tolerance_ps_nm: { min: -1800, max: 1800 }
+    wavelength_range_nm: [1271, 1611]
+  ports:
+    tx: { direction: out, connector: lc-upc }
+    rx: { direction: in, connector: lc-upc }
+  source: "typical value (unverified) — representative of common CWDM SFP+ 80km 'EZX'/high-power datasheets"
+
+- kind: transceiver
+  id: generic-10g-dwdm-80km
+  description: Generic DWDM SFP+, tunable across the 40-channel 100 GHz C-band grid, 80km
+  form_factor: SFP+
+  rate_Gbps: 10
+  reach_km: 80
+  tx:
+    wavelength: { plan: dwdm-c-100ghz-40, channels: all }
+    power_dBm: { min: 0, typ: 2, max: 4 }
+  rx:
+    sensitivity_dBm: -24
+    overload_dBm: -7
+    cd_tolerance_ps_nm: { min: -800, max: 1600 }
+    wavelength_range_nm: [1260, 1620]
+  ports:
+    tx: { direction: out, connector: lc-upc }
+    rx: { direction: in, connector: lc-upc }
+  source: "SPEC.md §5.1 worked example values; consistent with common 10G DWDM SFP+ 80km (EML+APD) datasheets"
+
+- kind: transceiver
+  id: example-10g-dwdm-t18
+  description: >-
+    Example tunable DWDM SFP+ sized to reproduce SPEC.md test T18 exactly (Rx sensitivity
+    -14dBm, overload -1dBm, CD tolerance +-1600ps/nm) — used by the dwdm-amplified example
+    instead of generic-10g-dwdm-80km, whose -7dBm overload is too low for T18's post-amplifier
+    per-channel powers (up to ~+0.8dBm at the demux input).
+  form_factor: SFP+
+  rate_Gbps: 10
+  reach_km: 80
+  tx:
+    wavelength: { plan: dwdm-c-100ghz-40, channels: all }
+    power_dBm: { min: -6, typ: 0, max: 3 }   # instance channels use tx_power_override_dBm (+3/0/-3/-6)
+  rx:
+    sensitivity_dBm: -14
+    overload_dBm: -1
+    cd_tolerance_ps_nm: { min: -1600, max: 1600 }
+    wavelength_range_nm: [1528, 1568]
+  ports:
+    tx: { direction: out, connector: lc-upc }
+    rx: { direction: in, connector: lc-upc }
+  source: "SPEC T18 test values"
+
+- kind: transceiver
+  id: generic-10g-dwdm-tunable
+  description: Generic full C-band tunable DWDM SFP+, 50 GHz grid (80 channels), 80km
+  form_factor: SFP+
+  rate_Gbps: 10
+  reach_km: 80
+  tx:
+    wavelength: { plan: dwdm-c-50ghz-80, channels: all }
+    power_dBm: { min: -1, typ: 1.5, max: 4 }
+  rx:
+    sensitivity_dBm: -24
+    overload_dBm: -7
+    cd_tolerance_ps_nm: { min: -800, max: 1600 }
+    wavelength_range_nm: [1528, 1568]
+  ports:
+    tx: { direction: out, connector: lc-upc }
+    rx: { direction: in, connector: lc-upc }
+  source: "Cisco DWDM-SFP10G-C datasheet class values (launch power -1..+4dBm, CD tolerance 1600 ps/nm, 80km @ ~20 ps/nm/km); see cisco-dwdm-sfp10g-c for the cited vendor figures"
+
+- kind: transceiver
+  id: generic-25g-lr
+  description: Generic 25GBASE-LR SFP28, 1310nm, 10km
+  form_factor: SFP28
+  rate_Gbps: 25
+  reach_km: 10
+  tx:
+    wavelength: { wavelength_nm: 1310 }
+    power_dBm: { min: -4.5, typ: -1, max: 2.4 }
+  rx:
+    sensitivity_dBm: -10.9
+    overload_dBm: 2.4
+    wavelength_range_nm: [1260, 1355]
+  ports:
+    tx: { direction: out, connector: lc-upc }
+    rx: { direction: in, connector: lc-upc }
+  source: "IEEE 802.3by-2016 clause 114 (25GBASE-LR) optical parameter table"
+
+- kind: transceiver
+  id: generic-100g-lr4
+  description: >-
+    Generic 100GBASE-LR4 QSFP28, 4-lane LAN-WDM CWDM4 grid, 10km. The catalog schema's
+    tx.wavelength holds a single value; the four LAN-WDM lane wavelengths are recorded under
+    x.lanes_nm for reference (see README "schema limitations").
+  form_factor: QSFP28
+  rate_Gbps: 100
+  reach_km: 10
+  tx:
+    wavelength: { wavelength_nm: 1300 }
+    power_dBm: { min: -4.3, typ: 0, max: 4.5 }
+  rx:
+    sensitivity_dBm: -10.6
+    overload_dBm: 4.5
+    wavelength_range_nm: [1294.53, 1310.19]
+  ports:
+    tx: { direction: out, connector: lc-upc }
+    rx: { direction: in, connector: lc-upc }
+  x:
+    lanes_nm: [1295.56, 1300.05, 1304.58, 1309.14]
+  source: "IEEE 802.3ba-2010 clause 88 (100GBASE-LR4) optical parameter table"
+
+- kind: transceiver
+  id: generic-1g-bidi
+  description: Generic 1000BASE-BX10-D (downstream/CO side) BiDi SFP, Tx 1310nm / Rx 1490nm, 10km
+  form_factor: SFP
+  rate_Gbps: 1.25
+  reach_km: 10
+  tx:
+    wavelength: { wavelength_nm: 1310 }
+    power_dBm: { min: -9, typ: -3, max: -3 }
+  rx:
+    sensitivity_dBm: -19.5
+    overload_dBm: -3
+    wavelength_range_nm: [1480, 1500]
+  ports:
+    bidi: { direction: bidi, connector: lc-upc }
+  source: "IEEE 802.3-2018 clause 59 (1000BASE-BX10-D) optical parameter table"
+
+- kind: transceiver
+  id: generic-1g-bidi-u
+  description: >-
+    Generic 1000BASE-BX10-U (upstream/subscriber side) BiDi SFP, Tx 1490nm / Rx 1310nm, 10km.
+    Pairs with generic-1g-bidi on the same fibre (not one of the ids requested by the brief,
+    added because a BiDi link needs a matched pair at each end — see README).
+  form_factor: SFP
+  rate_Gbps: 1.25
+  reach_km: 10
+  tx:
+    wavelength: { wavelength_nm: 1490 }
+    power_dBm: { min: -9, typ: -3, max: -3 }
+  rx:
+    sensitivity_dBm: -19.5
+    overload_dBm: -3
+    wavelength_range_nm: [1300, 1320]
+  ports:
+    bidi: { direction: bidi, connector: lc-upc }
+  source: "IEEE 802.3-2018 clause 59 (1000BASE-BX10-U) optical parameter table"
+
+# ============================================= FS =============================================
+
+- kind: transceiver
+  id: fs-sfp-10g-lr
+  extends: generic-10g-lr
+  vendor: FS
+  model: SFP-10G-LR
+  description: >-
+    Receiver sensitivity below is OMA per the FS datasheet (used directly as the average-power
+    figure here; overload is a typical value).
+  tx:
+    wavelength: { wavelength_nm: 1310 }
+    power_dBm: { min: -8.2, typ: -1, max: 0.5 }
+  rx:
+    sensitivity_dBm: -12.6
+    overload_dBm: 0.5
+    wavelength_range_nm: [1260, 1355]
+  source: "https://img-en.fs.com/file/datasheet/10g-base-lr-1310nm.pdf (Tx power and Rx sensitivity(OMA) verified; overload is a typical value, unverified)"
+
+- kind: transceiver
+  id: fs-sfp-10g-er
+  extends: generic-10g-er
+  vendor: FS
+  model: SFP-10G-ER
+  source: "typical value (unverified) — fs.com SFP-10G-ER product family, IEEE 802.3ae 10GBASE-ER compliant values used"
+
+- kind: transceiver
+  id: fs-sfp-10g-zr
+  extends: generic-10g-zr
+  vendor: FS
+  model: SFP-10G-ZR-55
+  tx:
+    wavelength: { wavelength_nm: 1550 }
+    power_dBm: { min: 0, typ: 3, max: 5 }
+  rx:
+    sensitivity_dBm: -24
+    overload_dBm: -7
+    cd_tolerance_ps_nm: { min: -1600, max: 1600 }
+    wavelength_range_nm: [1530, 1565]
+  source: "https://resource.fs.com/mall/resource/sfp-10gzr-55-datasheet.pdf (product/URL confirmed; optical parameter values are typical, unverified — source PDF is image-only)"
+
+- kind: transceiver
+  id: fs-sfp-10g-dwdm-80km
+  extends: generic-10g-dwdm-tunable
+  vendor: FS
+  model: 10G Tunable DWDM SFP+ 50GHz 80km (Cisco DWDM-SFP10G-C compatible)
+  tx:
+    wavelength: { plan: dwdm-c-50ghz-80, channels: all }
+    power_dBm: { min: -1, typ: 1.5, max: 4 }
+  rx:
+    sensitivity_dBm: -24
+    overload_dBm: -7
+    cd_tolerance_ps_nm: { min: -800, max: 1600 }
+    wavelength_range_nm: [1528, 1568]
+  source: "https://www.fs.com/products/69267.html (Cisco DWDM-SFP10G-C compatible; power range and CD tolerance per Cisco DWDM-SFP10G-C datasheet: https://www.cisco.com/c/en/us/products/collateral/interfaces-modules/dwdm-transceiver-modules/data_sheet_c78-711186.html)"
+
+- kind: transceiver
+  id: fs-sfp-10g-dwdm-c21-80km
+  extends: generic-10g-dwdm-80km
+  vendor: FS
+  model: SFP-10G-DWDM-C21-80
+  tx:
+    wavelength: { plan: dwdm-c-100ghz-40, channel: C21 }
+    power_dBm: { min: 0, typ: 2, max: 4 }
+  source: "SPEC.md §5.1 worked example (fixed-channel DWDM SFP+, C21 = 192.100 THz / 1560.606 nm)"
+
+- kind: transceiver
+  id: fs-sfp-10g-dwdm-c22-80km
+  extends: generic-10g-dwdm-80km
+  vendor: FS
+  model: SFP-10G-DWDM-C22-80
+  tx:
+    wavelength: { plan: dwdm-c-100ghz-40, channel: C22 }
+    power_dBm: { min: 0, typ: 2, max: 4 }
+  source: "typical value (unverified) — same class as fs-sfp-10g-dwdm-c21-80km, fixed to C22 (192.200 THz)"
+
+# ============================================ Cisco ============================================
+
+- kind: transceiver
+  id: cisco-sfp-10g-lr
+  extends: generic-10g-lr
+  vendor: Cisco
+  model: SFP-10G-LR
+  source: "https://www.cisco.com/c/en/us/products/collateral/interfaces-modules/transceiver-modules/data_sheet_c78-455693.html (10GBASE-LR, IEEE 802.3ae compliant; product/URL confirmed, optical table values are IEEE-standard typical values)"
+
+- kind: transceiver
+  id: cisco-sfp-10g-er
+  extends: generic-10g-er
+  vendor: Cisco
+  model: SFP-10G-ER
+  source: "https://www.cisco.com/c/en/us/products/collateral/interfaces-modules/transceiver-modules/data_sheet_c78-455693.html (10GBASE-ER, IEEE 802.3ae compliant; product/URL confirmed, optical table values are IEEE-standard typical values)"
+
+- kind: transceiver
+  id: cisco-dwdm-sfp10g-c
+  extends: generic-10g-dwdm-tunable
+  vendor: Cisco
+  model: DWDM-SFP10G-C
+  description: C-band tunable DWDM SFP+, 96 x 50GHz ITU channels, 80km @ ~20 ps/(nm.km) fibre dispersion
+  tx:
+    wavelength: { plan: dwdm-c-50ghz-80, channels: all }
+    power_dBm: { min: -1, typ: 1.5, max: 4 }
+  rx:
+    sensitivity_dBm: -24
+    overload_dBm: -7
+    cd_tolerance_ps_nm: { min: -1600, max: 1600 }
+    wavelength_range_nm: [1528, 1568]
+  source: "https://www.cisco.com/c/en/us/products/collateral/interfaces-modules/dwdm-transceiver-modules/data_sheet_c78-711186.html (launch power -1..+4dBm and CD tolerance 1600 ps/nm confirmed via search; full table not fetched, other fields typical)"
+
+# =========================================== Finisar ===========================================
+# Both part numbers below are real Finisar (now Coherent Corp) SFP+ numbers. Despite the '1471'
+# and '1671' in the names — which look like CWDM wavelengths — datasheets confirm these are
+# grey 10GBASE-LR/ER optics (D3BCL = duplex LC, 3.3V, cooled), not CWDM parts. See README.
+
+- kind: transceiver
+  id: finisar-ftlx1471d3bcl
+  extends: generic-10g-lr
+  vendor: Finisar (Coherent Corp)
+  model: FTLX1471D3BCL
+  description: >-
+    10GBASE-LR/LW SFP+, 1310nm, 10km. NOT a 1471nm CWDM optic despite the part number —
+    confirmed by datasheet (wavelength range 1260-1360nm, 6dB link budget, IEEE 802.3ae).
+  source: "https://www.mouser.com/datasheet/2/1457/Coherent_FTLX1471D3BCL-3581310.pdf (confirms 10GBASE-LR/LW 1310nm 10km; exact Tx/Rx power table not extracted, IEEE 802.3ae typical values used)"
+
+- kind: transceiver
+  id: finisar-ftlx1671d3bcl
+  extends: generic-10g-er
+  vendor: Finisar (Coherent Corp)
+  model: FTLX1671D3BCL
+  description: >-
+    10GBASE-ER/EW SFP+, 1550nm, 40km. NOT a 1671nm CWDM optic despite the part number —
+    confirmed by datasheet.
+  tx:
+    wavelength: { wavelength_nm: 1550 }
+    power_dBm: { min: -3, typ: 0, max: 3 }
+  rx:
+    sensitivity_dBm: -14.1
+    overload_dBm: -1.0
+    wavelength_range_nm: [1530, 1565]
+  source: "https://www.mouser.com/ds/2/610/FTLX1671D3BCL%20Product%20Spec%20RevC_1-275074.pdf (TX -3..+3dBm, RX -14.1..-1.0dBm, 1550nm 40km, confirmed)"

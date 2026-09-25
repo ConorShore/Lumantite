@@ -1,0 +1,24 @@
+# Ring spans, G.652.D, direct LC/UPC connections into each hop's OADM common port. Each span
+# carries two wavelengths: the channel added by the upstream site, plus whatever the upstream
+# site is expressing through from two hops back (see sites/site*.yaml).
+fibres:
+  - id: span12
+    type: g652d
+    length_km: 15
+    a: { joint: lc-upc, to: site1-oadm-out.common }
+    b: { joint: lc-upc, to: site2-oadm-in.common }
+  - id: span23
+    type: g652d
+    length_km: 18
+    a: { joint: lc-upc, to: site2-oadm-out.common }
+    b: { joint: lc-upc, to: site3-oadm-in.common }
+  - id: span34
+    type: g652d
+    length_km: 12
+    a: { joint: lc-upc, to: site3-oadm-out.common }
+    b: { joint: lc-upc, to: site4-oadm-in.common }
+  - id: span41
+    type: g652d
+    length_km: 20
+    a: { joint: lc-upc, to: site4-oadm-out.common }
+    b: { joint: lc-upc, to: site1-oadm-in.common }

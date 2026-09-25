@@ -1,0 +1,74 @@
+# Joints (connectors and splices). SPEC.md §5.3.
+# Loss is counted once per joint (fibre end <-> device port, or fibre end <-> fibre end).
+# `family` must match between a fibre end's joint and the port it plugs into (or between two
+# fibre-end joints). insertion_loss_dB is a {min, typ, max} triple; return_loss_dB is stored only.
+
+- kind: joint
+  id: lc-upc
+  family: LC
+  polish: UPC
+  description: LC/UPC mated pair
+  insertion_loss_dB: { min: 0.1, typ: 0.2, max: 0.5 }
+  return_loss_dB: 50
+  source: "Telcordia GR-326-CORE generic single-mode connector requirements (typical mated-pair IL/RL for UPC)"
+
+- kind: joint
+  id: lc-apc
+  family: LC
+  polish: APC
+  description: LC/APC mated pair
+  insertion_loss_dB: { min: 0.1, typ: 0.2, max: 0.5 }
+  return_loss_dB: 60
+  source: "Telcordia GR-326-CORE generic single-mode connector requirements (typical mated-pair IL/RL for APC)"
+
+- kind: joint
+  id: sc-upc
+  family: SC
+  polish: UPC
+  description: SC/UPC mated pair
+  insertion_loss_dB: { min: 0.1, typ: 0.25, max: 0.5 }
+  return_loss_dB: 50
+  source: "Telcordia GR-326-CORE generic single-mode connector requirements (typical mated-pair IL/RL for UPC)"
+
+- kind: joint
+  id: sc-apc
+  family: SC
+  polish: APC
+  description: SC/APC mated pair
+  insertion_loss_dB: { min: 0.1, typ: 0.25, max: 0.5 }
+  return_loss_dB: 60
+  source: "Telcordia GR-326-CORE generic single-mode connector requirements (typical mated-pair IL/RL for APC)"
+
+- kind: joint
+  id: e2000-apc
+  family: E2000
+  polish: APC
+  description: E2000/APC mated pair (spring-loaded shutter connector, common on DWDM equipment)
+  insertion_loss_dB: { min: 0.1, typ: 0.2, max: 0.3 }
+  return_loss_dB: 60
+  source: "typical value (unverified) — consistent with Telcordia GR-326-CORE APC limits"
+
+- kind: joint
+  id: mpo-12
+  family: MPO
+  polish: UPC
+  description: MPO-12 mated pair (per-fibre average, trunk/ribbon cabling)
+  insertion_loss_dB: { min: 0.15, typ: 0.35, max: 0.75 }
+  return_loss_dB: 40
+  source: "Telcordia GR-1435-CORE generic MPO/MT requirements (typical per-fibre mated-pair IL)"
+
+- kind: joint
+  id: fusion-splice
+  family: splice
+  description: Single-mode fusion splice
+  insertion_loss_dB: { min: 0.02, typ: 0.05, max: 0.1 }
+  return_loss_dB: 60
+  source: "Corning splicing guidelines / common field-splice acceptance criteria (typical fusion splice IL)"
+
+- kind: joint
+  id: mechanical-splice
+  family: splice
+  description: Single-mode mechanical splice
+  insertion_loss_dB: { min: 0.1, typ: 0.15, max: 0.3 }
+  return_loss_dB: 40
+  source: "typical value (unverified) — consistent with common mechanical-splice datasheet ranges (e.g. 3M Fibrlok / Corning CamSplice)"

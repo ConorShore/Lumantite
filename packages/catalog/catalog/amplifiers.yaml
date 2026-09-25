@@ -1,0 +1,86 @@
+# EDFAs. SPEC.md §5.5 / §7.6. Planning-grade model: one gain value for all channels, shaped by
+# a wavelength-dependent tilt and a flatness tolerance (gain_model: parametric), or measured
+# gain spectra at one or more operating points (gain_model: measured).
+
+- kind: amplifier
+  id: generic-edfa-booster
+  description: Generic C-band booster EDFA (post-amplifier)
+  band_nm: [1528, 1566]
+  modes: [constant_gain, constant_output_power]
+  gain_dB: { min: 10, max: 23 }
+  input_power_total_dBm: { min: -30, max: 5 }
+  output_power_total_dBm: { max: 20 }
+  gain_flatness_dB: 1.0
+  gain_tilt:
+    - { nm: 1528, dB: 0.5 }
+    - { nm: 1566, dB: -0.5 }
+  noise_figure_dB: 5.5
+  gain_model: parametric
+  connector: lc-upc
+  ports:
+    in: { direction: in, connector: lc-upc }
+    out: { direction: out, connector: lc-upc }
+  source: "SPEC.md §5.5 worked example values (representative C-band booster EDFA)"
+
+- kind: amplifier
+  id: generic-edfa-inline
+  description: Generic C-band in-line (line) EDFA
+  band_nm: [1528, 1566]
+  modes: [constant_gain, constant_output_power]
+  gain_dB: { min: 15, max: 30 }
+  input_power_total_dBm: { min: -35, max: -5 }
+  output_power_total_dBm: { max: 17 }
+  gain_flatness_dB: 1.0
+  gain_tilt:
+    - { nm: 1528, dB: 0.5 }
+    - { nm: 1566, dB: -0.5 }
+  noise_figure_dB: 5.5
+  gain_model: parametric
+  connector: lc-upc
+  ports:
+    in: { direction: in, connector: lc-upc }
+    out: { direction: out, connector: lc-upc }
+  source: "typical value (unverified) — representative C-band in-line/line EDFA datasheet range"
+
+- kind: amplifier
+  id: generic-edfa-preamp
+  description: Generic C-band pre-amplifier EDFA (low-noise, high-gain)
+  band_nm: [1528, 1566]
+  modes: [constant_gain, constant_output_power]
+  gain_dB: { min: 20, max: 35 }
+  input_power_total_dBm: { min: -40, max: -15 }
+  output_power_total_dBm: { max: 10 }
+  gain_flatness_dB: 1.0
+  gain_tilt:
+    - { nm: 1528, dB: 0.5 }
+    - { nm: 1566, dB: -0.5 }
+  noise_figure_dB: 5.0
+  gain_model: parametric
+  connector: lc-upc
+  ports:
+    in: { direction: in, connector: lc-upc }
+    out: { direction: out, connector: lc-upc }
+  source: "typical value (unverified) — representative low-noise C-band pre-amplifier EDFA datasheet range"
+
+- kind: amplifier
+  id: example-edfa-measured
+  extends: generic-edfa-booster
+  description: >-
+    Example booster EDFA using the measured gain-spectrum model instead of parametric
+    tilt+flatness — demonstrates gain_model: measured (SPEC.md §5.5 / §7.6, test T16b).
+  gain_model: measured
+  gain_spectrum:
+    - input_power_total_dBm: -20
+      gain_setting_dB: 20
+      spectrum:
+        - { nm: 1528, gain_dB: 20.6 }
+        - { nm: 1547, gain_dB: 20.1 }
+        - { nm: 1566, gain_dB: 19.4 }
+    - input_power_total_dBm: -5
+      gain_setting_dB: 20
+      spectrum:
+        - { nm: 1528, gain_dB: 19.9 }
+        - { nm: 1547, gain_dB: 20.0 }
+        - { nm: 1566, gain_dB: 19.8 }
+  measurement_uncertainty_dB: 0.3
+  source: "SPEC.md §5.5 worked example gain_spectrum rows, verbatim"

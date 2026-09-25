@@ -1,0 +1,69 @@
+# simple-link: the smallest possible project. Two hosts, two 10GBASE-LR SFP+ transceivers,
+# each end's Tx and Rx both wired (one SFP per end, no dangling ports), over a 10km G.652.D
+# span in each direction. Single file, no fragments.
+# 10GBASE-LR is 1310nm: loss = 2 x LC (0.2 typ) + 10km x 0.35 dB/km (@1310nm) = 3.9 dB.
+# Tx typ -1 dBm -> Rx typ -4.9 dBm, well within sensitivity -14.4 / overload 0.5 dBm.
+optiplanner: 1
+
+project:
+  name: Simple point-to-point link
+  description: A 10GBASE-LR signal from A-sfp to B-sfp and back, each over 10km of G.652.D fibre.
+  wavelength_plans: []
+  margins:
+    system_margin_dB: 3.0
+    ageing_dB: 1.0
+    repair_splices: 2
+    repair_splice_loss_dB: 0.1
+    connector_ageing_dB: 0.0
+    cd_margin_pct: 10
+    max_channel_imbalance_dB: 6
+
+sites:
+  - { id: siteA, name: Site A }
+  - { id: siteB, name: Site B }
+
+nodes:
+  - { id: A-sw1, model: generic-host, site: siteA }
+  - { id: A-sfp, model: generic-10g-lr, site: siteA, host: A-sw1, slot: Eth1/1 }
+  - { id: B-sw1, model: generic-host, site: siteB }
+  - { id: B-sfp, model: generic-10g-lr, site: siteB, host: B-sw1, slot: Eth1/1 }
+
+fibres:
+  # A -> B
+  - id: p1
+    type: lc-patch
+    a: { to: A-sfp.tx }
+    b: { to: span1.a }
+  - id: span1
+    type: g652d
+    length_km: 10
+    a: { joint: lc-upc, to: p1.b }
+    b: { joint: lc-upc, to: p2.a }
+  - id: p2
+    type: lc-patch
+    a: { to: span1.b }
+    b: { to: B-sfp.rx }
+  # B -> A
+  - id: p3
+    type: lc-patch
+    a: { to: B-sfp.tx }
+    b: { to: span2.a }
+  - id: span2
+    type: g652d
+    length_km: 10
+    a: { joint: lc-upc, to: p3.b }
+    b: { joint: lc-upc, to: p4.a }
+  - id: p4
+    type: lc-patch
+    a: { to: span2.b }
+    b: { to: A-sfp.rx }
+
+layout:
+  sites:
+    siteA: { x: 0, y: 0, w: 260, h: 160 }
+    siteB: { x: 500, y: 0, w: 260, h: 160 }
+  nodes:
+    A-sw1: { x: 40, y: 40 }
+    A-sfp: { x: 40, y: 100 }
+    B-sw1: { x: 540, y: 40 }
+    B-sfp: { x: 540, y: 100 }

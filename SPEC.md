@@ -650,7 +650,9 @@ mux typ 3.0 dB).
   Tx typ: C21 +3, C22 0, C23 −3, C24 −6 dBm. Mux 3.0 dB → 0, −3, −6, −9; total 2.74 dBm.
   EDFA constant gain 20, Pout_max 20 → saturates, G_eff 17.26 → 17.26, 14.26, 11.26, 8.26 dBm
   (Pout_total 20.0). 80 km G.652.D + 2 × LC = 16.5 dB → 0.76, −2.24, −5.24, −8.24.
-  Demux 3.0 → −2.24, −5.24, −8.24, −11.24 dBm. Rx sens −14, system margin 3 → C24 fails
+  Demux 3.0 → −2.24, −5.24, −8.24, −11.24 dBm. (The span uses a flat 0.20 dB/km override; with the
+  G.652.D table interpolated at 1558–1561 nm the span is 16.7 dB and every Rx value is 0.2 dB lower,
+  same pass/fail.) Rx sens −14, system margin 3 → C24 fails
   (−11.24 < −11), the rest pass. With `gain_flatness_dB: 1` worst case C24.min = −12.24.
   Same network with the EDFA in constant-output-power mode set to 20 dBm gives identical
   numbers; set to 17 dBm → G 14.26 → Rx −5.24, −8.24, −11.24, −14.24 so C23 and C24 fail.
