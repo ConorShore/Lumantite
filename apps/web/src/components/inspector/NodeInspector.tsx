@@ -111,6 +111,7 @@ function Settings({ dm, settings, set }: { dm: DeviceModel; settings: NodeSettin
       <Section title="Settings">
         {tunable && <Row label="channel"><SelectField value={settings.channel} allowEmpty="(first)" options={chans} onChange={(v) => set("channel", v)} /></Row>}
         <Row label="Tx override" title="tx_power_override_dBm"><NumberField value={settings.tx_power_override_dBm} placeholder="dBm" onCommit={(v) => set("tx_power_override_dBm", v)} /></Row>
+        <Row label="ports" title="port_side: canvas only"><SelectField value={settings.port_side} allowEmpty="default (right)" options={[{ value: "right", label: "right" }, { value: "left", label: "left" }, { value: "split", label: "split (rx left, tx right)" }]} onChange={(v) => set("port_side", v)} /></Row>
       </Section>
     );
   }

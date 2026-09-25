@@ -21,7 +21,8 @@ export interface DeviceData extends Record<string, unknown> {
 }
 export interface FrameData extends Record<string, unknown> { kind: "file" | "site"; id: string; label: string; sub?: string }
 export interface JunctionData extends Record<string, unknown> { label: string }
-export interface FibreData extends Record<string, unknown> { fibre: FibreI; label: string }
+/** `net`: fibres joined end-to-end (splices/connectors) share one, like a wire between two pins. */
+export interface FibreData extends Record<string, unknown> { fibre: FibreI; label: string; net: string }
 
 export const NODE_W = 170;
 const HEADER_H = 34;
@@ -35,7 +36,12 @@ export function nodeHeight(ports: PortView[]): number {
   return HEADER_H + Math.max(l, r, 1) * ROW_H + 8;
 }
 
-function sideOf(name: string, spec: PortSpec, model: DeviceModel): "left" | "right" {
+function sideOf(name: string, spec: PortSpec, model: DeviceModel, inst: Inst): "left" | "right" {
+  // transceivers keep tx and rx together on one side unless the node asks to split them
+  if (model.kind === "transceiver") {
+    const s = inst.settings?.port_side ?? "right";
+    if (s !== "split") return s;
+  }
   if (spec.direction === "in") return "left";
   if (spec.direction === "out") return "right";
   if (model.kind === "mux") return spec.channel ? "left" : "right";
@@ -59,7 +65,7 @@ export function devicePorts(inst: Inst, model: DeviceModel | undefined, catalog:
   const counts = { left: 0, right: 0 };
   const ports: PortView[] = shown.map((name) => {
     const spec = all[name]!;
-    const side = model ? sideOf(name, spec, model) : "right";
+    const side = model ? sideOf(name, spec, model, inst) : "right";
     const top = HEADER_H + counts[side]++ * ROW_H + ROW_H / 2;
     return { name, spec, side, top };
   });
@@ -215,22 +221,31 @@ export function buildGraph(model: ProjectModel, catalog: Catalog, opts: BuildOpt
     if (p1 && p2) return { x: (p1.x + p2.x) / 2, y: (p1.y + p2.y) / 2 };
     return p1 ?? p2;
   };
+  const netOf = new Map<string, string>();
+  const net = (id: string): string => { const p = netOf.get(id) ?? id; if (p === id) return id; const r = net(p); netOf.set(id, r); return r; };
+  for (const f of model.fibres) for (const end of ["a", "b"] as const) {
+    const to = f[end]?.to;
+    const el = to ? splitEndpoint(to)[0] : undefined;
+    if (el && fibreById.has(el) && net(el) !== net(f.id)) netOf.set(net(el), net(f.id));
+  }
   const edges: Edge<FibreData>[] = [];
+  const ends = new Map<string, { node: string; handle: string }[]>();
   for (const f of model.fibres) {
-    const ends: { node: string; handle: string }[] = [];
+    const fe: { node: string; handle: string }[] = [];
+    ends.set(f.id, fe);
     for (const end of ["a", "b"] as const) {
       const to = f[end]?.to;
       const other = end === "a" ? "b" : "a";
       if (to) {
         const [el, port] = splitEndpoint(to);
-        if (dev.has(el)) { ends.push({ node: el, handle: port }); continue; }
+        if (dev.has(el)) { fe.push({ node: el, handle: port }); continue; }
         if (fibreById.has(el)) {
           const jid = junctionId(f.id, end, el, port);
           if (!junctions.has(jid)) {
             const p = endPos(f, end) ?? { x: 0, y: 0 };
             junctions.set(jid, { ...p, label: "splice" });
           }
-          ends.push({ node: jid, handle: "j" });
+          fe.push({ node: jid, handle: "j" });
           continue;
         }
       }
@@ -238,14 +253,36 @@ export function buildGraph(model: ProjectModel, catalog: Catalog, opts: BuildOpt
       const jid = `loose:${f.id}.${end}`;
       const anchor = f[other]?.to ? handlePos(f[other]!.to!) : null;
       junctions.set(jid, { x: (anchor?.x ?? 0) + (end === "a" ? -70 : 70), y: (anchor?.y ?? 0) + 20, label: to ? `? ${to}` : "open" });
-      ends.push({ node: jid, handle: "j" });
+      fe.push({ node: jid, handle: "j" });
     }
+  }
+
+  // splices that land on top of each other (e.g. the two directions of a link) get nudged apart
+  const JUNCTION_GAP = 16;
+  const js = [...junctions.values()].sort((a, b) => a.y - b.y || a.x - b.x);
+  for (let i = 0; i < js.length; i++) {
+    for (let k = 0; k < i; k++) {
+      const [a, b] = [js[k]!, js[i]!];
+      if (Math.abs(a.x - b.x) < JUNCTION_GAP && Math.abs(a.y - b.y) < JUNCTION_GAP) b.y = a.y + JUNCTION_GAP;
+    }
+  }
+  // a fibre leaves a junction from the side facing its other end, so a splice reads as one line passing through
+  const pos = (e: { node: string; handle: string }) => {
+    const j = junctions.get(e.node);
+    if (j) return j;
+    const d = dev.get(e.node);
+    const p = d?.data.ports.find((x) => x.name === e.handle);
+    return d ? { x: d.rect.x + (p?.side === "left" ? 0 : d.rect.w), y: d.rect.y + (p?.top ?? 10) } : { x: 0, y: 0 };
+  };
+  for (const f of model.fibres) {
+    const [a, b] = ends.get(f.id)!;
+    for (const [e, o] of [[a!, b!], [b!, a!]] as const) if (junctions.has(e.node)) e.handle = pos(o).x < junctions.get(e.node)!.x ? "l" : "r";
     const t = catalog.models.get(f.type);
     const len = f.length_km ?? (t?.kind === "fibre" ? t.default_length_km : undefined);
     const label = `${f.id}${len !== undefined ? ` · ${len < 0.1 ? `${(len * 1000).toFixed(0)} m` : `${len} km`}` : ""}`;
     edges.push({
-      id: f.id, type: "fibre", source: ends[0]!.node, sourceHandle: ends[0]!.handle, target: ends[1]!.node, targetHandle: ends[1]!.handle,
-      zIndex: 5, data: { fibre: f, label },
+      id: f.id, type: "fibre", source: a!.node, sourceHandle: a!.handle, target: b!.node, targetHandle: b!.handle,
+      zIndex: 5, data: { fibre: f, label, net: net(f.id) },
     });
   }
   for (const [id, j] of junctions) {
