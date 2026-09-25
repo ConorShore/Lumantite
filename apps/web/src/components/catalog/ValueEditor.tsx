@@ -13,7 +13,7 @@ export const isRange3 = (v: Json | undefined): v is Obj =>
 export const isWlTable = (v: Json | undefined): v is Obj[] =>
   Array.isArray(v) && v.length > 0 && v.every((r) => isObj(r) && typeof r.nm === "number");
 
-const inp = "rounded border border-slate-300 px-1 py-px bg-white";
+const inp = "field py-px";
 
 function NumInput({ value, onChange, placeholder, className = "w-20" }: { value: number | undefined; onChange(v: number | undefined): void; placeholder?: string; className?: string }) {
   const [t, setT] = useState(value === undefined ? "" : String(value));
@@ -32,7 +32,7 @@ function Range3Editor({ value, onChange }: { value: Obj; onChange(v: Json): void
   return (
     <span className="inline-flex items-center gap-1">
       {R3.map((k) => <NumInput key={k} className="w-16" placeholder={k} value={value[k] as number | undefined} onChange={(n) => set(k, n)} />)}
-      <button className="text-slate-400 hover:text-slate-700" title="Make scalar" onClick={() => onChange((value.typ ?? value.max ?? value.min ?? 0) as number)}>=</button>
+      <button className="text-muted hover:text-accent" title="Make scalar" onClick={() => onChange((value.typ ?? value.max ?? value.min ?? 0) as number)}>=</button>
     </span>
   );
 }
@@ -42,17 +42,17 @@ function WlTableEditor({ value, onChange }: { value: Obj[]; onChange(v: Json): v
   const setRow = (i: number, row: Obj) => onChange(value.map((r, j) => (j === i ? row : r)));
   return (
     <table className="text-[11px]">
-      <thead><tr className="text-slate-400"><th className="text-left">nm</th>{cols.map((c) => <th key={c} className="text-left pl-2">{c}</th>)}<th /></tr></thead>
+      <thead><tr className="text-muted"><th className="text-left">nm</th>{cols.map((c) => <th key={c} className="text-left pl-2">{c}</th>)}<th /></tr></thead>
       <tbody>
         {value.map((r, i) => (
           <tr key={i}>
             <td><NumInput className="w-16" value={r.nm as number} onChange={(n) => setRow(i, { ...r, nm: n ?? 0 })} /></td>
             {cols.map((c) => <td key={c} className="pl-2"><ValueEditor value={r[c]} onChange={(v) => setRow(i, { ...r, [c]: v })} /></td>)}
-            <td><button className="px-1 text-red-500" title="Remove row" onClick={() => onChange(value.filter((_, j) => j !== i))}>×</button></td>
+            <td><button className="px-1 text-fail/80 hover:text-fail" title="Remove row" onClick={() => onChange(value.filter((_, j) => j !== i))}>×</button></td>
           </tr>
         ))}
       </tbody>
-      <tfoot><tr><td colSpan={cols.length + 2}><button className="text-sky-700" onClick={() => onChange([...value, structuredClone(value[value.length - 1]!)])}>+ row</button></td></tr></tfoot>
+      <tfoot><tr><td colSpan={cols.length + 2}><button className="text-aqua hover:text-aqua-hover" onClick={() => onChange([...value, structuredClone(value[value.length - 1]!)])}>+ row</button></td></tr></tfoot>
     </table>
   );
 }
@@ -62,7 +62,7 @@ export function ValueEditor({ value, onChange }: { value: Json | undefined; onCh
     return (
       <span className="inline-flex items-center gap-1">
         <NumInput value={value} onChange={(n) => onChange(n ?? 0)} />
-        <button className="text-slate-400 hover:text-slate-700" title="Make min/typ/max range" onClick={() => onChange({ min: value, typ: value, max: value })}>±</button>
+        <button className="text-muted hover:text-accent" title="Make min/typ/max range" onClick={() => onChange({ min: value, typ: value, max: value })}>±</button>
       </span>
     );
   if (typeof value === "boolean") return <input type="checkbox" checked={value} onChange={(e) => onChange(e.target.checked)} />;
@@ -75,12 +75,12 @@ export function ValueEditor({ value, onChange }: { value: Json | undefined; onCh
       <div className="space-y-0.5">
         {value.map((v, i) => (
           <div key={i} className="flex items-start gap-1">
-            <span className="text-slate-400 w-4 text-right">{i}</span>
+            <span className="text-muted w-4 text-right">{i}</span>
             <ValueEditor value={v} onChange={(nv) => onChange(value.map((x, j) => (j === i ? nv : x)))} />
-            <button className="text-red-500" onClick={() => onChange(value.filter((_, j) => j !== i))}>×</button>
+            <button className="text-fail/80 hover:text-fail" onClick={() => onChange(value.filter((_, j) => j !== i))}>×</button>
           </div>
         ))}
-        <button className="text-sky-700" onClick={() => onChange([...value, value.length ? structuredClone(value[value.length - 1]!) : ""])}>+ item</button>
+        <button className="text-aqua hover:text-aqua-hover" onClick={() => onChange([...value, value.length ? structuredClone(value[value.length - 1]!) : ""])}>+ item</button>
       </div>
     );
   return <ObjectEditor value={value} onChange={onChange} />;
@@ -92,17 +92,17 @@ export function ObjectEditor({ value, onChange, hide = [], suggestions = [] }: {
   const missing = suggestions.filter((s) => !(s.key in value) && !hide.includes(s.key));
   const add = (k: string, v: Json) => { if (k && !(k in value)) onChange({ ...value, [k]: v }); };
   return (
-    <div className="border-l border-slate-200 pl-2 space-y-0.5">
+    <div className="border-l border-line pl-2 space-y-0.5">
       {keys.map((k) => (
         <div key={k} className="flex items-start gap-1">
-          <span className="w-28 shrink-0 truncate pt-0.5 font-mono text-[11px] text-slate-600" title={k}>{k}</span>
+          <span className="w-28 shrink-0 truncate pt-0.5 font-mono text-[11px] text-muted" title={k}>{k}</span>
           <div className="flex-1 min-w-52"><ValueEditor value={value[k]} onChange={(v) => onChange({ ...value, [k]: v })} /></div>
-          <button className="text-red-500 px-1" title={`Remove ${k}`} onClick={() => { const n = { ...value }; delete n[k]; onChange(n); }}>×</button>
+          <button className="text-fail/80 hover:text-fail px-1" title={`Remove ${k}`} onClick={() => { const n = { ...value }; delete n[k]; onChange(n); }}>×</button>
         </div>
       ))}
       <div className="flex items-center gap-1 pt-0.5">
         {missing.length > 0 && (
-          <select className={`${inp} text-[11px]`} value="" onChange={(e) => { const s = missing.find((m) => m.key === e.target.value); if (s) add(s.key, s.make()); }}>
+          <select className={`${inp} text-[11px] text-aqua`} value="" onChange={(e) => { const s = missing.find((m) => m.key === e.target.value); if (s) add(s.key, s.make()); }}>
             <option value="">+ field…</option>
             {missing.map((m) => <option key={m.key}>{m.key}</option>)}
           </select>

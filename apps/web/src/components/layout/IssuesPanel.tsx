@@ -19,9 +19,9 @@ export function IssuesPanel() {
   const shown = useMemo(() => issues.filter((i) => filter[i.severity]).slice(0, 1000), [issues, filter]);
 
   return (
-    <section className="h-40 shrink-0 flex flex-col border-t border-slate-200 bg-white" aria-label="Issues">
-      <div className="flex items-center gap-2 px-2 h-7 border-b border-slate-100 bg-slate-50">
-        <span className="font-medium">Issues</span>
+    <section className="h-40 shrink-0 flex flex-col border-t border-line bg-surface" aria-label="Issues">
+      <div className="flex items-center gap-3 px-2 h-7 border-b border-line bg-surface">
+        <span className="font-medium text-fg">Issues</span>
         {SEVS.map((s) => (
           <label key={s} className={`flex items-center gap-1 cursor-pointer ${SEVERITY_CLASS[s]}`}>
             <input type="checkbox" checked={filter[s]} onChange={() => toggle(s)} />
@@ -33,18 +33,18 @@ export function IssuesPanel() {
         {shown.map((i, n) => (
           <li key={n}>
             <button
-              className={`w-full text-left px-2 py-0.5 hover:bg-sky-50 flex gap-2 ${SEVERITY_CLASS[i.severity]}`}
+              className="w-full text-left px-2 py-0.5 hover:bg-raised flex gap-2 text-fg"
               onClick={() => selectIssue(i)}
               title="Select element"
             >
-              <span className={`w-10 shrink-0 uppercase ${i.severity === "error" ? "font-bold" : ""}`}>{i.severity}</span>
-              <span className="w-44 shrink-0 truncate text-slate-500">{i.code}</span>
-              <span className="w-40 shrink-0 truncate text-slate-700">{i.element ?? ""}</span>
-              <span className="truncate text-slate-800">{i.message}</span>
+              <span className={`w-10 shrink-0 uppercase ${SEVERITY_CLASS[i.severity]} ${i.severity === "error" ? "font-bold" : ""}`}>{i.severity}</span>
+              <span className="w-44 shrink-0 truncate text-muted">{i.code}</span>
+              <span className="w-40 shrink-0 truncate text-fg/85">{i.element ?? ""}</span>
+              <span className="truncate text-fg">{i.message}</span>
             </button>
           </li>
         ))}
-        {!shown.length && <li className="px-2 py-1 text-slate-400">No issues.</li>}
+        {!shown.length && <li className="px-2 py-1 text-muted">No issues.</li>}
       </ul>
     </section>
   );

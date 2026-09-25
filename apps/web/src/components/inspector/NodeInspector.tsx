@@ -44,7 +44,7 @@ export function NodeInspector({ id }: { id: string }) {
         <Row label="model">
           <div className="flex gap-1">
             <SelectField value={inst.model} options={sameKind} onChange={(v) => v && patch({ model: v })} />
-            <button className="text-sky-700" title="Open in catalog" onClick={() => { setCatalogView(dm?.kind ?? "transceiver", inst.model); setTab("catalog"); }}>↗</button>
+            <button className="link" title="Open in catalog" onClick={() => { setCatalogView(dm?.kind ?? "transceiver", inst.model); setTab("catalog"); }}>↗</button>
           </div>
         </Row>
         <Row label="name"><TextField value={inst.name} onCommit={(v) => patch({ name: v })} /></Row>
@@ -63,16 +63,16 @@ export function NodeInspector({ id }: { id: string }) {
       {Object.keys(ports).length > 0 && (
         <Section title="Ports">
           <table className="w-full text-[11px]">
-            <thead><tr className="text-left text-slate-400"><th>port</th><th>dir</th><th>fibre</th><th className="text-right">in/out typ</th><th /></tr></thead>
+            <thead><tr className="text-left text-muted"><th>port</th><th>dir</th><th>fibre</th><th className="text-right">in/out typ</th><th /></tr></thead>
             <tbody>
               {Object.entries(ports).filter(([p]) => !ports[p]!.channel || fibreAt(p) || pidx?.get(`${id}.${p}`)).map(([p, spec]) => {
                 const pr = pidx?.get(`${id}.${p}`);
                 const f = fibreAt(p);
                 return (
-                  <tr key={p} className="border-t border-slate-100">
+                  <tr key={p} className="border-t border-line-soft">
                     <td className="font-mono">{p}</td>
                     <td>{spec.direction}</td>
-                    <td>{f ? <button className="text-sky-700 font-mono" onClick={() => select([{ kind: "fibre", id: f.id }])}>{f.id}</button> : <span className="text-slate-300">—</span>}</td>
+                    <td>{f ? <button className="link font-mono" onClick={() => select([{ kind: "fibre", id: f.id }])}>{f.id}</button> : <span className="text-faint">—</span>}</td>
                     <td className="text-right tabular-nums">{dB(pr?.in.totalPower?.typ)} / {dB(pr?.out.totalPower?.typ)}</td>
                     <td className="pl-1">{pr && <StatusBadge status={pr.status} />}</td>
                   </tr>
@@ -80,7 +80,7 @@ export function NodeInspector({ id }: { id: string }) {
               })}
             </tbody>
           </table>
-          {dm?.kind === "mux" && <div className="text-[10px] text-slate-400">Unused channel ports hidden.</div>}
+          {dm?.kind === "mux" && <div className="text-[10px] text-muted">Unused channel ports hidden.</div>}
         </Section>
       )}
       {signals.length > 0 && (

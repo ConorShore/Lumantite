@@ -10,9 +10,9 @@ export function Toast() {
   }, [toast]);
   if (!toast) return null;
   return (
-    <div role="status" className={`fixed bottom-4 left-1/2 -translate-x-1/2 z-50 rounded px-3 py-2 shadow-lg ${toast.kind === "error" ? "bg-red-700 text-white" : "bg-slate-800 text-white"}`}>
+    <div role="status" className={`fixed bottom-4 left-1/2 -translate-x-1/2 z-50 flex items-center rounded border border-l-4 bg-raised px-3 py-2 text-fg shadow-xl shadow-black/40 ${toast.kind === "error" ? "border-fail/70" : "border-aqua/60"}`}>
       {toast.text}
-      <button className="ml-3 opacity-70 hover:opacity-100" onClick={() => useUi.setState({ toast: null })}>×</button>
+      <button className="ml-3 text-muted hover:text-fg" aria-label="Dismiss" onClick={() => useUi.setState({ toast: null })}>×</button>
     </div>
   );
 }

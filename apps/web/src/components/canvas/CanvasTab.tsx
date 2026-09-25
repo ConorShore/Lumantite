@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
-  ReactFlow, ReactFlowProvider, Background, Controls, MiniMap, ConnectionMode, applyNodeChanges, applyEdgeChanges,
+  ReactFlow, ReactFlowProvider, Background, BackgroundVariant, Controls, MiniMap, ConnectionMode, applyNodeChanges, applyEdgeChanges,
   useReactFlow, useUpdateNodeInternals,
   type Node, type Edge, type NodeChange, type EdgeChange, type Connection, type OnSelectionChangeParams,
 } from "@xyflow/react";
@@ -262,7 +262,7 @@ function CanvasInner() {
     useProject.getState().applyOps([{ op: "addSite", file, site: { id }, rect: { x: c.x - 150, y: c.y - 100, w: 300, h: 200 } }]);
   };
 
-  if (!model) return <div className="p-6 text-slate-500">No project loaded.</div>;
+  if (!model) return <div className="p-6 text-muted">No project loaded.</div>;
 
   return (
     <div className="h-full flex flex-col">
@@ -300,11 +300,14 @@ function CanvasInner() {
         elevateEdgesOnSelect={false}
         onlyRenderVisibleElements
         minZoom={0.05}
+        colorMode="dark"
         fitView
       >
-        <Background gap={20} size={1} />
+        <Background variant={BackgroundVariant.Dots} gap={20} size={1.2} color="#3a3c42" bgColor="#1b1c1f" />
         <Controls position="bottom-right" showInteractive={false} />
-        <MiniMap position="top-right" pannable zoomable className="!w-40 !h-28" nodeColor={(n) => (n.type === "device" ? "#64748b" : "transparent")} />
+        <MiniMap position="top-right" pannable zoomable className="!w-40 !h-28" bgColor="#232428" maskColor="rgb(27 28 31 / 0.65)" maskStrokeColor="#f2c14e" maskStrokeWidth={1.5}
+          nodeColor={(n) => (n.type === "device" ? (n.selected ? "#f2c14e" : "#5a5d66") : "transparent")}
+          nodeStrokeColor={(n) => (n.type === "fileFrame" ? "rgb(63 216 210 / 0.35)" : n.type === "siteFrame" ? "#3a3c42" : "transparent")} />
       </ReactFlow>
       </div>
       </div>

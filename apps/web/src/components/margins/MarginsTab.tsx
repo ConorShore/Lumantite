@@ -47,7 +47,7 @@ export function MarginsTab() {
     return { total: worse + better, worse, better };
   }, [baseline, results]);
 
-  if (!model) return <div className="p-6 text-slate-500">No project loaded.</div>;
+  if (!model) return <div className="p-6 text-muted">No project loaded.</div>;
   const dflt = (k: keyof ResolvedMargins) => configDefaults[k] ?? DEFAULT_MARGINS[k];
   const set = (k: keyof ResolvedMargins, v: number | undefined) => {
     const next = { ...draft, [k]: v };
@@ -62,29 +62,29 @@ export function MarginsTab() {
     <div className="max-w-3xl p-4">
       <div className="mb-3 flex items-center gap-2">
         <h2 className="text-sm font-semibold">Project margins</h2>
-        <span className="text-slate-500">applied to every check (SPEC §7.8); blank = default</span>
+        <span className="text-muted">applied to every check (SPEC §7.8); blank = default</span>
       </div>
-      <div className="mb-4 flex items-center gap-2 rounded border border-slate-200 bg-slate-50 p-2">
-        <span className="text-slate-600">Signals:</span>
+      <div className="mb-4 flex items-center gap-2 rounded border border-line bg-surface p-2">
+        <span className="text-muted">Signals:</span>
         {s ? (<><Count n={s.pass} status="pass" /><Count n={s.warn} status="warn" /><Count n={s.fail} status="fail" /></>) : <span>—</span>}
-        {computing && <span className="text-slate-400">computing…</span>}
-        <span className="ml-4 text-slate-600" data-testid="margins-delta">
-          {changed.total ? <>{changed.total} checks changed since opened (<span className="text-red-700">{changed.worse} worse</span>, <span className="text-green-700">{changed.better} better</span>)</> : "no status changes yet"}
+        {computing && <span className="text-muted">computing…</span>}
+        <span className="ml-4 text-muted" data-testid="margins-delta">
+          {changed.total ? <>{changed.total} checks changed since opened (<span className="text-fail">{changed.worse} worse</span>, <span className="text-pass">{changed.better} better</span>)</> : "no status changes yet"}
         </span>
-        <button className="ml-auto rounded border bg-white px-2" onClick={() => setBaseline(checkStatuses(results))}>Reset baseline</button>
+        <button className="btn ml-auto" onClick={() => setBaseline(checkStatuses(results))}>Reset baseline</button>
       </div>
       <table className="w-full">
-        <thead><tr className="text-left text-slate-500"><th className="py-1">Margin</th><th>Value</th><th>Default</th><th>Unit</th><th /></tr></thead>
+        <thead><tr className="text-left text-muted"><th className="py-1">Margin</th><th>Value</th><th>Default</th><th>Unit</th><th /></tr></thead>
         <tbody>
           {FIELDS.map((f) => {
             const v = draft[f.key];
             return (
-              <tr key={f.key} className="border-t border-slate-100" title={f.help}>
-                <td className="py-1 pr-2"><div className="font-medium">{f.label}</div><div className="font-mono text-[10px] text-slate-400">{f.key}</div></td>
+              <tr key={f.key} className="border-t border-line-soft" title={f.help}>
+                <td className="py-1 pr-2"><div className="font-medium">{f.label}</div><div className="font-mono text-[10px] text-muted">{f.key}</div></td>
                 <td>
                   <input
                     aria-label={f.key}
-                    className={`w-24 rounded border px-1 tabular-nums ${v === undefined ? "border-slate-200" : "border-sky-400 bg-sky-50"}`}
+                    className={`field w-24 tabular-nums ${v === undefined ? "" : "!border-accent/70 !bg-accent/10 text-accent"}`}
                     type="number" step={f.step ?? 0.1} min={0}
                     placeholder={String(dflt(f.key))}
                     value={v ?? ""}
@@ -94,15 +94,15 @@ export function MarginsTab() {
                     }}
                   />
                 </td>
-                <td className="tabular-nums text-slate-500">{dflt(f.key)}</td>
-                <td className="text-slate-500">{f.unit}</td>
-                <td>{v !== undefined && <button className="text-sky-700" onClick={() => set(f.key, undefined)}>reset</button>}</td>
+                <td className="tabular-nums text-muted">{dflt(f.key)}</td>
+                <td className="text-muted">{f.unit}</td>
+                <td>{v !== undefined && <button className="link" onClick={() => set(f.key, undefined)}>reset</button>}</td>
               </tr>
             );
           })}
         </tbody>
       </table>
-      {!!saved && <p className="mt-3 text-[11px] text-slate-400">Stored under <code>project.margins</code> in {model.rootFile}.</p>}
+      {!!saved && <p className="mt-3 text-[11px] text-muted">Stored under <code>project.margins</code> in {model.rootFile}.</p>}
     </div>
   );
 }

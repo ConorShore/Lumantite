@@ -16,19 +16,19 @@ export function Palette({ onAdd }: { onAdd(modelId: string): void }) {
     return out;
   }, [catalog, q]);
   return (
-    <div className="w-48 shrink-0 flex flex-col border-r border-slate-200 bg-slate-50" aria-label="Device palette">
-      <input className="m-1 rounded border px-1" placeholder="Search models…" value={q} onChange={(e) => setQ(e.target.value)} />
+    <div className="w-48 shrink-0 flex flex-col border-r border-line bg-surface" aria-label="Device palette">
+      <input className="field m-1" placeholder="Search models…" value={q} onChange={(e) => setQ(e.target.value)} />
       <div className="flex-1 overflow-auto pb-1">
         {groups.map(([kind, ids]) => (
           <div key={kind}>
-            <div className="sticky top-0 bg-slate-100 px-2 text-[10px] font-semibold uppercase text-slate-500">{kind}</div>
+            <div className="sticky top-0 bg-raised px-2 text-[10px] font-semibold uppercase tracking-wider text-muted">{kind}</div>
             {ids.map((id) => (
               <div
                 key={id}
                 draggable
                 onDragStart={(e) => { e.dataTransfer.setData(DND_MIME, id); e.dataTransfer.effectAllowed = "copy"; }}
                 onDoubleClick={() => onAdd(id)}
-                className="cursor-grab truncate px-2 font-mono text-[10px] hover:bg-sky-50"
+                className="cursor-grab truncate px-2 font-mono text-[10px] text-fg/90 hover:bg-hover hover:text-accent"
                 title={`${id} — drag onto the canvas (double-click adds at centre)`}
               >
                 {id}

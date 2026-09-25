@@ -46,17 +46,17 @@ export function App() {
   // Hidden layers keep their size (React Flow / Monaco measure it); .tab-hidden forces visibility on descendants.
   const layer = (t: Tab) => `absolute inset-0 ${tab === t ? "" : "tab-hidden pointer-events-none"}`;
   return (
-    <div className="h-full flex flex-col text-slate-900">
+    <div className="h-full flex flex-col bg-page text-fg">
       <TopBar />
       <div className="flex flex-1 min-h-0">
         <Sidebar />
-        <main className="flex-1 flex flex-col min-w-0 border-x border-slate-200">
+        <main className="flex-1 flex flex-col min-w-0 border-x border-line">
           <TabBar />
-          <div className="relative flex-1 min-h-0 bg-white">
+          <div className="relative flex-1 min-h-0 bg-page">
             <div className={layer("canvas")} data-testid="tab-canvas"><ErrorBoundary label="Canvas"><CanvasTab /></ErrorBoundary></div>
             {visited.yaml && (
               <div className={layer("yaml")}>
-                <ErrorBoundary label="YAML editor"><Suspense fallback={<div className="p-4 text-slate-500">Loading editor…</div>}><YamlTab /></Suspense></ErrorBoundary>
+                <ErrorBoundary label="YAML editor"><Suspense fallback={<div className="p-4 text-muted">Loading editor…</div>}><YamlTab /></Suspense></ErrorBoundary>
               </div>
             )}
             {tab === "catalog" && <div className="absolute inset-0"><ErrorBoundary label="Catalog"><CatalogTab /></ErrorBoundary></div>}

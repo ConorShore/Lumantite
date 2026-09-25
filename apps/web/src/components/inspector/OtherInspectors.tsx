@@ -22,7 +22,7 @@ export function SiteInspector({ id }: { id: string }) {
         <Row label="file"><SelectField value={site.file} options={model.files.map((f) => ({ value: f.path, label: f.label ?? f.path }))} onChange={(v) => v && apply([{ op: "moveToFile", kind: "site", id, file: v }])} /></Row>
       </Section>
       <Section title={`Nodes (${members.length})`}>
-        <ul className="font-mono text-[11px]">{members.map((n) => <li key={n.id}><button className="text-sky-700" onClick={() => select([{ kind: "node", id: n.id }])}>{n.id}</button></li>)}</ul>
+        <ul className="font-mono text-[11px]">{members.map((n) => <li key={n.id}><button className="link" onClick={() => select([{ kind: "node", id: n.id }])}>{n.id}</button></li>)}</ul>
       </Section>
       <ElementIssues id={id} />
     </>
@@ -43,12 +43,12 @@ export function FileInspector({ path }: { path: string }) {
   return (
     <>
       <Section title={isRoot ? "parent file" : "fragment file"}>
-        <Row label="path"><span className="font-mono break-all">{path}{dirty && <span className="text-amber-600"> ●</span>}</span></Row>
+        <Row label="path"><span className="font-mono break-all">{path}{dirty && <span className="text-aqua" title="unsaved changes"> ●</span>}</span></Row>
         <Row label="label"><span>{f.label ?? "—"}</span></Row>
         <Row label="contents"><span>{n} nodes, {fb} fibres, {st} sites</span></Row>
         <div className="mt-1 flex gap-1">
-          <button className="rounded border px-2" onClick={() => { setYamlFile(path); setTab("yaml"); }}>Open YAML</button>
-          {!isRoot && <button className="rounded border border-red-300 px-2 text-red-700 disabled:opacity-40" disabled={n + fb + st > 0} title={n + fb + st > 0 ? "Move its elements out first" : ""} onClick={() => apply([{ op: "removeFile", file: path }])}>Remove file</button>}
+          <button className="btn" onClick={() => { setYamlFile(path); setTab("yaml"); }}>Open YAML</button>
+          {!isRoot && <button className="btn-danger" disabled={n + fb + st > 0} title={n + fb + st > 0 ? "Move its elements out first" : ""} onClick={() => apply([{ op: "removeFile", file: path }])}>Remove file</button>}
         </div>
       </Section>
       <ElementIssues id={storageOf(model.rootFile, path)} />
@@ -85,7 +85,7 @@ export function ProjectInspector() {
       <Section title={`Files (${model.files.length})`}>
         <ul>
           {model.files.map((f) => (
-            <li key={f.path}><button className="text-sky-700 font-mono text-[11px] text-left break-all" onClick={() => select([{ kind: "file", id: f.path }])}>{f.label ? `${f.label} — ` : ""}{f.path}</button></li>
+            <li key={f.path}><button className="link font-mono text-[11px] text-left break-all" onClick={() => select([{ kind: "file", id: f.path }])}>{f.label ? `${f.label} — ` : ""}{f.path}</button></li>
           ))}
         </ul>
       </Section>

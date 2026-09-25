@@ -3,13 +3,13 @@ import { useEffect, useState, type ReactNode } from "react";
 export function Row({ label, children, title }: { label: string; children: ReactNode; title?: string }) {
   return (
     <label className="grid grid-cols-[88px_1fr] items-center gap-1 py-0.5" title={title}>
-      <span className="text-slate-500 truncate">{label}</span>
+      <span className="text-muted truncate">{label}</span>
       <span className="min-w-0">{children}</span>
     </label>
   );
 }
 
-const input = "w-full rounded border border-slate-300 px-1 py-px bg-white";
+const input = "field w-full py-px";
 
 /** Text input that commits on blur / Enter (not per keystroke), so each edit is one op. */
 export function TextField({ value, onCommit, placeholder, list, mono }: { value: string | undefined; onCommit(v: string | undefined): void; placeholder?: string; list?: string; mono?: boolean }) {
@@ -66,8 +66,8 @@ export function SelectField({ value, options, onChange, allowEmpty }: { value: s
 
 export function Section({ title, children, right }: { title: string; children: ReactNode; right?: ReactNode }) {
   return (
-    <section className="border-b border-slate-100 px-2 py-1.5">
-      <h4 className="mb-1 flex items-center text-[10px] font-semibold uppercase tracking-wider text-slate-500">{title}<span className="ml-auto normal-case tracking-normal">{right}</span></h4>
+    <section className="border-b border-line px-2 py-1.5">
+      <h4 className="mb-1 flex items-center text-[10px] font-semibold uppercase tracking-wider text-muted">{title}<span className="ml-auto normal-case tracking-normal">{right}</span></h4>
       {children}
     </section>
   );

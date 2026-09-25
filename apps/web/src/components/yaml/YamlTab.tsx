@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import Editor, { type OnMount } from "@monaco-editor/react";
-import { monaco, uriFor, configureSchemas } from "./monacoSetup";
+import { monaco, uriFor, configureSchemas, MONACO_THEME } from "./monacoSetup";
 import { useProject } from "../../store/projectStore";
 import { useUi } from "../../store/uiStore";
 import { useAllIssues } from "../../store/hooks";
@@ -100,29 +100,30 @@ export default function YamlTab() {
     ed.onDidBlurEditorText(() => { const p = ed.getModel()?.uri.path.slice(1); if (p) flush(p); });
   };
 
-  if (!model) return <div className="p-6 text-slate-500">No project loaded.</div>;
+  if (!model) return <div className="p-6 text-muted">No project loaded.</div>;
   const issueCount = (p: string) => { const st = storageOf(model.rootFile, p); return issues.filter((i) => i.element === p || i.element === st).length; };
 
   return (
     <div className="h-full flex flex-col">
-      <div className="flex h-7 items-end gap-0.5 border-b border-slate-200 bg-slate-50 px-2 overflow-x-auto" role="tablist" aria-label="Project files">
+      <div className="flex h-7 items-end gap-1 border-b border-line bg-surface px-2 overflow-x-auto" role="tablist" aria-label="Project files">
         {files.map((f) => (
           <button
             key={f.path}
             role="tab"
             aria-selected={f.path === file}
-            className={`whitespace-nowrap rounded-t border border-b-0 px-2 py-0.5 font-mono text-[11px] ${f.path === file ? "bg-white border-slate-200" : "border-transparent text-slate-500 hover:text-slate-800"}`}
+            className={`-mb-px whitespace-nowrap border-b-2 px-2 py-0.5 font-mono text-[11px] ${f.path === file ? "border-accent text-fg" : "border-transparent text-muted hover:text-fg hover:border-line"}`}
             onClick={() => { flush(file); setYamlFile(f.path); }}
             title={f.label}
           >
-            {f.path === model.rootFile ? "★ " : ""}{f.path}
-            {dirty.includes(f.path) && <span className="text-amber-600"> ●</span>}
-            {issueCount(f.path) > 0 && <span className="text-red-600"> ({issueCount(f.path)})</span>}
+            {f.path === model.rootFile && <span className="text-accent">★ </span>}{f.path}
+            {dirty.includes(f.path) && <span className="text-aqua" title="unsaved changes"> ●</span>}
+            {issueCount(f.path) > 0 && <span className="text-fail"> ({issueCount(f.path)})</span>}
           </button>
         ))}
       </div>
-      <div className="flex-1 min-h-0">
+      <div className="flex-1 min-h-0 bg-page">
         <Editor
+          theme={MONACO_THEME}
           path={uriFor(file)}
           defaultLanguage="yaml"
           defaultValue={text}

@@ -5,7 +5,7 @@ import { useUi } from "../../store/uiStore";
 
 export function Sidebar() {
   return (
-    <aside className="w-56 shrink-0 flex flex-col bg-slate-50 min-h-0">
+    <aside className="w-56 shrink-0 flex flex-col bg-surface min-h-0">
       <Projects />
       <CatalogTree />
     </aside>
@@ -26,26 +26,26 @@ function Projects() {
     void open(id);
   };
   return (
-    <section className="border-b border-slate-200">
-      <h3 className="flex items-center px-2 h-7 font-semibold text-slate-600 uppercase text-[10px] tracking-wider">
+    <section className="border-b border-line">
+      <h3 className="flex items-center px-2 h-7 font-semibold text-muted uppercase text-[10px] tracking-wider">
         Projects
-        <button className="ml-auto text-sky-700 normal-case tracking-normal text-xs" onClick={() => setName("")}>+ New</button>
+        <button className="ml-auto rounded px-1 text-aqua normal-case tracking-normal text-xs hover:bg-aqua/10 hover:text-aqua-hover" onClick={() => setName("")}>+ New</button>
       </h3>
       {name !== null && (
         <form className="flex gap-1 px-2 pb-1" onSubmit={(e) => { e.preventDefault(); if (name.trim()) void create(name.trim()); setName(null); }}>
-          <input autoFocus className="flex-1 min-w-0 rounded border px-1" placeholder="Project name" value={name} onChange={(e) => setName(e.target.value)} onKeyDown={(e) => e.key === "Escape" && setName(null)} />
-          <button className="rounded bg-sky-600 px-2 text-white">Create</button>
+          <input autoFocus className="field flex-1 min-w-0" placeholder="Project name" value={name} onChange={(e) => setName(e.target.value)} onKeyDown={(e) => e.key === "Escape" && setName(null)} />
+          <button className="btn-new">Create</button>
         </form>
       )}
       <ul className="max-h-48 overflow-auto pb-1">
         {projects.map((p) => (
           <li key={p.id}>
-            <button className={`w-full text-left px-3 py-0.5 truncate ${p.id === current ? "bg-sky-100 font-medium" : "hover:bg-slate-100"}`} onClick={() => pick(p.id)} title={p.rootFile}>
+            <button className={`w-full text-left px-3 py-0.5 truncate ${p.id === current ? "bg-accent/15 text-accent font-medium shadow-[inset_2px_0_0_var(--color-accent)]" : "text-fg hover:bg-hover"}`} onClick={() => pick(p.id)} title={p.rootFile}>
               {p.name}
             </button>
           </li>
         ))}
-        {!projects.length && <li className="px-3 text-slate-400">none</li>}
+        {!projects.length && <li className="px-3 text-muted">none</li>}
       </ul>
     </section>
   );
@@ -68,20 +68,20 @@ function CatalogTree() {
   }, [rows]);
   return (
     <section className="flex-1 min-h-0 flex flex-col">
-      <h3 className="px-2 h-7 flex items-center font-semibold text-slate-600 uppercase text-[10px] tracking-wider">Catalog</h3>
+      <h3 className="px-2 h-7 flex items-center font-semibold text-muted uppercase text-[10px] tracking-wider">Catalog</h3>
       <ul className="flex-1 overflow-auto pb-2">
         {groups.map(([kind, ids]) => (
           <li key={kind}>
-            <button className="w-full text-left px-2 py-0.5 hover:bg-slate-100" onClick={() => setOpen((o) => ({ ...o, [kind]: !o[kind] }))}>
-              <span className="inline-block w-3 text-slate-400">{open[kind] ? "▾" : "▸"}</span>
-              {kind} <span className="text-slate-400">({ids.length})</span>
+            <button className="w-full text-left px-2 py-0.5 hover:bg-hover" onClick={() => setOpen((o) => ({ ...o, [kind]: !o[kind] }))}>
+              <span className="inline-block w-3 text-faint">{open[kind] ? "▾" : "▸"}</span>
+              {kind} <span className="text-muted">({ids.length})</span>
             </button>
             {open[kind] && (
               <ul>
                 {ids.map((id) => (
                   <li key={id}>
                     <button
-                      className={`w-full text-left pl-7 pr-2 truncate font-mono text-[11px] ${selected === id ? "bg-sky-100" : "hover:bg-slate-100"}`}
+                      className={`w-full text-left pl-7 pr-2 truncate font-mono text-[11px] ${selected === id ? "bg-accent/15 text-accent shadow-[inset_2px_0_0_var(--color-accent)]" : "text-fg/90 hover:bg-hover"}`}
                       onClick={() => { setView(kind, id); setTab("catalog"); }}
                       title={id}
                     >

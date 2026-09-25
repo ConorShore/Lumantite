@@ -1,15 +1,160 @@
 @import "tailwindcss";
 
-@theme {
+/*
+ * Lumantite dark palette. Defined once here; Tailwind v4 turns each --color-* into utilities
+ * (bg-surface, text-accent, border-line, ring-aqua, bg-fail/15, ...). `static` keeps every
+ * variable on :root so inline styles / SVG can use var(--color-*) too.
+ * Status hexes are mirrored in src/lib/status.ts (STATUS_COLOR) for SVG strokes.
+ */
+@theme static {
   --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  /* surfaces (no pure black) */
+  --color-page: #1b1c1f;      /* app background, canvas, editor, tables */
+  --color-surface: #232428;   /* panels: top bar, sidebar, inspector, issues, toolbars */
+  --color-raised: #2b2d31;    /* cards, buttons, popovers, table headers, device nodes */
+  --color-hover: #33353a;     /* hover on raised / surface rows */
+  --color-line: #3a3c42;      /* borders */
+  --color-line-soft: #2e3034; /* hairlines between rows */
+
+  /* text */
+  --color-fg: #e6e6e6;        /* primary text (13.5:1 on page) */
+  --color-muted: #9a9ca3;     /* secondary text (6.2:1 on page, 5.0:1 on raised) */
+  --color-faint: #83868e;     /* placeholders, glyphs, separators (4.7:1 on page) */
+
+  /* primary accent: golden yellow */
+  --color-accent: #f2c14e;
+  --color-accent-hover: #ffd166;
+  --color-on-accent: #1b1c1f;
+
+  /* offset accent: aqua */
+  --color-aqua: #3fd8d2;
+  --color-aqua-hover: #6ee7e2;
+
+  /* status (kept clear of the gold accent: warn is orange, not yellow) */
+  --color-pass: #4ade80;
+  --color-warn: #fb923c;
+  --color-fail: #f87171;
+  --color-na: #8b8e96;
 }
 
-html, body, #root { height: 100%; margin: 0; }
-body { font-size: 12px; color: #0f172a; background: #f8fafc; }
+@layer base {
+  html {
+    color-scheme: dark;
+    scrollbar-color: var(--color-line) transparent;
+  }
+  html, body, #root { height: 100%; margin: 0; }
+  body {
+    font-size: 12px;
+    color: var(--color-fg);
+    background: var(--color-page);
+  }
+  *, ::before, ::after, ::backdrop, ::file-selector-button { border-color: var(--color-line); }
+  input:not([type="checkbox"]):not([type="radio"]), select, textarea {
+    background-color: var(--color-page);
+    color: var(--color-fg);
+  }
+  input:not([type="checkbox"]):not([type="radio"]):focus, select:focus, textarea:focus { border-color: var(--color-accent); }
+  input:disabled, select:disabled, textarea:disabled { color: var(--color-muted); }
+  ::placeholder { color: var(--color-faint); opacity: 1; }
+  option { background-color: var(--color-raised); color: var(--color-fg); }
+  input[type="checkbox"], input[type="radio"] { accent-color: var(--color-accent); }
+  :focus-visible { outline: 2px solid var(--color-accent); outline-offset: 1px; }
+  ::selection { background: color-mix(in srgb, var(--color-accent) 35%, transparent); }
+  a { color: var(--color-accent); }
+  a:hover { color: var(--color-accent-hover); }
 
-/* React Flow tweaks: compact handles, dashed file frames below everything */
-.react-flow__handle { width: 8px; height: 8px; min-width: 0; min-height: 0; border-radius: 2px; }
+  /* WebKit scrollbars (Safari); Chromium/Firefox use scrollbar-color above */
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--color-line); border-radius: 6px; border: 2px solid transparent; background-clip: padding-box; }
+  ::-webkit-scrollbar-thumb:hover { background-color: #4a4d55; }
+  ::-webkit-scrollbar-corner { background: transparent; }
+}
+
+@layer components {
+  /* neutral button */
+  .btn {
+    @apply rounded border border-line bg-raised px-2 text-fg hover:bg-hover disabled:cursor-default disabled:opacity-40 disabled:hover:bg-raised;
+  }
+  /* primary (gold) */
+  .btn-primary {
+    @apply rounded border border-accent bg-accent px-2 font-medium text-on-accent hover:border-accent-hover hover:bg-accent-hover disabled:cursor-default disabled:opacity-40 disabled:hover:bg-accent;
+  }
+  /* "new ..." affordances (aqua) */
+  .btn-new {
+    @apply rounded border border-aqua/40 bg-aqua/10 px-2 text-aqua hover:border-aqua hover:bg-aqua/20 hover:text-aqua-hover;
+  }
+  .btn-danger {
+    @apply rounded border border-fail/50 bg-raised px-2 text-fail hover:bg-fail/15 disabled:cursor-default disabled:opacity-40 disabled:hover:bg-raised;
+  }
+  /* inline text link */
+  .link {
+    @apply text-accent hover:text-accent-hover hover:underline;
+  }
+  /* segmented / chip toggle: add .is-active for the selected one */
+  .seg {
+    @apply rounded border border-transparent px-2 py-0.5 text-muted hover:bg-hover hover:text-fg;
+  }
+  .seg.is-active {
+    @apply border-accent/40 bg-accent/15 text-accent hover:bg-accent/20 hover:text-accent;
+  }
+  .field {
+    @apply rounded border border-line bg-page px-1 text-fg focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent/60 disabled:text-muted;
+  }
+}
+
+/* ------------------------------------------------------------------ React Flow (dark) */
+.react-flow {
+  --xy-background-color: var(--color-page);
+  --xy-background-pattern-dots-color: #3a3c42;
+  --xy-edge-stroke: var(--color-na);
+  --xy-connectionline-stroke: var(--color-aqua);
+  --xy-connectionline-stroke-width: 2;
+  --xy-selection-background-color: color-mix(in srgb, var(--color-accent) 8%, transparent);
+  --xy-selection-border: 1px dashed color-mix(in srgb, var(--color-accent) 70%, transparent);
+  --xy-resize-background-color: var(--color-accent);
+  --xy-controls-button-background-color: var(--color-raised);
+  --xy-controls-button-background-color-hover: var(--color-hover);
+  --xy-controls-button-color: var(--color-fg);
+  --xy-controls-button-color-hover: var(--color-accent);
+  --xy-controls-button-border-color: var(--color-line);
+  --xy-controls-box-shadow: 0 2px 8px rgb(0 0 0 / 0.35);
+  --xy-minimap-background-color: var(--color-surface);
+  --xy-minimap-mask-background-color: rgb(27 28 31 / 0.65);
+  --xy-minimap-mask-stroke-color: var(--color-accent);
+  --xy-minimap-node-background-color: #4a4d55;
+  --xy-attribution-background-color: transparent;
+  --xy-edge-label-background-color: var(--color-surface);
+  --xy-edge-label-color: var(--color-fg);
+  color: var(--color-fg);
+}
+.react-flow__controls { border: 1px solid var(--color-line); border-radius: 4px; overflow: hidden; }
+.react-flow__controls-button { border-bottom-color: var(--color-line); }
+.react-flow__controls-button svg { fill: currentColor; }
+.react-flow__minimap { border: 1px solid var(--color-line); border-radius: 4px; overflow: hidden; }
+.react-flow__attribution { background: transparent; }
+.react-flow__attribution a { color: var(--color-faint); }
+
+/* Port handles: small grey dots; warn/fail ports get a status ring; aqua on hover / while connecting. */
+.react-flow__handle {
+  width: 8px; height: 8px; min-width: 0; min-height: 0; border-radius: 9999px;
+  background: #6b6e76; border: 1.5px solid var(--color-raised);
+  transition: background-color 80ms, border-color 80ms, transform 80ms;
+}
+.react-flow__handle.port-warn { border-color: var(--color-warn); }
+.react-flow__handle.port-fail { border-color: var(--color-fail); }
+.react-flow__handle:hover,
+.react-flow__handle.connectingfrom,
+.react-flow__handle.connectingto,
+.react-flow__handle.valid {
+  background: var(--color-aqua); border-color: var(--color-aqua-hover);
+}
+.react-flow__handle-left:hover, .react-flow__handle-left.connectingto, .react-flow__handle-left.connectingfrom, .react-flow__handle-left.valid { transform: translate(-50%, -50%) scale(1.35); }
+.react-flow__handle-right:hover, .react-flow__handle-right.connectingto, .react-flow__handle-right.connectingfrom, .react-flow__handle-right.valid { transform: translate(50%, -50%) scale(1.35); }
+
+.react-flow__resize-control.handle { background: var(--color-accent); border-color: var(--color-page); }
 .react-flow__node-fileFrame, .react-flow__node-siteFrame { pointer-events: none; }
 .react-flow__node-fileFrame .frame-grip, .react-flow__node-siteFrame .frame-grip,
 .react-flow__node-fileFrame .react-flow__resize-control, .react-flow__node-siteFrame .react-flow__resize-control { pointer-events: all; }

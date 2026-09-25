@@ -23,20 +23,20 @@ export function ExportsTab() {
     if (kind === "signals") return toSignalsCsv(results, delimiter);
     return toMarkdown(model, results);
   }, [results, model, kind, delimiter]);
-  if (!results || !model) return <div className="p-6 text-slate-500">No results to export yet.</div>;
+  if (!results || !model) return <div className="p-6 text-muted">No results to export yet.</div>;
   const base = model.rootFile.replace(/\/?project\.ya?ml$/, "").replace(/\.ya?ml$/, "").replace(/\//g, "-") || "project";
   const filename = `${base}-${META[kind].ext}`;
   return (
     <div className="flex h-full flex-col">
-      <div className="flex items-center gap-1 border-b border-slate-200 bg-slate-50 px-2 py-1">
+      <div className="flex items-center gap-1 border-b border-line bg-surface px-2 py-1">
         {(Object.keys(META) as Kind[]).map((k) => (
-          <button key={k} className={`rounded px-2 py-0.5 ${k === kind ? "bg-sky-600 text-white" : "hover:bg-slate-200"}`} onClick={() => setKind(k)}>{META[k].label}</button>
+          <button key={k} className={`seg ${k === kind ? "is-active" : ""}`} onClick={() => setKind(k)}>{META[k].label}</button>
         ))}
-        <span className="ml-3 text-slate-500">{text.split("\n").length - 1} lines · {(text.length / 1024).toFixed(1)} KiB</span>
-        <button className="ml-auto rounded bg-sky-600 px-2 py-0.5 text-white" onClick={() => downloadText(filename, text, META[kind].mime)}>Download {filename}</button>
-        <button className="rounded border bg-white px-2 py-0.5" onClick={() => void navigator.clipboard?.writeText(text)}>Copy</button>
+        <span className="ml-3 text-muted">{text.split("\n").length - 1} lines · {(text.length / 1024).toFixed(1)} KiB</span>
+        <button className="btn-primary ml-auto py-0.5" onClick={() => downloadText(filename, text, META[kind].mime)}>Download {filename}</button>
+        <button className="btn py-0.5" onClick={() => void navigator.clipboard?.writeText(text)}>Copy</button>
       </div>
-      <pre className="flex-1 min-h-0 overflow-auto p-2 font-mono text-[11px] leading-4" aria-label="Export preview">{text}</pre>
+      <pre className="flex-1 min-h-0 overflow-auto bg-page p-2 font-mono text-[11px] leading-4 text-fg" aria-label="Export preview">{text}</pre>
     </div>
   );
 }

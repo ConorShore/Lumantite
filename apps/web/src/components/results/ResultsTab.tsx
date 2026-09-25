@@ -15,12 +15,12 @@ function LinkBudget({ s }: { s: SignalResult }) {
     <div>
       <div className="mb-1 font-semibold">Link budget {s.id} → {s.rx ? `${s.rx.node}.${s.rx.port}` : `(${s.terminated})`}</div>
       <table className="text-[11px]">
-        <thead><tr className="text-left text-slate-500"><th className="pr-3">#</th><th className="pr-3">element</th><th className="pr-3">kind</th><th className="pr-3">in → out</th><th className="pr-3 text-right">Δ min/typ/max dB</th><th className="pr-3 text-right">power min/typ/max dBm</th><th className="pr-3 text-right">ΔCD</th><th className="text-right">CD ps/nm</th><th className="pl-3">note</th></tr></thead>
+        <thead><tr className="text-left text-muted"><th className="pr-3">#</th><th className="pr-3">element</th><th className="pr-3">kind</th><th className="pr-3">in → out</th><th className="pr-3 text-right">Δ min/typ/max dB</th><th className="pr-3 text-right">power min/typ/max dBm</th><th className="pr-3 text-right">ΔCD</th><th className="text-right">CD ps/nm</th><th className="pl-3">note</th></tr></thead>
         <tbody className="tabular-nums">
           {s.path.map((p, i) => {
             return (
-              <tr key={i} className="border-t border-slate-200">
-                <td className="pr-3 text-slate-400">{i}</td>
+              <tr key={i} className="border-t border-line">
+                <td className="pr-3 text-muted">{i}</td>
                 <td className="pr-3 font-mono">{p.element}</td>
                 <td className="pr-3">{p.kind}</td>
                 <td className="pr-3 font-mono">{p.inPort ?? ""}{p.inPort || p.outPort ? " → " : ""}{p.outPort ?? ""}</td>
@@ -28,14 +28,14 @@ function LinkBudget({ s }: { s: SignalResult }) {
                 <td className="pr-3 text-right font-medium">{dB(p.power.min)} / {dB(p.power.typ)} / {dB(p.power.max)}</td>
                 <td className="pr-3 text-right">{cd(p.deltaCd)}</td>
                 <td className="text-right">{cd(p.cd)}</td>
-                <td className="pl-3 text-slate-500">{p.note ?? ""}</td>
+                <td className="pl-3 text-muted">{p.note ?? ""}</td>
               </tr>
             );
           })}
         </tbody>
       </table>
       <div className="mt-2 space-y-0.5">
-        {s.checks.map((c) => <div key={c.code} className="flex gap-2"><StatusBadge status={c.status} /><span className="font-mono">{c.code}</span><span>{c.message}</span>{c.margin !== undefined && <span className="tabular-nums text-slate-500">margin {dB(c.margin)}</span>}</div>)}
+        {s.checks.map((c) => <div key={c.code} className="flex gap-2"><StatusBadge status={c.status} /><span className="font-mono">{c.code}</span><span>{c.message}</span>{c.margin !== undefined && <span className="tabular-nums text-muted">margin {dB(c.margin)}</span>}</div>)}
       </div>
     </div>
   );
@@ -96,15 +96,15 @@ export function ResultsTab() {
     { key: "ch", header: "channels", value: (a) => a.perChannel.length, align: "right" },
   ], []);
 
-  if (!results) return <div className="p-6 text-slate-500">{error ? `Compute failed: ${error}` : "No results yet."}</div>;
+  if (!results) return <div className="p-6 text-muted">{error ? `Compute failed: ${error}` : "No results yet."}</div>;
   const counts: Record<Sub, number> = { signals: results.signals.length, ports: results.ports.length, fibres: results.fibres.length, amplifiers: results.amplifiers.length };
   return (
     <div className="flex h-full flex-col">
-      <div className="flex gap-1 border-b border-slate-200 bg-slate-50 px-2 py-1">
+      <div className="flex items-center gap-1 border-b border-line bg-surface px-2 py-1">
         {(Object.keys(counts) as Sub[]).map((k) => (
-          <button key={k} className={`rounded px-2 py-0.5 ${k === sub ? "bg-sky-600 text-white" : "hover:bg-slate-200"}`} onClick={() => setSub(k)}>{k} <span className="opacity-60">{counts[k]}</span></button>
+          <button key={k} className={`seg ${k === sub ? "is-active" : ""}`} onClick={() => setSub(k)}>{k} <span className="opacity-60">{counts[k]}</span></button>
         ))}
-        <span className="ml-auto text-slate-400">computed {new Date(results.computedAt).toLocaleTimeString()}</span>
+        <span className="ml-auto text-muted">computed {new Date(results.computedAt).toLocaleTimeString()}</span>
       </div>
       <div className="flex-1 min-h-0">
         {sub === "signals" && <DataTable rows={results.signals} columns={signalCols} rowKey={(s) => s.id} renderExpanded={(s) => <LinkBudget s={s} />} onRowClick={(s) => select([{ kind: "node", id: s.tx.node }])} initialSort={{ key: "status", dir: -1 }} />}
@@ -112,7 +112,7 @@ export function ResultsTab() {
         {sub === "fibres" && <DataTable rows={results.fibres} columns={fibreCols} rowKey={(f) => f.id} onRowClick={(f) => select([{ kind: "fibre", id: f.id }])} />}
         {sub === "amplifiers" && <DataTable rows={results.amplifiers} columns={ampCols} rowKey={(a) => a.id} onRowClick={(a) => select([{ kind: "node", id: a.id }])} renderExpanded={(a) => (
           <table className="text-[11px] tabular-nums">
-            <thead><tr className="text-slate-500"><th className="pr-3 text-left">channel</th><th className="pr-3 text-right">pin typ</th><th className="pr-3 text-right">gain min/typ/max</th><th className="text-right">pout typ</th></tr></thead>
+            <thead><tr className="text-muted"><th className="pr-3 text-left">channel</th><th className="pr-3 text-right">pin typ</th><th className="pr-3 text-right">gain min/typ/max</th><th className="text-right">pout typ</th></tr></thead>
             <tbody>{a.perChannel.map((c) => <tr key={c.signalId}><td className="pr-3">{c.channel.id}</td><td className="pr-3 text-right">{dB(c.pin.typ)}</td><td className="pr-3 text-right">{dB(c.gain.min)} / {dB(c.gain.typ)} / {dB(c.gain.max)}</td><td className="text-right">{dB(c.pout.typ)}</td></tr>)}</tbody>
           </table>
         )} />}

@@ -25,8 +25,8 @@ export function Inspector() {
     return <FileInspector path={s.id} />;
   })();
   return (
-    <aside className="w-72 shrink-0 overflow-auto bg-white" aria-label="Inspector">
-      <div className="h-7 flex items-center px-2 border-b border-slate-200 bg-slate-50 font-medium">Inspector</div>
+    <aside className="w-72 shrink-0 overflow-auto bg-surface" aria-label="Inspector">
+      <div className="sticky top-0 z-[1] h-7 flex items-center px-2 border-b border-line bg-surface font-medium text-fg">Inspector</div>
       {body}
     </aside>
   );
@@ -48,7 +48,7 @@ function MultiInspector() {
           onChange={(file) => file && apply(movable.map((s) => ({ op: "moveToFile", kind: s.kind, id: s.id, file })))}
         />
       </Row>
-      <button className="mt-2 rounded border border-red-300 px-2 text-red-700" onClick={deleteSelection}>Delete selected</button>
+      <button className="btn-danger mt-2" onClick={deleteSelection}>Delete selected</button>
     </Section>
   );
 }
@@ -60,7 +60,7 @@ export function ElementIssues({ id }: { id: string }) {
   return (
     <Section title={`Issues (${issues.length})`}>
       <ul className="space-y-0.5">
-        {issues.map((i, n) => <li key={n} className={SEVERITY_CLASS[i.severity]}><b>{i.severity}</b> {i.message}</li>)}
+        {issues.map((i, n) => <li key={n} className="text-fg"><b className={`uppercase text-[10px] ${SEVERITY_CLASS[i.severity]}`}>{i.severity}</b> {i.message}</li>)}
       </ul>
     </Section>
   );

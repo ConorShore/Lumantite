@@ -41,7 +41,7 @@ export function FibreInspector({ id }: { id: string }) {
         <Row label="file"><SelectField value={f.file} options={model.files.map((x) => ({ value: x.path, label: x.label ?? x.path }))} onChange={(v) => v && apply([{ op: "moveToFile", kind: "fibre", id, file: v }])} /></Row>
         <datalist id="endpoints">{endpoints.map((e) => <option key={e} value={e} />)}</datalist>
         {(["a", "b"] as const).map((end) => (
-          <div key={end} className="mt-1 rounded bg-slate-50 px-1">
+          <div key={end} className="mt-1 rounded border border-line bg-raised px-1">
             <Row label={`${end}.to`}><TextField mono list="endpoints" value={f[end]?.to} onCommit={(v) => patch({ [end]: { to: v } } as Partial<FibreInst>)} /></Row>
             <Row label={`${end}.joint`}><SelectField value={f[end]?.joint} allowEmpty={`(default ${t?.kind === "fibre" ? t.default_joint ?? "port" : "?"})`} options={joints} onChange={(v) => patch({ [end]: { joint: v } } as Partial<FibreInst>)} /></Row>
           </div>

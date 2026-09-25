@@ -35,45 +35,45 @@ export function ConnectPopover({ pending, onClose }: { pending: PendingConnectio
 
   return (
     <div
-      className="fixed z-50 w-64 rounded border border-slate-300 bg-white p-2 shadow-xl"
+      className="fixed z-50 w-64 rounded border border-line bg-raised p-2 text-fg shadow-2xl shadow-black/40"
       style={{ left: Math.min(pending.x, window.innerWidth - 270), top: Math.min(pending.y, window.innerHeight - 260) }}
       role="dialog"
       aria-label="New fibre"
       onKeyDown={(e) => { if (e.key === "Escape") onClose(); if (e.key === "Enter") create(); }}
     >
-      <div className="mb-1 font-semibold">New fibre</div>
-      <div className="mb-1 font-mono text-[10px] text-slate-600">{pending.a} → {pending.b}</div>
-      {reused.length > 0 && <div className="mb-1 text-[10px] text-amber-700">Port already used by {reused.join(", ")}</div>}
+      <div className="mb-1 font-semibold text-aqua">New fibre</div>
+      <div className="mb-1 font-mono text-[10px] text-muted">{pending.a} → {pending.b}</div>
+      {reused.length > 0 && <div className="mb-1 text-[10px] text-warn">Port already used by {reused.join(", ")}</div>}
       <label className="block mb-1">Type
-        <select autoFocus className="w-full rounded border px-1" value={type} onChange={(e) => setType(e.target.value)}>
+        <select autoFocus className="field w-full" value={type} onChange={(e) => setType(e.target.value)}>
           {fibres.map((f) => <option key={f.id} value={f.id}>{f.id}{f.default_length_km !== undefined ? " (patch)" : ""}</option>)}
         </select>
       </label>
       <label className="block mb-1">Length km
-        <input className="w-full rounded border px-1" type="number" step="any" min={0} value={length} placeholder={t?.default_length_km !== undefined ? `default ${t.default_length_km}` : "required for spans"} onChange={(e) => setLength(e.target.value)} />
+        <input className="field w-full" type="number" step="any" min={0} value={length} placeholder={t?.default_length_km !== undefined ? `default ${t.default_length_km}` : "required for spans"} onChange={(e) => setLength(e.target.value)} />
       </label>
       <div className="flex gap-1">
         <label className="flex-1">Joint a
-          <select className="w-full rounded border px-1" value={jointA} onChange={(e) => setJointA(e.target.value)}>
+          <select className="field w-full" value={jointA} onChange={(e) => setJointA(e.target.value)}>
             <option value="">default ({dflt(pending.connA)})</option>
             {joints.map((j) => <option key={j}>{j}</option>)}
           </select>
         </label>
         <label className="flex-1">Joint b
-          <select className="w-full rounded border px-1" value={jointB} onChange={(e) => setJointB(e.target.value)}>
+          <select className="field w-full" value={jointB} onChange={(e) => setJointB(e.target.value)}>
             <option value="">default ({dflt(pending.connB)})</option>
             {joints.map((j) => <option key={j}>{j}</option>)}
           </select>
         </label>
       </div>
       <label className="block mt-1">File
-        <select className="w-full rounded border px-1" value={file} onChange={(e) => setFile(e.target.value)}>
+        <select className="field w-full" value={file} onChange={(e) => setFile(e.target.value)}>
           {model?.files.map((f) => <option key={f.path} value={f.path}>{f.label ?? f.path}</option>)}
         </select>
       </label>
       <div className="mt-2 flex justify-end gap-1">
-        <button className="rounded border px-2" onClick={onClose}>Cancel</button>
-        <button className="rounded bg-sky-600 px-2 text-white" onClick={create} disabled={!type}>Create</button>
+        <button className="btn" onClick={onClose}>Cancel</button>
+        <button className="btn-primary" onClick={create} disabled={!type}>Create</button>
       </div>
     </div>
   );

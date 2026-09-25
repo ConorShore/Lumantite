@@ -26,12 +26,13 @@ function FibreEdgeImpl({ id, sourceX, sourceY, targetX, targetY, sourcePosition,
         style={{
           stroke: color, strokeWidth: width, opacity: dim ? 0.15 : 1,
           strokeDasharray: hasError ? "6 3" : undefined,
-          filter: selected ? "drop-shadow(0 0 2px #0284c7)" : undefined,
+          // gold halo for the selection and the selected signal's path; the stroke keeps its status colour
+          filter: selected ? "drop-shadow(0 0 3px #f2c14e) drop-shadow(0 0 1px #f2c14e)" : onPath ? "drop-shadow(0 0 3px rgb(242 193 78 / 0.8))" : undefined,
         }}
       />
       <EdgeLabelRenderer>
         <div
-          className={`nodrag nopan absolute rounded px-1 text-[9px] leading-3 border bg-white/90 ${hasError ? "border-red-500 text-red-700" : "border-slate-200 text-slate-600"} ${selected ? "ring-1 ring-sky-500" : ""}`}
+          className={`nodrag nopan absolute rounded px-1 text-[9px] leading-3 border bg-surface/95 ${hasError ? "border-fail/70 text-fail" : onPath ? "border-accent/50 text-fg" : "border-line text-fg/85"} ${selected ? "ring-1 ring-accent" : ""}`}
           style={{ transform: `translate(-50%, -50%) translate(${lx}px, ${ly}px)`, opacity: dim ? 0.25 : 1, pointerEvents: "all" }}
         >
           {data?.label}

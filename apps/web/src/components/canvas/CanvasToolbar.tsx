@@ -18,22 +18,22 @@ export function CanvasToolbar({ paletteOpen, onTogglePalette, onNewFile, onNewSi
   }, [model, catalog]);
   const plan = filter?.plan ?? plans[0] ?? "";
   const channels = plan ? catalog.channels(plan) : [];
-  const btn = "rounded border border-slate-300 bg-white px-2 py-0.5 hover:bg-slate-50";
+  const btn = "btn py-0.5";
   return (
-    <div className="flex flex-wrap items-center gap-1.5 border-b border-slate-200 bg-slate-50 px-2 py-1">
-      <button className={`${btn} ${paletteOpen ? "bg-sky-50 border-sky-300" : ""}`} onClick={onTogglePalette} aria-pressed={paletteOpen}>Palette</button>
+    <div className="flex flex-wrap items-center gap-1.5 border-b border-line bg-surface px-2 py-1">
+      <button className={`${btn} ${paletteOpen ? "!border-accent/50 !bg-accent/15 text-accent" : ""}`} onClick={onTogglePalette} aria-pressed={paletteOpen}>Palette</button>
       <label className={`${btn} flex items-center gap-1 cursor-pointer`}>
         <input type="checkbox" checked={showFrames} onChange={toggleFrames} /> File frames
       </label>
-      <button className={btn} onClick={onNewFile}>+ New file</button>
-      <button className={btn} onClick={onNewSite}>+ New site</button>
+      <button className="btn-new py-0.5" onClick={onNewFile}>+ New file</button>
+      <button className="btn-new py-0.5" onClick={onNewSite}>+ New site</button>
       <button className={btn} onClick={onFit}>Fit</button>
-      <span className="ml-2 text-slate-500">λ filter</span>
-      <select className="rounded border px-1" value={plan} onChange={(e) => setFilter(filter ? { plan: e.target.value, channel: "" } : null)} aria-label="Wavelength plan">
+      <span className="ml-2 text-muted">λ filter</span>
+      <select className="field" value={plan} onChange={(e) => setFilter(filter ? { plan: e.target.value, channel: "" } : null)} aria-label="Wavelength plan">
         {plans.map((p) => <option key={p}>{p}</option>)}
       </select>
       <select
-        className="rounded border px-1"
+        className={`field ${filter?.channel ? "!border-accent text-accent" : ""}`}
         value={filter?.channel ?? ""}
         onChange={(e) => setFilter(e.target.value ? { plan, channel: e.target.value } : null)}
         aria-label="Channel filter"
