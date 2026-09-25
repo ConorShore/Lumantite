@@ -26,7 +26,7 @@ describe("project adapter", () => {
   });
 
   it("reports missing includes but still opens", () => {
-    const s = openProject("p.yaml", { "p.yaml": "optiplanner: 1\nincludes: [{ file: gone.yaml }]\nproject: { name: x }\n" });
+    const s = openProject("p.yaml", { "p.yaml": "lumantite: 1\nincludes: [{ file: gone.yaml }]\nproject: { name: x }\n" });
     expect(s.issues.map((i) => i.code)).toContain("project.file_unknown");
     expect(s.model.project.name).toBe("x");
     expect(s.files()).toEqual(["p.yaml", "gone.yaml"]);

@@ -1,4 +1,4 @@
-import type { CheckStatus } from "@optiplanner/schema";
+import type { CheckStatus } from "@lumantite/schema";
 import { STATUS_CLASS } from "../../lib/status";
 
 export function StatusBadge({ status }: { status: CheckStatus }) {

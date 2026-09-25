@@ -1,4 +1,4 @@
-import type { Issue, ProjectModel } from "@optiplanner/schema";
+import type { Issue, ProjectModel } from "@lumantite/schema";
 import { txChannel, type Catalog } from "./catalog.js";
 import { buildGraph, type Graph } from "./graph.js";
 

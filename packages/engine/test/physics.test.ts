@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { FibreModel } from "@optiplanner/schema";
+import type { FibreModel } from "@lumantite/schema";
 import {
   applyLoss,
   attenuationAt,

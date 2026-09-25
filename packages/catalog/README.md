@@ -1,7 +1,7 @@
-# @optiplanner/catalog
+# @lumantite/catalog
 
 Starter catalog (wavelength plans, connectors, fibre, transceiver, mux, amplifier and passive
-models) plus example projects for OptiPlanner. Data only — see `docs/CONTRACT.md` for the
+models) plus example projects for Lumantite. Data only — see `docs/CONTRACT.md` for the
 package's runtime surface (`catalogDir`, `examplesDir`).
 
 ```
@@ -19,11 +19,11 @@ examples/                example projects (SPEC.md §6)
   dwdm-amplified/
   cwdm-ring/
 test/catalog.test.ts     loads every catalog file + example, resolves `extends`, validates
-                          against @optiplanner/schema
+                          against @lumantite/schema
 ```
 
 Every catalog file is a top-level YAML sequence of entries (`kind` + `id` + fields), which is
-one of the two forms `@optiplanner/project`'s `CatalogSession` accepts (SPEC.md §8.2 /
+one of the two forms `@lumantite/project`'s `CatalogSession` accepts (SPEC.md §8.2 /
 `docs/CONTRACT.md`). `extends` deep-merges the referenced model (child fields win) before
 schema validation — see the test for the resolution algorithm.
 
@@ -160,7 +160,7 @@ in), never a separate Tx-only/Rx-only node pair — an unwired port on either si
 ## Schema / brief notes
 
 A few datasheet parameters could not be expressed exactly in the current
-`@optiplanner/schema` (`packages/schema/src/catalog.ts`):
+`@lumantite/schema` (`packages/schema/src/catalog.ts`):
 
 - **100GBASE-LR4 is 4 wavelengths, the schema's `tx.wavelength` is one.** `TxWavelength`
   (catalog.ts) is a union of a single `wavelength_nm`, or a single `{plan, channel}` /

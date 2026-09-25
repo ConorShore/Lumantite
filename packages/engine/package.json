@@ -1,5 +1,5 @@
 {
-  "name": "@optiplanner/engine",
+  "name": "@lumantite/engine",
   "version": "0.1.0",
   "type": "module",
   "main": "./dist/index.js",
@@ -16,7 +16,7 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@optiplanner/schema": "0.1.0"
+    "@lumantite/schema": "0.1.0"
   },
   "devDependencies": {}
 }

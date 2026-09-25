@@ -7,17 +7,17 @@ interface CatalogModule {
   examplesDir?: string;
 }
 
-// `@optiplanner/catalog` is built concurrently by another agent and may not have compiled
+// `@lumantite/catalog` is built concurrently by another agent and may not have compiled
 // output/types yet. Import it via a non-literal specifier so TypeScript does not try to
 // statically resolve its types at build time; the try/catch handles it being absent at runtime.
-const CATALOG_PACKAGE = "@optiplanner/catalog";
+const CATALOG_PACKAGE = "@lumantite/catalog";
 
 async function loadCatalogModule(log: FastifyBaseLogger): Promise<CatalogModule | undefined> {
   try {
     const mod = (await import(CATALOG_PACKAGE)) as CatalogModule;
     return mod;
   } catch (err) {
-    log.warn({ err }, "@optiplanner/catalog is not available yet; skipping starter-content bootstrap for it");
+    log.warn({ err }, "@lumantite/catalog is not available yet; skipping starter-content bootstrap for it");
     return undefined;
   }
 }
@@ -39,7 +39,7 @@ async function copyStarterContent(targetDir: string, sourceDir: string | undefin
 
 /**
  * If `paths.catalog` / `paths.projects` are empty (or missing) at startup, seed them from
- * `@optiplanner/catalog`'s bundled `catalogDir` / `examplesDir`. That package is built
+ * `@lumantite/catalog`'s bundled `catalogDir` / `examplesDir`. That package is built
  * concurrently, so a missing/incomplete export only logs a warning.
  */
 export async function bootstrapStarterContent(

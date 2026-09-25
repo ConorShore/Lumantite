@@ -1,4 +1,4 @@
-import type { AttenuatorModel, DcmModel, NodeSettings, PassthroughModel, SplitterModel } from "@optiplanner/schema";
+import type { AttenuatorModel, DcmModel, NodeSettings, PassthroughModel, SplitterModel } from "@lumantite/schema";
 import type { NodeInfo } from "../graph.js";
 import { addLoss, numOrRange, triple } from "../physics.js";
 import { warnTerm, type RouteCtx, type RouteOut, type RouteSig } from "./types.js";

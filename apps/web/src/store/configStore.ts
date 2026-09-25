@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { AppConfig } from "@optiplanner/schema";
+import { AppConfig } from "@lumantite/schema";
 
 export const DEFAULT_CONFIG: AppConfig = AppConfig.parse({});
 

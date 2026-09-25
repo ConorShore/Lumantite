@@ -1,7 +1,7 @@
 /** Realistic split project mirroring SPEC §6: parent + two site fragments + a spans fragment. */
 
 export const PROJECT_YAML = `# Metro ring east — parent file
-optiplanner: 1
+lumantite: 1
 includes:
   - { file: sites/a.yaml, label: Exchange A }
   - { file: ./sites/b.yaml, label: Exchange B }

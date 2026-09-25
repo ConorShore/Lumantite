@@ -1,5 +1,5 @@
-/** Fetch wrappers for the server HTTP API (docs/CONTRACT.md § @optiplanner/server). */
-import type { AppConfig } from "@optiplanner/schema";
+/** Fetch wrappers for the server HTTP API (docs/CONTRACT.md § @lumantite/server). */
+import type { AppConfig } from "@lumantite/schema";
 
 export interface ProjectListItem { id: string; name: string; rootFile: string }
 export interface FileWithEtag { text: string; etag: string }

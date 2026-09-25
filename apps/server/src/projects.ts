@@ -9,7 +9,7 @@ export interface ProjectSummary {
   rootFile: string;
 }
 
-/** Scan `projectsDir` recursively for `*.yaml` files whose top level has `optiplanner: 1`. */
+/** Scan `projectsDir` recursively for `*.yaml` files whose top level has `lumantite: 1`. */
 export async function listProjects(projectsDir: string): Promise<ProjectSummary[]> {
   const files = await listFilesRecursive(projectsDir, (p) => p.endsWith(".yaml") || p.endsWith(".yml"));
   const result: ProjectSummary[] = [];
@@ -22,7 +22,7 @@ export async function listProjects(projectsDir: string): Promise<ProjectSummary[
     } catch {
       continue;
     }
-    if (!doc || typeof doc !== "object" || (doc as Record<string, unknown>).optiplanner !== 1) continue;
+    if (!doc || typeof doc !== "object" || (doc as Record<string, unknown>).lumantite !== 1) continue;
     const project = (doc as Record<string, unknown>).project as Record<string, unknown> | undefined;
     const rel = toPosix(path.relative(projectsDir, full));
     const name = typeof project?.name === "string" ? project.name : rel;
@@ -89,19 +89,19 @@ export async function getProject(projectsDir: string, id: string): Promise<Proje
 }
 
 /**
- * Minimal parent-file text, used only if `@optiplanner/project`'s `newProjectText` is not
+ * Minimal parent-file text, used only if `@lumantite/project`'s `newProjectText` is not
  * available yet (that package is built concurrently). Shape matches SPEC §6's parent file.
  */
 function fallbackNewProjectText(name: string): string {
-  return stringifyYaml({ optiplanner: 1, project: { name } });
+  return stringifyYaml({ lumantite: 1, project: { name } });
 }
 
-// `@optiplanner/project` is built concurrently by another agent and may not have compiled
+// `@lumantite/project` is built concurrently by another agent and may not have compiled
 // output/types yet. Import it via a non-literal specifier so TypeScript does not try to
 // statically resolve its types at build time; the try/catch handles it being absent at runtime.
-const PROJECT_PACKAGE = "@optiplanner/project";
+const PROJECT_PACKAGE = "@lumantite/project";
 
-/** Import `@optiplanner/project`'s `newProjectText` if it builds; otherwise fall back to a minimal parent file. */
+/** Import `@lumantite/project`'s `newProjectText` if it builds; otherwise fall back to a minimal parent file. */
 export async function newProjectText(name: string): Promise<string> {
   try {
     const mod: any = await import(PROJECT_PACKAGE);

@@ -1,5 +1,5 @@
 {
-  "name": "@optiplanner/web",
+  "name": "@lumantite/web",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -11,9 +11,9 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@optiplanner/schema": "0.1.0",
-    "@optiplanner/engine": "0.1.0",
-    "@optiplanner/project": "0.1.0",
+    "@lumantite/schema": "0.1.0",
+    "@lumantite/engine": "0.1.0",
+    "@lumantite/project": "0.1.0",
     "@xyflow/react": "^12.8.4",
     "@monaco-editor/react": "^4.7.0",
     "monaco-editor": "^0.52.2",

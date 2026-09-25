@@ -1,5 +1,5 @@
 /** Cross-store actions. */
-import type { Issue, ProjectModel } from "@optiplanner/schema";
+import type { Issue, ProjectModel } from "@lumantite/schema";
 import type { Op } from "../adapters/project";
 import { api } from "../api/client";
 import { useProject, lastProject } from "./projectStore";

@@ -95,7 +95,7 @@ export const Layout = z.object({
 });
 export type Layout = z.infer<typeof Layout>;
 
-/** A fragment file: same shape as the parent minus `optiplanner`, `includes`, `project`. */
+/** A fragment file: same shape as the parent minus `lumantite`, `includes`, `project`. */
 export const FragmentFile = z.object({
   sites: z.array(Site).optional(),
   nodes: z.array(NodeInst).optional(),
@@ -108,7 +108,7 @@ export const Include = z.object({ file: z.string(), label: z.string().optional()
 export type Include = z.infer<typeof Include>;
 
 export const ProjectFile = FragmentFile.extend({
-  optiplanner: z.literal(1),
+  lumantite: z.literal(1),
   includes: z.array(Include).optional(),
   project: ProjectMeta,
 });

@@ -1,14 +1,14 @@
-import { AppConfig } from "@optiplanner/schema";
+import { AppConfig } from "@lumantite/schema";
 import { parse as parseYaml } from "yaml";
 import { readFileIfExists } from "./files.js";
 
 /**
- * Resolve the application config: `OPTIPLANNER_CONFIG` env var, then `/config.yaml`, then
+ * Resolve the application config: `LUMANTITE_CONFIG` env var, then `/config.yaml`, then
  * `./config.yaml`, then schema defaults. The first candidate path that exists on disk wins;
  * its content is parsed as YAML and validated (with defaults filled) through `AppConfig`.
  */
 export async function loadConfig(env: NodeJS.ProcessEnv = process.env): Promise<AppConfig> {
-  const candidates = [env.OPTIPLANNER_CONFIG, "/config.yaml", "./config.yaml"].filter(
+  const candidates = [env.LUMANTITE_CONFIG, "/config.yaml", "./config.yaml"].filter(
     (p): p is string => typeof p === "string" && p.length > 0,
   );
 

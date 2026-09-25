@@ -8,7 +8,7 @@ import type {
   Issue,
   NodeSettings,
   Triple,
-} from "@optiplanner/schema";
+} from "@lumantite/schema";
 import type { NodeInfo } from "../graph.js";
 import { EPS, interpXY, statusFromMargin, sumDbm, worstOf } from "../physics.js";
 import { failTerm, type RouteOut, type RouteSig } from "./types.js";

@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import type { Severity } from "@optiplanner/schema";
+import type { Severity } from "@lumantite/schema";
 import { useAllIssues } from "../../store/hooks";
 import { useUi } from "../../store/uiStore";
 import { selectIssue } from "../../store/actions";

@@ -7,7 +7,7 @@ import {
   type ResolvedMargins,
   type TransceiverModel,
   type Triple,
-} from "@optiplanner/schema";
+} from "@lumantite/schema";
 import { EPS, statusFromMargin } from "./physics.js";
 
 /** DEFAULT_MARGINS ← opts.defaultMargins ← project.margins, per key. */

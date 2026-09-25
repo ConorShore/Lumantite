@@ -326,10 +326,10 @@ describe("addFile / removeFile", () => {
   });
 
   test("addFile without label uses the path as the header comment and omits label", () => {
-    const s = openProject("p.yaml", { "p.yaml": "optiplanner: 1\nproject: { name: X }\n" });
+    const s = openProject("p.yaml", { "p.yaml": "lumantite: 1\nproject: { name: X }\n" });
     expect(s.apply([{ op: "addFile", file: "frag.yaml" }])).toEqual([]);
     expect(text(s, "frag.yaml")).toBe("# frag.yaml\nnodes: []\nfibres: []\n");
-    expect(text(s, "p.yaml")).toBe("optiplanner: 1\nincludes:\n  - { file: frag.yaml }\nproject: { name: X }\n");
+    expect(text(s, "p.yaml")).toBe("lumantite: 1\nincludes:\n  - { file: frag.yaml }\nproject: { name: X }\n");
   });
 
   test("removeFile refuses while the fragment holds elements, then works once empty", () => {
@@ -423,24 +423,24 @@ layout:`));
 
   test("a flow-style item list gets flow items; block list under a comment keeps its comment", () => {
     const s = openProject("p.yaml", {
-      "p.yaml": "optiplanner: 1\nproject: {name: X}\nnodes: [{id: a, model: m}]   # inline list\nfibres:   # none yet\n",
+      "p.yaml": "lumantite: 1\nproject: {name: X}\nnodes: [{id: a, model: m}]   # inline list\nfibres:   # none yet\n",
     });
     expect(s.apply([
       { op: "addNode", file: "p.yaml", node: { id: "b", model: "m", settings: { gain_dB: 3 } } },
       { op: "addFibre", file: "p.yaml", fibre: { id: "f", type: "t", a: { to: "a.out" }, b: { to: "b.in" } } },
     ])).toEqual([]);
     expect(text(s, "p.yaml")).toBe(
-      "optiplanner: 1\nproject: {name: X}\nnodes: [{id: a, model: m}, {id: b, model: m, settings: {gain_dB: 3}}]   # inline list\n"
+      "lumantite: 1\nproject: {name: X}\nnodes: [{id: a, model: m}, {id: b, model: m, settings: {gain_dB: 3}}]   # inline list\n"
       + "fibres:   # none yet\n  - id: f\n    type: t\n    a: {to: a.out}\n    b: {to: b.in}\n");
   });
 
   test("indentation style of the file is respected (4 spaces, non-indented sequences)", () => {
-    const src = "optiplanner: 1\nproject:\n    name: X\nnodes:\n- id: a\n  model: m\n";
+    const src = "lumantite: 1\nproject:\n    name: X\nnodes:\n- id: a\n  model: m\n";
     const s = openProject("p.yaml", { "p.yaml": src });
     expect(s.apply([
       { op: "addNode", file: "p.yaml", node: { id: "b", model: "m" } },
       { op: "setProjectMeta", patch: { wavelength_plans: ["cwdm-18"] } },
     ])).toEqual([]);
-    expect(text(s, "p.yaml")).toBe("optiplanner: 1\nproject:\n    name: X\n    wavelength_plans: [ cwdm-18 ]\nnodes:\n- id: a\n  model: m\n- id: b\n  model: m\n");
+    expect(text(s, "p.yaml")).toBe("lumantite: 1\nproject:\n    name: X\n    wavelength_plans: [ cwdm-18 ]\nnodes:\n- id: a\n  model: m\n- id: b\n  model: m\n");
   });
 });

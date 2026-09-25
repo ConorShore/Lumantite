@@ -11,7 +11,7 @@ import {
   type NodeSettings,
   type PortSpec,
   type TransceiverModel,
-} from "@optiplanner/schema";
+} from "@lumantite/schema";
 
 export interface Catalog {
   models: Map<string, DeviceModel>;

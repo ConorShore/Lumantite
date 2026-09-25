@@ -1,8 +1,8 @@
 # syntax=docker/dockerfile:1.7
 #
-# Multi-stage build for the whole npm workspace. Only @optiplanner/server actually runs in the
-# final image; it depends at build time on @optiplanner/schema, @optiplanner/engine (transitively,
-# via other workspace packages), @optiplanner/project and @optiplanner/catalog, so their compiled
+# Multi-stage build for the whole npm workspace. Only @lumantite/server actually runs in the
+# final image; it depends at build time on @lumantite/schema, @lumantite/engine (transitively,
+# via other workspace packages), @lumantite/project and @lumantite/catalog, so their compiled
 # dist/ output (and the catalog package's data directories) has to ship too. apps/web's built SPA
 # is copied in for static hosting; apps/cli is not needed by the server and is left out.
 

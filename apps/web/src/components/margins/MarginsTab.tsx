@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { DEFAULT_MARGINS, type Margins, type ResolvedMargins, type Results, type CheckStatus } from "@optiplanner/schema";
+import { DEFAULT_MARGINS, type Margins, type ResolvedMargins, type Results, type CheckStatus } from "@lumantite/schema";
 import { useProject } from "../../store/projectStore";
 import { useConfig } from "../../store/configStore";
 import { useResults } from "../../store/resultsStore";

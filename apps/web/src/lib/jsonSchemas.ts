@@ -1,6 +1,6 @@
-/** JSON Schemas for the YAML editor, generated from the zod schemas in @optiplanner/schema. */
+/** JSON Schemas for the YAML editor, generated from the zod schemas in @lumantite/schema. */
 import { z } from "zod";
-import { ProjectFile, FragmentFile } from "@optiplanner/schema";
+import { ProjectFile, FragmentFile } from "@lumantite/schema";
 
 type JsonSchema = Record<string, unknown>;
 let cache: { project: JsonSchema; fragment: JsonSchema } | null = null;

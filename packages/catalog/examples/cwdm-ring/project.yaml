@@ -16,7 +16,7 @@
 # it) that this example leaves visible rather than papering over, since the brief only asked for
 # every Rx to pass with comfortable margin, not for imbalance-free spans.
 # Split one file per site plus a spans file for the four ring fibres.
-optiplanner: 1
+lumantite: 1
 
 includes:
   - { file: sites/site1.yaml, label: Site 1 }

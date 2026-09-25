@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { useCatalog } from "../../store/catalogStore";
 
-export const DND_MIME = "application/x-optiplanner-model";
+export const DND_MIME = "application/x-lumantite-model";
 const PALETTE_KINDS = ["transceiver", "mux", "amplifier", "attenuator", "dcm", "splitter", "passthrough", "host"];
 
 export function Palette({ onAdd }: { onAdd(modelId: string): void }) {

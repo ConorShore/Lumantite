@@ -14,4 +14,4 @@ createRoot(document.getElementById("root")!).render(
 void bootstrap();
 
 // Dev-only handle for debugging from the console.
-if (import.meta.env.DEV) Object.assign(window, { __optiplanner: { useProject, useCatalog, useResults, useUi } });
+if (import.meta.env.DEV) Object.assign(window, { __lumantite: { useProject, useCatalog, useResults, useUi } });

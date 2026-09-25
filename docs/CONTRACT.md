@@ -1,27 +1,27 @@
 # Package contract
 
 Read this with SPEC.md. This file fixes the public API of each package so they can be built in
-parallel. Types named here live in `@optiplanner/schema` (packages/schema/src) unless stated.
+parallel. Types named here live in `@lumantite/schema` (packages/schema/src) unless stated.
 If you must change a signature, change it here in the same commit and say so in your report.
 
 Workspace: npm workspaces, TypeScript, ESM (`"type": "module"`, NodeNext, import paths end in `.js`).
 Build: `npm run build -w <pkg>`. Test: vitest. Node ≥ 22. Do not run `git commit`.
 
 ```
-packages/schema    @optiplanner/schema    zod schemas + TS types (done)
-packages/engine    @optiplanner/engine    pure physics/propagation/checks/exports; no I/O, no DOM
-packages/project   @optiplanner/project   YAML round-trip sessions for projects and catalog (pure, string in/out)
-packages/catalog   @optiplanner/catalog   starter catalog YAML + wavelength plans (data only) + examples/
-apps/server        @optiplanner/server    Fastify file API + static hosting
-apps/cli           @optiplanner/cli       `optiplanner check|export`
-apps/web           @optiplanner/web       React + Vite SPA
+packages/schema    @lumantite/schema    zod schemas + TS types (done)
+packages/engine    @lumantite/engine    pure physics/propagation/checks/exports; no I/O, no DOM
+packages/project   @lumantite/project   YAML round-trip sessions for projects and catalog (pure, string in/out)
+packages/catalog   @lumantite/catalog   starter catalog YAML + wavelength plans (data only) + examples/
+apps/server        @lumantite/server    Fastify file API + static hosting
+apps/cli           @lumantite/cli       `lumantite check|export`
+apps/web           @lumantite/web       React + Vite SPA
 ```
 
-## @optiplanner/engine
+## @lumantite/engine
 
 ```ts
 import type { DeviceModel, WavelengthPlan, Channel, PortSpec, ProjectModel, Margins,
-              Results, Issue, Triple, WlSpec, FibreModel } from "@optiplanner/schema";
+              Results, Issue, Triple, WlSpec, FibreModel } from "@lumantite/schema";
 
 export interface Catalog {
   models: Map<string, DeviceModel>;          // fully resolved (extends applied, validated)
@@ -61,13 +61,13 @@ export function dispersionAt(fibre: FibreModel, nm: number): number;    // ps/(n
 Semantics are SPEC §7. Signal id = `${txNode}.${txPort}:${channelId}`. Fibre-to-fibre joints appear in
 `PathStep.element` as `joint:<fibreA>.<end>~<fibreB>.<end>` with the lexically smaller fibre first.
 
-## @optiplanner/project
+## @lumantite/project
 
 Pure string-in / string-out. Uses the `yaml` package **Document API** so comments, key order and
 formatting of untouched content survive. Never `YAML.stringify` a plain object over an existing file.
 
 ```ts
-import type { ProjectModel, NodeInst, FibreInst, Site, Margins, ProjectMeta, Layout, Issue, XY, Rect } from "@optiplanner/schema";
+import type { ProjectModel, NodeInst, FibreInst, Site, Margins, ProjectMeta, Layout, Issue, XY, Rect } from "@lumantite/schema";
 
 export type Op =
   | { op: "addNode";    file: string; node: NodeInst; position?: XY }
@@ -120,7 +120,7 @@ export function openCatalog(files: Record<string, string>): CatalogSession;
 ```
 
 Conventions (as implemented):
-- `XY`, `Rect`, `NewFibre` types are exported by `@optiplanner/project` (schema only exports the zod values).
+- `XY`, `Rect`, `NewFibre` types are exported by `@lumantite/project` (schema only exports the zod values).
 - Two path forms: *storage paths* (keys of the `files` map, e.g. `metro/sites/a.yaml`) are used by
   `files()`, `changedFiles()`, `serialize()`, `markSaved()` and as `Issue.element` for file issues;
   *model paths* (`rootFile` for the parent, the include path as written, normalised, for fragments) are
@@ -134,13 +134,13 @@ Conventions (as implemented):
 - A file with YAML syntax errors keeps its last good content in the model; ops touching it are refused.
 - A missing include is listed in `files()` with text `""` and left out of `serialize()` until an op writes to it.
 
-## @optiplanner/catalog
+## @lumantite/catalog
 
 Data only. `catalog/*.yaml` per SPEC §8.2, `examples/<name>/project.yaml` (+ fragments) that parse
-with `@optiplanner/schema` and exercise the features. Exports nothing at runtime except
+with `@lumantite/schema` and exercise the features. Exports nothing at runtime except
 `catalogDir` and `examplesDir` (absolute paths) from `src/index.ts` for the server and tests.
 
-## @optiplanner/server (HTTP API)
+## @lumantite/server (HTTP API)
 
 All JSON. Paths are relative to `paths.projects` / `paths.catalog`. `etag` = sha1 of file text.
 
@@ -160,18 +160,18 @@ DELETE /api/catalog/files?path=<relative>           deletes one shared catalog f
 GET  /*                                 → static SPA from apps/web/dist (history fallback to index.html)
 ```
 Path traversal outside the configured dirs must be rejected (400). Config file path from
-`OPTIPLANNER_CONFIG` env (default `/config.yaml`, falling back to `./config.yaml`).
+`LUMANTITE_CONFIG` env (default `/config.yaml`, falling back to `./config.yaml`).
 
 The two DELETE routes remove one file inside the configured base directory, guarded the same way
 reads/writes are: 400 if `path` escapes the base dir, 404 if it does not exist. Both refuse (409)
-to delete a project parent file (a YAML whose top level has `optiplanner: 1`) — a parent file's
+to delete a project parent file (a YAML whose top level has `lumantite: 1`) — a parent file's
 lifecycle is the project's, not a single fragment's.
 
-## @optiplanner/web
+## @lumantite/web
 
 - Vite + React 19 + TypeScript, `@xyflow/react` for the canvas, `@monaco-editor/react` for YAML,
   `zustand` for state, Tailwind v4 for styling.
-- Loads project + catalog via the server API, opens them with `@optiplanner/project`, runs
+- Loads project + catalog via the server API, opens them with `@lumantite/project`, runs
   `resolveCatalog` + `compute` in a **web worker** (`src/worker/compute.worker.ts`), debounced 150 ms.
 - Save = `PUT` of `session.changedFiles()` with their etags; on 409 show reload/overwrite. A
   fragment removed via the `removeFile` op is queued (by storage path) and `DELETE`d from the

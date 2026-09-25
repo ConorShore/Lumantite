@@ -5,7 +5,7 @@ export const SAMPLE_ROOT = "sample/project.yaml";
 const CH = [21, 22, 23, 24];
 
 const parent = `# Sample project bundled with the web app (used when the server is unreachable).
-optiplanner: 1
+lumantite: 1
 includes:
   - { file: sites/exchange-a.yaml, label: Exchange A }
   - { file: sites/exchange-b.yaml, label: Exchange B }

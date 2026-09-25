@@ -63,7 +63,7 @@ describe("duplicate ids and schema problems", () => {
   });
 
   test("parent with a broken project block still opens", () => {
-    const s = openProject("p.yaml", { "p.yaml": "optiplanner: 2\nproject: { description: 3 }\nnodes:\n  - { id: n1, model: m }\n" });
+    const s = openProject("p.yaml", { "p.yaml": "lumantite: 2\nproject: { description: 3 }\nnodes:\n  - { id: n1, model: m }\n" });
     expect(s.issues.every((i) => i.code === "project.schema_error" && i.element === "p.yaml")).toBe(true);
     expect(s.issues.length).toBeGreaterThanOrEqual(2);
     expect(s.model.nodes.map((n) => n.id)).toEqual(["n1"]);
@@ -129,7 +129,7 @@ describe("newProjectText", () => {
       { op: "addSite", file: "ring/project.yaml", site: { id: "s1" } },
       { op: "addNode", file: "ring/project.yaml", node: { id: "n1", model: "m", site: "s1" }, position: { x: 0, y: 0 } },
     ])).toEqual([]);
-    expect(s.getFileText("ring/project.yaml")).toBe(`optiplanner: 1
+    expect(s.getFileText("ring/project.yaml")).toBe(`lumantite: 1
 project:
   name: "Ring: west"
 sites:

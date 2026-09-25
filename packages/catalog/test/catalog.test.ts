@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { readFileSync, readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { parse as parseYaml } from "yaml";
-import { CatalogEntry, ProjectFile, FragmentFile } from "@optiplanner/schema";
+import { CatalogEntry, ProjectFile, FragmentFile } from "@lumantite/schema";
 import { catalogDir, examplesDir } from "../src/index.js";
 
 // ---------- helpers ----------

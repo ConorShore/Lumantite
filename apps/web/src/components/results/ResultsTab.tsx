@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import type { SignalResult, PortResult, FibreResult, AmplifierResult } from "@optiplanner/schema";
+import type { SignalResult, PortResult, FibreResult, AmplifierResult } from "@lumantite/schema";
 import { useResults } from "../../store/resultsStore";
 import { useUi } from "../../store/uiStore";
 import { dB, cd, nm } from "../../lib/format";

@@ -1,4 +1,4 @@
-import type { Check, ProjectModel, Results, Triple } from "@optiplanner/schema";
+import type { Check, ProjectModel, Results, Triple } from "@lumantite/schema";
 
 const EOL = "\r\n";
 

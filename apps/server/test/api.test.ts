@@ -1,7 +1,7 @@
 import { promises as fs } from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { AppConfig } from "@optiplanner/schema";
+import { AppConfig } from "@lumantite/schema";
 import type { FastifyInstance } from "fastify";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { buildServer } from "../src/app.js";
@@ -23,7 +23,7 @@ async function start(): Promise<void> {
 }
 
 beforeEach(async () => {
-  tmpRoot = await fs.mkdtemp(path.join(os.tmpdir(), "optiplanner-server-test-"));
+  tmpRoot = await fs.mkdtemp(path.join(os.tmpdir(), "lumantite-server-test-"));
   projectsDir = path.join(tmpRoot, "projects");
   catalogDir = path.join(tmpRoot, "catalog");
   await fs.mkdir(projectsDir, { recursive: true });
@@ -48,17 +48,17 @@ describe("GET /api/config", () => {
 });
 
 describe("GET /api/projects (list)", () => {
-  it("lists only files with optiplanner: 1 at the top level, reading project.name", async () => {
+  it("lists only files with lumantite: 1 at the top level, reading project.name", async () => {
     await fs.writeFile(
       path.join(projectsDir, "ring.yaml"),
-      "optiplanner: 1\nproject:\n  name: Metro ring east\nsites: []\nnodes: []\nfibres: []\n",
+      "lumantite: 1\nproject:\n  name: Metro ring east\nsites: []\nnodes: []\nfibres: []\n",
     );
     await fs.mkdir(path.join(projectsDir, "sub"), { recursive: true });
     await fs.writeFile(
       path.join(projectsDir, "sub", "other.yaml"),
-      "optiplanner: 1\nproject:\n  name: Nested project\n",
+      "lumantite: 1\nproject:\n  name: Nested project\n",
     );
-    // Not a project file: no `optiplanner: 1` at the top level (e.g. a catalog fragment).
+    // Not a project file: no `lumantite: 1` at the top level (e.g. a catalog fragment).
     await fs.writeFile(path.join(projectsDir, "not-a-project.yaml"), "kind: joint\nid: lc-upc\n");
 
     const res = await fastify.inject({ method: "GET", url: "/api/projects" });
@@ -77,7 +77,7 @@ describe("GET /api/projects/:id (project + includes)", () => {
     await fs.writeFile(
       path.join(projectsDir, "proj", "project.yaml"),
       [
-        "optiplanner: 1",
+        "lumantite: 1",
         "includes:",
         "  - { file: sites/a.yaml, label: Site A }",
         "project:",
@@ -99,7 +99,7 @@ describe("GET /api/projects/:id (project + includes)", () => {
     await fs.mkdir(path.join(projectsDir, "proj2"), { recursive: true });
     await fs.writeFile(
       path.join(projectsDir, "proj2", "project.yaml"),
-      ["optiplanner: 1", "includes:", "  - { file: gone.yaml }", "project:", "  name: Demo2"].join("\n"),
+      ["lumantite: 1", "includes:", "  - { file: gone.yaml }", "project:", "  name: Demo2"].join("\n"),
     );
 
     const res = await fastify.inject({ method: "GET", url: "/api/projects/proj2/project.yaml" });
@@ -114,7 +114,7 @@ describe("GET /api/projects/:id (project + includes)", () => {
   });
 
   it("404s (not 500) for a bogus path nested under an existing project file", async () => {
-    await fs.writeFile(path.join(projectsDir, "leaf.yaml"), "optiplanner: 1\nproject:\n  name: Leaf\n");
+    await fs.writeFile(path.join(projectsDir, "leaf.yaml"), "lumantite: 1\nproject:\n  name: Leaf\n");
     const res = await fastify.inject({ method: "GET", url: "/api/projects/leaf.yaml/bogus" });
     expect(res.statusCode).toBe(404);
   });
@@ -123,11 +123,11 @@ describe("GET /api/projects/:id (project + includes)", () => {
 describe("PUT /api/projects/:id/files (etag-guarded save)", () => {
   it("succeeds with a matching etag and returns a new etag", async () => {
     const full = path.join(projectsDir, "p.yaml");
-    await fs.writeFile(full, "optiplanner: 1\nproject:\n  name: P\n");
+    await fs.writeFile(full, "lumantite: 1\nproject:\n  name: P\n");
     const get = await fastify.inject({ method: "GET", url: "/api/projects/p.yaml" });
     const etag = get.json().files["p.yaml"].etag as string;
 
-    const newText = "optiplanner: 1\nproject:\n  name: P renamed\n";
+    const newText = "lumantite: 1\nproject:\n  name: P renamed\n";
     const put = await fastify.inject({
       method: "PUT",
       url: "/api/projects/p.yaml/files",
@@ -144,7 +144,7 @@ describe("PUT /api/projects/:id/files (etag-guarded save)", () => {
 
   it("rejects a stale etag with 409 and the current text", async () => {
     const full = path.join(projectsDir, "p2.yaml");
-    await fs.writeFile(full, "optiplanner: 1\nproject:\n  name: P2\n");
+    await fs.writeFile(full, "lumantite: 1\nproject:\n  name: P2\n");
 
     const put = await fastify.inject({
       method: "PUT",
@@ -154,11 +154,11 @@ describe("PUT /api/projects/:id/files (etag-guarded save)", () => {
     expect(put.statusCode).toBe(409);
     const body = put.json() as { conflicts: string[]; files: Record<string, { text: string; etag: string | null }> };
     expect(body.conflicts).toEqual(["p2.yaml"]);
-    expect(body.files["p2.yaml"].text).toBe("optiplanner: 1\nproject:\n  name: P2\n");
+    expect(body.files["p2.yaml"].text).toBe("lumantite: 1\nproject:\n  name: P2\n");
 
     // Nothing was written.
     const onDisk = await fs.readFile(full, "utf8");
-    expect(onDisk).toBe("optiplanner: 1\nproject:\n  name: P2\n");
+    expect(onDisk).toBe("lumantite: 1\nproject:\n  name: P2\n");
   });
 
   it("creates a new file when etag is null", async () => {
@@ -230,14 +230,14 @@ describe("catalog", () => {
 
 describe("project-local catalog", () => {
   it("returns an empty files map when the project has no local catalog/ dir", async () => {
-    await fs.writeFile(path.join(projectsDir, "solo.yaml"), "optiplanner: 1\nproject:\n  name: Solo\n");
+    await fs.writeFile(path.join(projectsDir, "solo.yaml"), "lumantite: 1\nproject:\n  name: Solo\n");
     const res = await fastify.inject({ method: "GET", url: "/api/projects/solo.yaml/catalog" });
     expect(res.statusCode).toBe(200);
     expect(res.json()).toEqual({ files: {} });
   });
 
   it("round-trips a project-local catalog file", async () => {
-    await fs.writeFile(path.join(projectsDir, "solo2.yaml"), "optiplanner: 1\nproject:\n  name: Solo2\n");
+    await fs.writeFile(path.join(projectsDir, "solo2.yaml"), "lumantite: 1\nproject:\n  name: Solo2\n");
     const put = await fastify.inject({
       method: "PUT",
       url: "/api/projects/solo2.yaml/catalog/files",
@@ -259,7 +259,7 @@ describe("DELETE /api/projects/*/files?path= (fragment delete)", () => {
     await fs.mkdir(path.join(projectsDir, "proj3", "sites"), { recursive: true });
     await fs.writeFile(
       path.join(projectsDir, "proj3", "project.yaml"),
-      ["optiplanner: 1", "includes:", "  - { file: sites/a.yaml }", "project:", "  name: Demo3"].join("\n"),
+      ["lumantite: 1", "includes:", "  - { file: sites/a.yaml }", "project:", "  name: Demo3"].join("\n"),
     );
     const fragFull = path.join(projectsDir, "proj3", "sites", "a.yaml");
     await fs.writeFile(fragFull, "nodes: []\n");
@@ -274,7 +274,7 @@ describe("DELETE /api/projects/*/files?path= (fragment delete)", () => {
 
   it("refuses to delete a project parent file (409)", async () => {
     const full = path.join(projectsDir, "parent.yaml");
-    await fs.writeFile(full, "optiplanner: 1\nproject:\n  name: Parent\n");
+    await fs.writeFile(full, "lumantite: 1\nproject:\n  name: Parent\n");
 
     const res = await fastify.inject({
       method: "DELETE",
@@ -282,7 +282,7 @@ describe("DELETE /api/projects/*/files?path= (fragment delete)", () => {
     });
     expect(res.statusCode).toBe(409);
     const onDisk = await fs.readFile(full, "utf8");
-    expect(onDisk).toContain("optiplanner: 1");
+    expect(onDisk).toContain("lumantite: 1");
   });
 
   it("rejects a traversal path with 400", async () => {
@@ -337,12 +337,12 @@ describe("POST /api/projects (create)", () => {
     const body = res.json() as { rootFile: string; files: Record<string, { text: string; etag: string }> };
     expect(body.rootFile).toBe("created/project.yaml");
     const onDisk = await fs.readFile(path.join(projectsDir, "created", "project.yaml"), "utf8");
-    expect(onDisk).toContain("optiplanner: 1");
+    expect(onDisk).toContain("lumantite: 1");
     expect(onDisk).toContain("Created Project");
   });
 
   it("refuses to overwrite an existing project (409)", async () => {
-    await fs.writeFile(path.join(projectsDir, "dup.yaml"), "optiplanner: 1\nproject:\n  name: Dup\n");
+    await fs.writeFile(path.join(projectsDir, "dup.yaml"), "lumantite: 1\nproject:\n  name: Dup\n");
     const res = await fastify.inject({
       method: "POST",
       url: "/api/projects",

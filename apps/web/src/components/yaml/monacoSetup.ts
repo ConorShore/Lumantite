@@ -28,8 +28,8 @@ export function configureSchemas(rootFile: string, files: string[]): void {
     validate: true,
     format: { enable: false },
     schemas: [
-      { uri: "inmemory://optiplanner/project.schema.json", fileMatch: [uriFor(rootFile)], schema: project },
-      { uri: "inmemory://optiplanner/fragment.schema.json", fileMatch: files.filter((f) => f !== rootFile).map(uriFor), schema: fragment },
+      { uri: "inmemory://lumantite/project.schema.json", fileMatch: [uriFor(rootFile)], schema: project },
+      { uri: "inmemory://lumantite/fragment.schema.json", fileMatch: files.filter((f) => f !== rootFile).map(uriFor), schema: fragment },
     ],
   };
   if (!yamlHandle) yamlHandle = configureMonacoYaml(monaco, opts);

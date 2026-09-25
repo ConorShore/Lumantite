@@ -2,7 +2,7 @@
 import {
   TransceiverModel, FibreModel, JointModel, MuxModel, AmplifierModel, AttenuatorModel, DcmModel,
   SplitterModel, PassthroughModel, HostModel, WavelengthPlan,
-} from "@optiplanner/schema";
+} from "@lumantite/schema";
 import type { Json } from "./ValueEditor";
 
 const SCHEMAS: Record<string, { shape: Record<string, unknown> }> = {

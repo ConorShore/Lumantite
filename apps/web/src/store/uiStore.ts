@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import type { Severity } from "@optiplanner/schema";
+import type { Severity } from "@lumantite/schema";
 
 export type Tab = "canvas" | "yaml" | "catalog" | "margins" | "results" | "exports";
 export const TABS: { id: Tab; label: string }[] = [

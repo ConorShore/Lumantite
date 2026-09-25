@@ -1,4 +1,4 @@
-# OptiPlanner
+# Lumantite
 
 Web-based optical network planner: power budgets, chromatic dispersion and wavelength-aware
 routing through mux/demux and amplifiers. Networks are edited on a schematic canvas and stored
@@ -15,7 +15,7 @@ packages/engine   physics, propagation, checks, exports (pure)
 packages/project  comment-preserving YAML sessions for projects and catalog
 packages/catalog  starter catalog and example projects
 apps/server       Fastify file API + static hosting
-apps/cli          optiplanner check | export
+apps/cli          lumantite check | export
 apps/web          React SPA
 docker/           Dockerfile and docker-compose.yaml
 ```

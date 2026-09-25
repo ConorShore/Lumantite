@@ -1,6 +1,6 @@
 /** SPEC §12 "Amplifier": T13–T20. */
 import { describe, expect, it } from "vitest";
-import type { NodeSettings } from "@optiplanner/schema";
+import type { NodeSettings } from "@lumantite/schema";
 import { compute } from "../src/index.js";
 import { amp, catalog, check, fibre, ideal, issues, near, project, sig } from "./fixtures.js";
 

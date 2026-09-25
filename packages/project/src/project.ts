@@ -2,11 +2,11 @@ import { Document, Pair, Scalar, YAMLMap, YAMLSeq, isMap, isScalar, isSeq } from
 import {
   FibreInst, FragmentFile, Include, Margins, NodeInst, ProjectFile, ProjectMeta, Rect as RectSchema, Site,
   XY as XYSchema, parseEndpoint,
-} from "@optiplanner/schema";
+} from "@lumantite/schema";
 import type {
   FibreInst as FibreInstT, Issue, IssueCode, Margins as MarginsT, NodeInst as NodeInstT,
   ProjectMeta as ProjectMetaT, ProjectModel, Site as SiteT,
-} from "@optiplanner/schema";
+} from "@lumantite/schema";
 import { dirname, joinPath, normPath } from "./paths.js";
 import {
   Tracker, deletePair, detectFmt, findPair, getIn, insertOrdered, jsOf, mk, parseDocumentCached, render, setKey,
@@ -55,7 +55,7 @@ export interface ProjectSession {
 
 type Kind = "node" | "fibre" | "site";
 const LIST: Record<Kind, "nodes" | "fibres" | "sites"> = { node: "nodes", fibre: "fibres", site: "sites" };
-const TOP_ORDER = ["optiplanner", "includes", "project", "sites", "nodes", "fibres", "layout"] as const;
+const TOP_ORDER = ["lumantite", "includes", "project", "sites", "nodes", "fibres", "layout"] as const;
 const NODE_ORDER = ["id", "name", "model", "site", "host", "slot", "settings", "x"];
 const FIBRE_ORDER = ["id", "name", "type", "length_km", "a", "b", "attenuation_dB_per_km", "dispersion_ps_nm_km", "extra_loss_dB", "x"];
 const SITE_ORDER = ["id", "name", "description", "parent", "x"];
@@ -177,7 +177,7 @@ function checkFile(st: FileState, isRoot: boolean): Checked {
   else {
     const full = (isRoot ? ProjectFile : FragmentFile).safeParse(raw) as ZodLike;
     for (const m of zodMessages(full, raw)) issue(m);
-    if (!isRoot) for (const k of ["optiplanner", "includes", "project"]) {
+    if (!isRoot) for (const k of ["lumantite", "includes", "project"]) {
       if (k in raw) issue(`"${k}" is only allowed in the parent file; ignored`, "warn");
     }
     const data = (full.success ? full.data : undefined) as ProjectFile | undefined;
@@ -787,6 +787,6 @@ export function newProjectText(name: string): string {
   const d = new Document();
   d.contents = new Scalar(String(name).replace(/[\r\n]+/g, " ")) as unknown as Document["contents"];
   const n = d.toString({ lineWidth: 0 }).trimEnd();
-  return `optiplanner: 1\nproject:\n  name: ${n}\nsites: []\nnodes: []\nfibres: []\n`;
+  return `lumantite: 1\nproject:\n  name: ${n}\nsites: []\nnodes: []\nfibres: []\n`;
 }
 

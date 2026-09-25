@@ -1,6 +1,6 @@
 /** SPEC §12 T25: generated 500-node / 5 000-fibre / 40-channel project computes in < 2 s. */
 import { describe, expect, it } from "vitest";
-import type { FibreInst, NodeInst } from "@optiplanner/schema";
+import type { FibreInst, NodeInst } from "@lumantite/schema";
 import { compute } from "../src/index.js";
 import { catalog, project } from "./fixtures.js";
 

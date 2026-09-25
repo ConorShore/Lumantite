@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import type { Issue, ProjectModel } from "@optiplanner/schema";
+import type { Issue, ProjectModel } from "@lumantite/schema";
 import { openProject, newProjectText, type Op, type ProjectSession } from "../adapters/project";
 import { api, type FileMap, type ProjectListItem } from "../api/client";
 import { SAMPLE_PROJECT_FILES, SAMPLE_ROOT } from "../sample";
@@ -46,7 +46,7 @@ interface ProjectState {
 }
 
 const LAYOUT_ONLY = new Set<Op["op"]>(["setLayout"]);
-const LAST_KEY = "optiplanner.lastProject";
+const LAST_KEY = "lumantite.lastProject";
 const remember = (id: string) => { try { localStorage.setItem(LAST_KEY, id); } catch { /* private mode */ } };
 export const lastProject = (): string | null => { try { return localStorage.getItem(LAST_KEY); } catch { return null; } };
 const slug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "project";

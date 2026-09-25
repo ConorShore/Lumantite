@@ -1,6 +1,6 @@
 /** Shared by the worker and the in-thread fallback (tests / no Worker support). */
 import { resolveCatalog, compute, type Catalog } from "../adapters/engine";
-import type { Issue } from "@optiplanner/schema";
+import type { Issue } from "@lumantite/schema";
 import type { ComputeRequest, ComputeResponse } from "./protocol";
 
 let cached: { version: number; catalog: Catalog; issues: Issue[] } | null = null;

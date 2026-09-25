@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { FibreModel, TransceiverModel } from "@optiplanner/schema";
+import type { FibreModel, TransceiverModel } from "@lumantite/schema";
 import { portsOf, resolveCatalog } from "../src/index.js";
 import { catalog, near } from "./fixtures.js";
 

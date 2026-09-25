@@ -2,7 +2,7 @@ import { useDecor } from "./decor";
 import { useResults } from "../../store/resultsStore";
 import { portIndex } from "../../store/selectors";
 import { dB, cd } from "../../lib/format";
-import type { PortChannelResult } from "@optiplanner/schema";
+import type { PortChannelResult } from "@lumantite/schema";
 
 function Rows({ title, chans, total }: { title: string; chans: PortChannelResult[]; total?: { min: number; typ: number; max: number } }) {
   if (!chans.length) return null;

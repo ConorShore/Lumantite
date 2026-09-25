@@ -1,4 +1,4 @@
-import type { CheckStatus, FibreModel, NumOrRange, Range3, Triple, WlRow, WlSpec } from "@optiplanner/schema";
+import type { CheckStatus, FibreModel, NumOrRange, Range3, Triple, WlRow, WlSpec } from "@lumantite/schema";
 
 // ---------------------------------------------------------------------------
 // Power units

@@ -11,7 +11,7 @@
 import { writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
-import { ghzToNm } from "@optiplanner/schema";
+import { ghzToNm } from "@lumantite/schema";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const OUT_FILE = join(__dirname, "..", "catalog", "wavelength-plans.yaml");

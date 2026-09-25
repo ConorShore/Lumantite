@@ -1,4 +1,4 @@
-// WAVE-2: replace with import from "@optiplanner/engine" (done by editing ./impl.ts only).
+// WAVE-2: replace with import from "@lumantite/engine" (done by editing ./impl.ts only).
 // Every physics call in the app goes through this module; nothing else may compute power or CD.
 import { engineImpl } from "./impl";
 import type { EngineApi } from "./contract";

@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import type { FibreModel } from "@optiplanner/schema";
+import type { FibreModel } from "@lumantite/schema";
 import { useCatalog } from "../../store/catalogStore";
 import { useProject } from "../../store/projectStore";
 import { nextId } from "../../lib/ids";

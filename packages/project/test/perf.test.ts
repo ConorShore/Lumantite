@@ -14,7 +14,7 @@ test("large project (500 nodes / 5000 fibres in 5 files): open and apply stay fa
     files[`part${f}.yaml`] = t;
     inc.push(`  - { file: part${f}.yaml }`);
   }
-  files["project.yaml"] = `optiplanner: 1\nincludes:\n${inc.join("\n")}\nproject: { name: Big }\n`;
+  files["project.yaml"] = `lumantite: 1\nincludes:\n${inc.join("\n")}\nproject: { name: Big }\n`;
   let t0 = performance.now();
   const s = openProject("project.yaml", files);
   const openMs = performance.now() - t0;

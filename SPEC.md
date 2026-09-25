@@ -1,4 +1,4 @@
-# OptiPlanner — Specification (draft 0.1)
+# Lumantite — Specification (draft 0.1)
 
 Web-based tool for planning optical networks: power budgets, chromatic dispersion,
 wavelength-aware routing through mux/demux and amplifiers. Networks are edited on a
@@ -44,7 +44,7 @@ Out of scope but the schema leaves room (see 6.9 "extension fields"):
   directory mounted into the container and committed to git by the team.
 - `docker compose up` starts one service: a Node server that serves the static SPA and a
   small file API. All physics runs in the browser (web worker); the server only reads and
-  writes files. The same engine is available as a CLI for CI (`optiplanner check
+  writes files. The same engine is available as a CLI for CI (`lumantite check
   project.yaml`).
 - Single application config file `config.yaml` (section 8.1) mounted into the container.
 - Target scale: hundreds of nodes, thousands of fibres, 80 channels per fibre. Full
@@ -295,7 +295,7 @@ interconnecting spans, but nothing enforces that.
 
 ```yaml
 # project.yaml (parent)
-optiplanner: 1
+lumantite: 1
 includes:
   - { file: sites/exchange-a.yaml, label: Exchange A }
   - { file: sites/exchange-b.yaml, label: Exchange B }
@@ -528,8 +528,8 @@ Values come from public datasheets and are cited in a `source:` field.
 
 ```yaml
 services:
-  optiplanner:
-    image: optiplanner:latest
+  lumantite:
+    image: lumantite:latest
     ports: ["8080:8080"]
     volumes:
       - ./config.yaml:/config.yaml:ro
@@ -577,12 +577,12 @@ disk since it was loaded (mtime/etag) and offers reload or overwrite.
   to sensitivity, margin to overload, CD, CD tolerance, status.
 - **Markdown**: project summary, per-signal link budget tables, per-amplifier table,
   issues. Suitable for committing next to the project or pasting into a design document.
-- CLI: `optiplanner export project.yaml --format csv|md --out dir/` for CI.
+- CLI: `lumantite export project.yaml --format csv|md --out dir/` for CI.
 
 ## 11. Architecture
 
 ```
-optiplanner/
+lumantite/
   packages/
     engine/      pure TS: schema types, catalog resolver, propagation, checks, exports
     schema/      zod schemas + generated JSON Schema (used by Monaco and the API)
@@ -590,7 +590,7 @@ optiplanner/
   apps/
     web/         React + Vite + React Flow + Monaco; engine in a web worker
     server/      Node (Fastify): static files, /api/projects, /api/catalog, etag saves
-    cli/         `optiplanner check|export`
+    cli/         `lumantite check|export`
   docker/        Dockerfile (multi-stage, single image), docker-compose.yaml
   config.example.yaml
 ```

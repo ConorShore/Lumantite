@@ -1,5 +1,5 @@
 /** Derived indexes over Results, cached per Results object. */
-import type { Issue, PortResult, Results, SignalResult } from "@optiplanner/schema";
+import type { Issue, PortResult, Results, SignalResult } from "@lumantite/schema";
 
 function cached<T>(fn: (r: Results) => T): (r: Results | null) => T | null {
   const cache = new WeakMap<Results, T>();

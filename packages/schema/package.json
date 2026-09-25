@@ -1,5 +1,5 @@
 {
-  "name": "@optiplanner/schema",
+  "name": "@lumantite/schema",
   "version": "0.1.0",
   "type": "module",
   "main": "./dist/index.js",

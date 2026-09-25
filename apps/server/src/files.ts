@@ -78,7 +78,7 @@ export async function removeFile(p: string): Promise<void> {
   }
 }
 
-/** True if `text` parses as YAML whose top level has `optiplanner: 1` (a project parent file). */
+/** True if `text` parses as YAML whose top level has `lumantite: 1` (a project parent file). */
 export function isProjectParentFile(text: string): boolean {
   let doc: unknown;
   try {
@@ -86,7 +86,7 @@ export function isProjectParentFile(text: string): boolean {
   } catch {
     return false;
   }
-  return !!doc && typeof doc === "object" && (doc as Record<string, unknown>).optiplanner === 1;
+  return !!doc && typeof doc === "object" && (doc as Record<string, unknown>).lumantite === 1;
 }
 
 export async function pathExists(p: string): Promise<boolean> {

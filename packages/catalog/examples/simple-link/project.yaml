@@ -12,7 +12,7 @@
 # Tx typ -1 dBm -> Rx typ -2.5 dBm. Worst case: Tx min -8.2, 4x LC max (0.5 each) + 2km
 # (0.7dB) = 2.7dB loss -> Rx min -10.9 dBm; minus margins 1.6dB = -12.5 dBm vs sensitivity
 # -14.4 dBm -> 1.9dB spare (pass, not just warn).
-optiplanner: 1
+lumantite: 1
 
 project:
   name: Simple point-to-point link

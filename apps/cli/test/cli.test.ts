@@ -1,7 +1,7 @@
 /**
  * End-to-end CLI tests: run the CLI as a real child process (`npx tsx src/index.ts ...`) against
  * a temp project, exactly as a user would invoke it. No build step: tsx runs `src/index.ts`
- * directly against the bundled starter catalog (`@optiplanner/catalog`'s `catalogDir`, used
+ * directly against the bundled starter catalog (`@lumantite/catalog`'s `catalogDir`, used
  * implicitly since no `-c/--catalog` flag is passed).
  */
 import { execFileSync } from "node:child_process";
@@ -19,7 +19,7 @@ const cliDir = join(dirname(fileURLToPath(import.meta.url)), "..");
  * whether the link budget passes).
  */
 function projectYaml(spanKm: number): string {
-  return `optiplanner: 1
+  return `lumantite: 1
 project:
   name: CLI Smoke Test
   margins:
@@ -71,14 +71,14 @@ function runCli(args: string[]): CliResult {
 let dir: string;
 
 beforeEach(() => {
-  dir = mkdtempSync(join(tmpdir(), "optiplanner-cli-test-"));
+  dir = mkdtempSync(join(tmpdir(), "lumantite-cli-test-"));
 });
 
 afterEach(() => {
   rmSync(dir, { recursive: true, force: true });
 });
 
-describe("optiplanner check", () => {
+describe("lumantite check", () => {
   it("exits 0 and prints PASS for a short (2 km) span", () => {
     const file = join(dir, "project.yaml");
     writeFileSync(file, projectYaml(2));
@@ -96,7 +96,7 @@ describe("optiplanner check", () => {
   }, 30000);
 });
 
-describe("optiplanner export", () => {
+describe("lumantite export", () => {
   it("writes ports/signals CSV and a Markdown file with the expected headers", () => {
     const file = join(dir, "project.yaml");
     writeFileSync(file, projectYaml(2));

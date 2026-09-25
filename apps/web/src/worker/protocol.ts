@@ -1,4 +1,4 @@
-import type { ProjectModel, Results, Issue } from "@optiplanner/schema";
+import type { ProjectModel, Results, Issue } from "@lumantite/schema";
 import type { ComputeOptions } from "../adapters/engine";
 
 export interface ComputeRequest {

@@ -5,7 +5,7 @@ import { useAllIssues } from "../../store/hooks";
 import { deleteSelection } from "../../store/actions";
 import { issuesByElement } from "../../store/selectors";
 import { SEVERITY_CLASS } from "../../lib/status";
-import type { Issue } from "@optiplanner/schema";
+import type { Issue } from "@lumantite/schema";
 import { NodeInspector } from "./NodeInspector";
 import { FibreInspector } from "./FibreInspector";
 import { SiteInspector, FileInspector, ProjectInspector } from "./OtherInspectors";

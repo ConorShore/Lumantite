@@ -4,7 +4,7 @@
  *   LC/UPC {0.1, 0.25, 0.5} dB, fusion splice {0.02, 0.05, 0.1} dB, mux typ 3.0 dB.
  * Plus a few scalar / ideal variants so the hand arithmetic of T9–T19 can be reproduced exactly.
  */
-import type { FibreInst, Issue, Margins, NodeInst, ProjectModel, Results, SignalResult } from "@optiplanner/schema";
+import type { FibreInst, Issue, Margins, NodeInst, ProjectModel, Results, SignalResult } from "@lumantite/schema";
 import { expect } from "vitest";
 import { resolveCatalog, type Catalog } from "../src/index.js";
 

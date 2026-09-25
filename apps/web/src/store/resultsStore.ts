@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import type { Issue, Results } from "@optiplanner/schema";
+import type { Issue, Results } from "@lumantite/schema";
 import { requestCompute } from "../worker/client";
 import { useProject } from "./projectStore";
 import { useCatalog } from "./catalogStore";

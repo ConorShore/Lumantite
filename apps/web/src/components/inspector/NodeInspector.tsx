@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import type { NodeSettings, DeviceModel, NodeInst } from "@optiplanner/schema";
+import type { NodeSettings, DeviceModel, NodeInst } from "@lumantite/schema";
 import { portsOf } from "../../adapters/engine";
 import { useProject } from "../../store/projectStore";
 import { useCatalog } from "../../store/catalogStore";

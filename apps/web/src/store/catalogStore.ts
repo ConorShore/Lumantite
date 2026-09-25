@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import type { Issue } from "@optiplanner/schema";
+import type { Issue } from "@lumantite/schema";
 import { openCatalog, type CatalogSession } from "../adapters/project";
 import { resolveCatalog, type Catalog } from "../adapters/engine";
 import { api, type FileMap } from "../api/client";

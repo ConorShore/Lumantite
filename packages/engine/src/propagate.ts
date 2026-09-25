@@ -1,4 +1,4 @@
-import type { Channel, Issue, Triple, WlSpec } from "@optiplanner/schema";
+import type { Channel, Issue, Triple, WlSpec } from "@lumantite/schema";
 import { txChannel, type Catalog } from "./catalog.js";
 import { computeAmplifier, route, type AmpComputation, type RouteCtx, type RouteSig, type Term } from "./devices/index.js";
 import { junctionName, other, portJointName, type End, type FibreInfo, type Graph, type JointRef } from "./graph.js";

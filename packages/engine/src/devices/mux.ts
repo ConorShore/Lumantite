@@ -1,4 +1,4 @@
-import type { MuxModel } from "@optiplanner/schema";
+import type { MuxModel } from "@lumantite/schema";
 import { channelMatches, muxPortFor, muxTable } from "../catalog.js";
 import type { NodeInfo } from "../graph.js";
 import { failTerm, warnTerm, type RouteCtx, type RouteOut, type RouteSig } from "./types.js";

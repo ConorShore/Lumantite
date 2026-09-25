@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import type { FibreInst } from "@optiplanner/schema";
+import type { FibreInst } from "@lumantite/schema";
 import { portsOf } from "../../adapters/engine";
 import { useProject } from "../../store/projectStore";
 import { useCatalog } from "../../store/catalogStore";

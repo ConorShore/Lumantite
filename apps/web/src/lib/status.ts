@@ -1,4 +1,4 @@
-import type { CheckStatus, Severity } from "@optiplanner/schema";
+import type { CheckStatus, Severity } from "@lumantite/schema";
 
 export const STATUS_RANK: Record<CheckStatus, number> = { "n/a": 0, pass: 1, warn: 2, fail: 3 };
 export const worstStatus = (a: CheckStatus, b: CheckStatus): CheckStatus => (STATUS_RANK[b] > STATUS_RANK[a] ? b : a);

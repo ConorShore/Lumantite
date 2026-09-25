@@ -1,4 +1,4 @@
-import type { DeviceModel, FibreInst, FibreModel, Issue, NodeInst, PortSpec, ProjectModel, Triple } from "@optiplanner/schema";
+import type { DeviceModel, FibreInst, FibreModel, Issue, NodeInst, PortSpec, ProjectModel, Triple } from "@lumantite/schema";
 import { jointModel, portsCached, transceiverPorts, type Catalog } from "./catalog.js";
 import { numOrRange, triple } from "./physics.js";
 

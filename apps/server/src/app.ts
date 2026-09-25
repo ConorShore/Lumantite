@@ -2,7 +2,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import fastifyStatic from "@fastify/static";
 import Fastify, { type FastifyError, type FastifyInstance, type FastifyReply } from "fastify";
-import type { AppConfig } from "@optiplanner/schema";
+import type { AppConfig } from "@lumantite/schema";
 import { FileApiError, pathExists, safeResolve, toPosix } from "./files.js";
 import { deleteFile, putFiles, readFilesRecursive, type PutFilesBody, type PutFilesResult } from "./fileset.js";
 import { createProject, getProject, listProjects } from "./projects.js";
@@ -91,7 +91,7 @@ export async function buildServer(config: AppConfig, opts: BuildServerOptions = 
   });
 
   // DELETE /api/projects/*/files?path=<relative to projectsDir> — deletes one project fragment
-  // file. Refuses (409) to delete a project parent file (top-level `optiplanner: 1`).
+  // file. Refuses (409) to delete a project parent file (top-level `lumantite: 1`).
   fastify.delete("/api/projects/*", async (request, reply) => {
     const rest = toPosix((request.params as Record<string, string>)["*"] ?? "");
     if (!rest.endsWith("/files")) {

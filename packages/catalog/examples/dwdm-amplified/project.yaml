@@ -8,7 +8,7 @@
 # generic 80km DWDM SFP, whose -7dBm overload is too low for T18's post-amplifier channel
 # powers. The same topology runs in the reverse direction (site B -> site A) on its own pair
 # of fibres. Split across one file per site plus spans.
-optiplanner: 1
+lumantite: 1
 
 includes:
   - { file: sites/exchange-a.yaml, label: Exchange A }

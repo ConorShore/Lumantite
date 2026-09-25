@@ -1,4 +1,4 @@
-import type { Triple } from "@optiplanner/schema";
+import type { Triple } from "@lumantite/schema";
 
 export const dB = (v: number | undefined | null, digits = 2): string =>
   v === undefined || v === null || !Number.isFinite(v) ? "–" : v.toFixed(digits);

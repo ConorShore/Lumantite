@@ -3,8 +3,8 @@
  * `portsOf`, colours are applied by the components from Results.
  */
 import type { Node, Edge } from "@xyflow/react";
-import { parseEndpoint } from "@optiplanner/schema";
-import type { DeviceModel, PortSpec, ProjectModel } from "@optiplanner/schema";
+import { parseEndpoint } from "@lumantite/schema";
+import type { DeviceModel, PortSpec, ProjectModel } from "@lumantite/schema";
 import { portsOf, type Catalog } from "../../adapters/engine";
 
 export type Inst = ProjectModel["nodes"][number];

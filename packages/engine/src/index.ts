@@ -1,5 +1,5 @@
 /**
- * @optiplanner/engine — pure physics, propagation, checks and exports (SPEC §4, §5, §7, §10).
+ * @lumantite/engine — pure physics, propagation, checks and exports (SPEC §4, §5, §7, §10).
  * No I/O, no DOM. See docs/CONTRACT.md for the public API.
  */
 export { resolveCatalog, portsOf, type Catalog } from "./catalog.js";

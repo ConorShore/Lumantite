@@ -97,7 +97,7 @@ export async function putFiles(baseDir: string, body: PutFilesBody): Promise<Put
  * Delete a single file under `baseDir`, with the same traversal protection as reads/writes:
  * `safeResolve` throws FileApiError(400) for a path outside `baseDir`. Throws FileApiError(404)
  * if the file does not exist, and FileApiError(409) if it is a project parent file (top-level
- * `optiplanner: 1`) — those must be removed by deleting/renaming the project, not this route.
+ * `lumantite: 1`) — those must be removed by deleting/renaming the project, not this route.
  */
 export async function deleteFile(baseDir: string, relPath: string): Promise<void> {
   const fullPath = safeResolve(baseDir, relPath); // throws FileApiError(400) on traversal

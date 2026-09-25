@@ -1,6 +1,6 @@
 import { Document, YAMLMap, YAMLSeq, isMap, isSeq, parseAllDocuments } from "yaml";
-import { CatalogEntryLoose } from "@optiplanner/schema";
-import type { Issue } from "@optiplanner/schema";
+import { CatalogEntryLoose } from "@lumantite/schema";
+import type { Issue } from "@lumantite/schema";
 import { normPath } from "./paths.js";
 import { Tracker, detectFmt, getIn, jsOf, mk, render, syncMap } from "./roundtrip.js";
 import type { Fmt } from "./roundtrip.js";

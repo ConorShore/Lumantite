@@ -15,7 +15,7 @@ export function TopBar() {
 
   return (
     <header className="flex items-center gap-3 h-9 px-3 border-b border-slate-200 bg-slate-800 text-slate-100">
-      <span className="font-semibold tracking-tight">OptiPlanner</span>
+      <span className="font-semibold tracking-tight">Lumantite</span>
       <span className="text-slate-400">/</span>
       <span className="font-medium" data-testid="project-name">{model?.project.name ?? "No project"}</span>
       {dirty.length > 0 && (

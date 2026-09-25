@@ -1,4 +1,4 @@
-import type { Channel, Check, Issue, Triple, WlSpec } from "@optiplanner/schema";
+import type { Channel, Check, Issue, Triple, WlSpec } from "@lumantite/schema";
 import type { Catalog } from "../catalog.js";
 
 export type TermKind = "rx" | "dead_end" | "dropped" | "loop";

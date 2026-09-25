@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { DEVICE_KINDS } from "@optiplanner/schema";
+import { DEVICE_KINDS } from "@lumantite/schema";
 import { useCatalog, type RawEntry } from "../../store/catalogStore";
 import { useProject } from "../../store/projectStore";
 import { useUi } from "../../store/uiStore";

@@ -6,7 +6,7 @@ import { loadConfig } from "./config.js";
 const config = await loadConfig();
 
 // eslint-disable-next-line no-console
-console.log("[optiplanner-server] resolved config:\n" + JSON.stringify(config, null, 2));
+console.log("[lumantite-server] resolved config:\n" + JSON.stringify(config, null, 2));
 
 await fs.mkdir(config.paths.projects, { recursive: true });
 await fs.mkdir(config.paths.catalog, { recursive: true });

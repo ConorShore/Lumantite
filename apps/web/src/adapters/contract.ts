@@ -8,12 +8,12 @@
 import type {
   DeviceModel, WavelengthPlan, Channel, PortSpec, ProjectModel, Margins, Results, Issue,
   NodeInst, FibreInst, Site, ProjectMeta,
-} from "@optiplanner/schema";
+} from "@lumantite/schema";
 
-// CONTRACT gap: @optiplanner/schema exports `XY` / `Rect` only as zod values, not as types.
+// CONTRACT gap: @lumantite/schema exports `XY` / `Rect` only as zod values, not as types.
 export interface XY { x: number; y: number }
 export interface Rect extends XY { w: number; h: number }
-/** FibreInst with optional a/b (CONTRACT: exported by @optiplanner/project). */
+/** FibreInst with optional a/b (CONTRACT: exported by @lumantite/project). */
 export type NewFibre = Omit<FibreInst, "a" | "b"> & Partial<Pick<FibreInst, "a" | "b">>;
 
 // ---------------------------------------------------------------- engine

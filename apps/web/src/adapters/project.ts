@@ -1,4 +1,4 @@
-// WAVE-2: replace with import from "@optiplanner/project" (done by editing ./impl.ts only).
+// WAVE-2: replace with import from "@lumantite/project" (done by editing ./impl.ts only).
 // Every YAML read/write in the app goes through this module; nothing else may import `yaml`.
 import { projectImpl } from "./impl";
 import type { ProjectApi } from "./contract";

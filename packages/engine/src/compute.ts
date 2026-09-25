@@ -13,7 +13,7 @@ import type {
   Results,
   SignalResult,
   Triple,
-} from "@optiplanner/schema";
+} from "@lumantite/schema";
 import type { Catalog } from "./catalog.js";
 import { checkIssue, resolveMargins, rxChecks } from "./checks.js";
 import { buildGraph } from "./graph.js";

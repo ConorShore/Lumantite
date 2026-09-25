@@ -64,7 +64,7 @@ export default function YamlTab() {
     const op = { range: new monaco.Range(s.lineNumber, s.column, e.lineNumber, e.column), text: edit.text, forceMoveMarkers: false };
     applyingExternal.current = true;
     try {
-      if (ed && ed.getModel() === m) ed.executeEdits("optiplanner", [op]);
+      if (ed && ed.getModel() === m) ed.executeEdits("lumantite", [op]);
       else m.pushEditOperations([], [op], () => null);
     } finally {
       applyingExternal.current = false;
@@ -92,7 +92,7 @@ export default function YamlTab() {
         message: `${i.code}: ${i.message}`, startLineNumber: line, endLineNumber: line, startColumn: 1, endColumn: m.getLineMaxColumn(line),
       });
     }
-    monaco.editor.setModelMarkers(m, "optiplanner", markers);
+    monaco.editor.setModelMarkers(m, "lumantite", markers);
   }, [issues, file, model, text]);
 
   const onMount: OnMount = (ed) => {

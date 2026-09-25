@@ -3,10 +3,10 @@ import { Command } from "commander";
 import { mkdirSync, readFileSync, readdirSync, statSync, writeFileSync } from "node:fs";
 import { dirname, join, relative, resolve } from "node:path";
 import { parseAllDocuments } from "yaml";
-import { openProject } from "@optiplanner/project";
-import { compute, resolveCatalog, toMarkdown, toPortsCsv, toSignalsCsv } from "@optiplanner/engine";
-import { catalogDir } from "@optiplanner/catalog";
-import type { Issue, Results } from "@optiplanner/schema";
+import { openProject } from "@lumantite/project";
+import { compute, resolveCatalog, toMarkdown, toPortsCsv, toSignalsCsv } from "@lumantite/engine";
+import { catalogDir } from "@lumantite/catalog";
+import type { Issue, Results } from "@lumantite/schema";
 
 function readYamlDir(dir: string): Record<string, string> {
   const out: Record<string, string> = {};
@@ -77,7 +77,7 @@ function run(rootFile: string, opts: { catalog?: string[]; quiet?: boolean }): {
   return { results, ok: errors.length === 0, model: session.model };
 }
 
-const program = new Command().name("optiplanner").description("Optical network planner CLI").version("0.1.0");
+const program = new Command().name("lumantite").description("Optical network planner CLI").version("0.1.0");
 
 program
   .command("check")

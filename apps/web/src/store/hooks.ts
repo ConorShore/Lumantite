@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import type { Issue } from "@optiplanner/schema";
+import type { Issue } from "@lumantite/schema";
 import { useProject } from "./projectStore";
 import { useCatalog } from "./catalogStore";
 import { useResults } from "./resultsStore";
