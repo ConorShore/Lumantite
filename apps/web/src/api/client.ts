@@ -35,12 +35,22 @@ async function put(url: string, files: PutFiles): Promise<PutResult> {
   const b = await json<{ files: Record<string, { etag: string }> }>(res);
   return { ok: true, files: b.files };
 }
+async function del(url: string): Promise<void> {
+  const res = await fetch(url, { method: "DELETE" });
+  if (!res.ok) {
+    const body = (await res.json().catch(() => ({}))) as { error?: string };
+    throw new ApiError(body.error ?? `${res.status} ${res.statusText}`, res.status);
+  }
+}
 
 export const api = {
   getConfig: () => fetch(`${base}/config`).then((r) => json<AppConfig>(r)),
   listProjects: () => fetch(`${base}/projects`).then((r) => json<ProjectListItem[]>(r)),
   getProject: (id: string) => fetch(`${base}/projects/${encodeId(id)}`).then((r) => json<ProjectPayload>(r)),
   putProjectFiles: (id: string, files: PutFiles) => put(`${base}/projects/${encodeId(id)}/files`, files),
+  /** `path` is a storage path (relative to `paths.projects`), same form as `putProjectFiles`' keys. */
+  deleteProjectFile: (id: string, path: string) =>
+    del(`${base}/projects/${encodeId(id)}/files?path=${encodeURIComponent(path)}`),
   createProject: (rootFile: string, name: string) =>
     fetch(`${base}/projects`, send("POST", { rootFile, name })).then((r) => json<unknown>(r)),
   getCatalog: () => fetch(`${base}/catalog`).then((r) => json<{ files: FileMap }>(r)),

@@ -3,10 +3,11 @@
 # dangling ports), combined by a 40ch/100GHz mux, boosted by an EDFA (constant_gain 20dB,
 # saturates at Pout_max 20dBm), sent over 80km (60km + 20km spliced G.652.D, flat 0.2dB/km
 # override), split by a matching demux and received by four Rx. Uses example-10g-dwdm-t18
-# (Rx sensitivity -14dBm / overload -1dBm / CD tolerance +-1600ps/nm) instead of the generic
-# 80km DWDM SFP, whose -7dBm overload is too low for T18's post-amplifier channel powers.
-# The same topology runs in the reverse direction (site B -> site A) on its own pair of
-# fibres. Split across one file per site plus spans.
+# (Rx sensitivity -16dBm / overload 0dBm / CD tolerance +-1600ps/nm — see that model's
+# description for why these are relaxed a little from T18's own -14/-1) instead of the
+# generic 80km DWDM SFP, whose -7dBm overload is too low for T18's post-amplifier channel
+# powers. The same topology runs in the reverse direction (site B -> site A) on its own pair
+# of fibres. Split across one file per site plus spans.
 optiplanner: 1
 
 includes:
@@ -19,9 +20,11 @@ project:
   description: >-
     Four unbalanced DWDM channels through a booster EDFA and an 80km span, both directions.
     Mirrors SPEC.md test T18: Tx typ C21 +3, C22 0, C23 -3, C24 -6 dBm; mux 3.0dB typ;
-    booster EDFA constant_gain 20dB into Pout_max 20dBm (saturates); 80km G.652.D + 2x LC.
-    Rx typ per SPEC T18: C21 -2.24, C22 -5.24, C23 -8.24, C24 -11.24 dBm; C24 fails Rx
-    sensitivity -14dBm + 3dB system margin.
+    booster EDFA constant_gain 20dB into Pout_max 20dBm (saturates, both directions); 80km
+    G.652.D at a flat 0.2dB/km. Rx typ (this project's real patch-cord + gain-tilt losses put
+    these a little below T18's idealised -2.24/-5.24/-8.24/-11.24): C21 -2.95 (pass), C22
+    -5.92 (pass), C23 -8.90 (warn), C24 -11.88 dBm (fails Rx sensitivity -16dBm + 4.2dB
+    margins). 9dB (typ) channel imbalance flagged at both mux/demux commons.
   wavelength_plans: [dwdm-c-100ghz-40]
   margins:
     system_margin_dB: 3.0

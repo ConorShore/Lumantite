@@ -77,6 +77,7 @@ Generic (grey / MSA-typical) base models:
 | `generic-10g-cwdm-80km` | `cwdm-18`, tunable | 80km | typical value (unverified) — CWDM "EZX" class |
 | `generic-10g-dwdm-80km` | `dwdm-c-100ghz-40`, tunable | 80km | SPEC.md §5.1 worked example |
 | `generic-10g-dwdm-tunable` | `dwdm-c-50ghz-80`, tunable | 80km | Cisco DWDM-SFP10G-C class values |
+| `example-10g-dwdm-t18` | `dwdm-c-100ghz-40`, tunable | 80km | SPEC.md test T18 (§12) — see "Examples" below and the model's own `description` |
 | `generic-25g-lr` | 1310nm | 10km | IEEE 802.3by-2016 cl.114 (25GBASE-LR) |
 | `generic-100g-lr4` | 1300nm nominal (4-lane, see below) | 10km | IEEE 802.3ba-2010 cl.88 (100GBASE-LR4) |
 | `generic-1g-bidi` | Tx1310/Rx1490, bidi port | 10km | IEEE 802.3-2018 cl.59 (1000BASE-BX10-D) |
@@ -108,6 +109,7 @@ Vendor models (`extends` a generic base):
 | `generic-dwdm-80ch-50ghz` | `dwdm-c-50ghz-80` | all (80) | 4.0/4.5/5.5 | brief; typical (unverified) |
 | `generic-dwdm-oadm-4ch` | `dwdm-c-100ghz-40` | C21-C24 | 1.0/1.5/2.5 (express typ 1.0 / max 1.5) | brief; typical (unverified) |
 | `generic-dwdm-oadm-8ch` | `dwdm-c-100ghz-40` | C21-C28 | 1.2/1.8/2.8 (express typ 1.3 / max 2.0) | typical value (unverified) |
+| `generic-cwdm-oadm-1471` / `-1491` / `-1511` / `-1531` | `cwdm-18` | 1 channel each | 1.0/1.5/2.5 (express typ 1.0 / max 1.5) | typical value (unverified) — single-channel CWDM add/drop modules used by the cwdm-ring example; see "Examples" and "Schema / brief notes" below for why each is single-channel rather than one shared 8ch OADM |
 
 ## Amplifiers (`amplifiers.yaml`)
 
@@ -129,16 +131,31 @@ SPEC.md §5.6/§6). `generic-host` — 8-slot chassis (Eth1/1…Eth1/8), organis
 
 ## Examples (`examples/`)
 
-- **`simple-link/`** — single-file project: 2 hosts, 2 `generic-10g-lr` SFP+, 2 `lc-patch`
-  cords, 1x 10km `g652d` span.
+Every example wires exactly one transceiver node per physical end (Tx and Rx both patched
+in), never a separate Tx-only/Rx-only node pair — an unwired port on either side trips
+`topology.unterminated_tx` / `topology.rx_no_signal` warnings (SPEC.md T23).
+
+- **`simple-link/`** — single-file project: 2 hosts, 2 `generic-10g-lr` SFP+ (Tx and Rx both
+  wired), 2x 10GBASE-LR signal over 2x 2km `g652d` span (one per direction, 2 `lc-patch`
+  cords each way). Uses a 2km run and a lighter margins policy rather than the other
+  examples' 10km/heavy-margins combination — see the file's own header comment for the link
+  budget arithmetic (10GBASE-LR's IEEE worst-case budget is only 6.2dB, too tight for 10km +
+  4 real connectors + a 4.2dB margins policy). 2 signals, both pass, zero warnings.
 - **`dwdm-amplified/`** — split project (`project.yaml` + `sites/exchange-a.yaml` +
   `sites/exchange-b.yaml` + `spans.yaml`). SPEC.md test T18 as a real project: 4 tunable DWDM
-  Tx (C21-C24, `tx_power_override_dBm` +3/0/-3/-6) into a 40ch/100GHz mux, a booster EDFA
-  (`constant_gain`, 20dB), 80km of spliced G.652.D (60km+20km), a matching demux and 4 Rx —
-  in both directions on separate fibre pairs.
-- **`cwdm-ring/`** — 4 sites (`sites/site1..4.yaml` + `spans.yaml`), each pair of ring
-  neighbours linked by its own `generic-cwdm-8ch` OADM pair on a dedicated channel (1471,
-  1491, 1511, 1531nm), forming a ring of 4x 12-20km `g652d` spans.
+  SFPs (`example-10g-dwdm-t18`, C21-C24, `tx_power_override_dBm` +3/0/-3/-6, Tx into the mux
+  and Rx from the demux) into a 40ch/100GHz mux, a booster EDFA (`constant_gain`, 20dB,
+  saturates), 80km of spliced G.652.D (60km+20km, `attenuation_dB_per_km: 0.2` override) and a
+  matching demux — in both directions on separate fibre pairs. 8 signals: C21/C22 pass, C23
+  warns, C24 fails `rx.power_low`, both boosters report `amp.output_saturated`, ~9dB channel
+  imbalance flagged at every mux/demux common.
+- **`cwdm-ring/`** — 4 sites (`sites/site1..4.yaml` + `spans.yaml`) in a physical ring, each
+  adding its own CWDM channel (1471/1491/1511/1531nm, fixed `tx_power_override_dBm: 4`) and
+  dropping the channel destined for it from two hops away, expressed through the intermediate
+  site's single-channel add/drop module (`generic-cwdm-oadm-1471` etc., chained line-in/
+  line-out per site). All 4 signals reach their intended Rx and pass with 2+dB margin, no
+  topology warnings; per-span channel imbalance (a fresh add vs. a twice-expressed channel) is
+  flagged but deliberately not equalised — see the file's header comment.
 
 ## Schema / brief notes
 
@@ -167,5 +184,17 @@ A few datasheet parameters could not be expressed exactly in the current
   (`typ 1.0 / max 1.5`) with no `min`, which the schema allows (`Range3` members are all
   optional) but means the engine must fill `min` itself (per `docs/CONTRACT.md`
   `resolveTriple`).
+- **A mux's `channel_ports` are matched by wavelength, not by wiring — so a multi-channel
+  OADM model can silently misroute an unwired channel.** SPEC.md §5.4 / `mux.ts`: a signal
+  arriving at `common` routes to whichever channel port's *channel* matches its wavelength,
+  regardless of whether that specific instance actually has a fibre patched into that port.
+  The cwdm-ring example originally gave every OADM instance the same 8-channel
+  `generic-cwdm-8ch`-style model; at a site where only one of those 8 ports was wired, a
+  passing-through (express-bound) signal whose wavelength happened to equal one of the
+  *other, unwired* channel names still got routed to that dead port instead of falling
+  through to `express_port`, producing `topology.unterminated_tx`. Fixed by giving each
+  add/drop point its own single-channel model (`generic-cwdm-oadm-1471` etc., `channel_ports:
+  ["1471"]` only) so a non-matching wavelength always falls through to express, as SPEC.md
+  §5.4 intends for an OADM with an express path.
 - Everything else validates cleanly against `DeviceModel` / `WavelengthPlan` / `ProjectFile` /
   `FragmentFile` as-is; no other structural gaps were hit.

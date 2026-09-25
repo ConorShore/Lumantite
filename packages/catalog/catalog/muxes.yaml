@@ -24,18 +24,60 @@
   source: "typical value (unverified) — representative thin-film-filter CWDM 18ch mux datasheet range (higher IL than 8ch due to more cascaded filter stages)"
 
 - kind: mux
-  id: generic-cwdm-oadm-8ch
+  id: generic-cwdm-oadm-1471
   description: >-
-    Generic 8-channel CWDM OADM (thin-film-filter add/drop) with an express path — the
-    cwdm-ring example chains one of these per line direction at each site so channels not
-    dropped locally continue around the ring through the express port.
+    Generic single-channel CWDM add/drop module (thin-film-filter), 1471nm, with an express
+    path — the cwdm-ring example chains a pair of these (plus the 1511nm pair) per site so the
+    channel not dropped locally continues around the ring through the express port. A
+    single-channel add/drop module only ever needs one named channel_port, which also keeps
+    the engine from matching a same-named channel port on an instance where it was never
+    wired (SPEC.md §5.4: a channel port routes by matching wavelength, not by wiring).
   plan: cwdm-18
-  channel_ports: ["1471", "1491", "1511", "1531", "1551", "1571", "1591", "1611"]
+  channel_ports: ["1471"]
   insertion_loss_dB: { min: 1.0, typ: 1.5, max: 2.5 }
   express_port: { insertion_loss_dB: { typ: 1.0, max: 1.5 } }
   isolation_dB: 25
   connector: lc-upc
-  source: "typical value (unverified) — representative thin-film-filter CWDM 8-skip-0 OADM datasheet range; express_port IL same class as generic-dwdm-oadm-4ch"
+  source: "typical value (unverified) — representative thin-film-filter single-channel CWDM add/drop module datasheet range; express_port IL same class as generic-dwdm-oadm-4ch"
+
+- kind: mux
+  id: generic-cwdm-oadm-1491
+  description: >-
+    Generic single-channel CWDM add/drop module (thin-film-filter), 1491nm, with an express
+    path. See generic-cwdm-oadm-1471.
+  plan: cwdm-18
+  channel_ports: ["1491"]
+  insertion_loss_dB: { min: 1.0, typ: 1.5, max: 2.5 }
+  express_port: { insertion_loss_dB: { typ: 1.0, max: 1.5 } }
+  isolation_dB: 25
+  connector: lc-upc
+  source: "typical value (unverified) — representative thin-film-filter single-channel CWDM add/drop module datasheet range; express_port IL same class as generic-dwdm-oadm-4ch"
+
+- kind: mux
+  id: generic-cwdm-oadm-1511
+  description: >-
+    Generic single-channel CWDM add/drop module (thin-film-filter), 1511nm, with an express
+    path. See generic-cwdm-oadm-1471.
+  plan: cwdm-18
+  channel_ports: ["1511"]
+  insertion_loss_dB: { min: 1.0, typ: 1.5, max: 2.5 }
+  express_port: { insertion_loss_dB: { typ: 1.0, max: 1.5 } }
+  isolation_dB: 25
+  connector: lc-upc
+  source: "typical value (unverified) — representative thin-film-filter single-channel CWDM add/drop module datasheet range; express_port IL same class as generic-dwdm-oadm-4ch"
+
+- kind: mux
+  id: generic-cwdm-oadm-1531
+  description: >-
+    Generic single-channel CWDM add/drop module (thin-film-filter), 1531nm, with an express
+    path. See generic-cwdm-oadm-1471.
+  plan: cwdm-18
+  channel_ports: ["1531"]
+  insertion_loss_dB: { min: 1.0, typ: 1.5, max: 2.5 }
+  express_port: { insertion_loss_dB: { typ: 1.0, max: 1.5 } }
+  isolation_dB: 25
+  connector: lc-upc
+  source: "typical value (unverified) — representative thin-film-filter single-channel CWDM add/drop module datasheet range; express_port IL same class as generic-dwdm-oadm-4ch"
 
 - kind: mux
   id: generic-dwdm-40ch-100ghz

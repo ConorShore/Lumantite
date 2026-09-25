@@ -4,6 +4,7 @@ import { openProject, newProjectText, type Op, type ProjectSession } from "../ad
 import { api, type FileMap, type ProjectListItem } from "../api/client";
 import { SAMPLE_PROJECT_FILES, SAMPLE_ROOT } from "../sample";
 import { useCatalog, texts, etagsOf } from "./catalogStore";
+import { useUi } from "./uiStore";
 import { storageOf } from "../lib/paths";
 
 export type Source = "server" | "sample";
@@ -23,6 +24,8 @@ interface ProjectState {
   fileTexts: Record<string, string>;
   /** Storage paths (session.changedFiles()); used for save. */
   dirtyFiles: string[];
+  /** Storage paths of fragment files removed via `removeFile`, queued for DELETE on the next save. */
+  pendingDeletes: string[];
   /** Same, as model paths, for UI markers. */
   dirtyModel: string[];
   etags: Record<string, string | null>;
@@ -81,6 +84,7 @@ export const useProject = create<ProjectState>()((set, get) => {
     fileTexts: {},
     dirtyFiles: [],
     dirtyModel: [],
+    pendingDeletes: [],
     etags: {},
     computeRev: 0,
     saving: false,
@@ -121,7 +125,7 @@ export const useProject = create<ProjectState>()((set, get) => {
 
     openFromFiles(rootFile, files, etags, source) {
       const session = openProject(rootFile, files);
-      set({ session, projectId: rootFile, etags, source, conflict: null, error: null, opIssues: [], fileTexts: {} });
+      set({ session, projectId: rootFile, etags, source, conflict: null, error: null, opIssues: [], fileTexts: {}, pendingDeletes: [] });
       sync(true);
     },
 
@@ -129,7 +133,16 @@ export const useProject = create<ProjectState>()((set, get) => {
       const { session } = get();
       if (!session || !ops.length) return [];
       const issues = session.apply(ops);
-      set({ opIssues: issues.filter((i) => i.severity === "error") });
+      const errors = issues.filter((i) => i.severity === "error");
+      set({ opIssues: errors });
+      if (!errors.length) {
+        // A successful `removeFile` drops the fragment from the session (files()/changedFiles()
+        // no longer include it), so it would never be re-written or deleted by a plain save.
+        // Queue its storage path here so save() explicitly DELETEs it from the server.
+        const toDelete: string[] = [];
+        for (const o of ops) if (o.op === "removeFile") toDelete.push(storageOf(session.rootFile, o.file));
+        if (toDelete.length) set((s) => ({ pendingDeletes: [...new Set([...s.pendingDeletes, ...toDelete])] }));
+      }
       sync(ops.some((o) => !LAYOUT_ONLY.has(o.op)));
       return issues;
     },
@@ -144,18 +157,37 @@ export const useProject = create<ProjectState>()((set, get) => {
     },
 
     async save() {
-      const { session, source, etags, projectId } = get();
+      const { session, source, etags, projectId, pendingDeletes } = get();
       if (!session || !projectId) return;
       const changed = session.changedFiles();
-      if (!changed.length) return;
-      if (source !== "server") { session.markSaved(changed); sync(false); return; }
+      if (!changed.length && !pendingDeletes.length) return;
+      if (source !== "server") {
+        if (changed.length) session.markSaved(changed);
+        if (pendingDeletes.length) set({ pendingDeletes: [] });
+        sync(false);
+        return;
+      }
       set({ saving: true, error: null });
       try {
-        const body = Object.fromEntries(changed.map((p) => [p, { text: session.getFileText(p), etag: etags[p] ?? null }]));
-        const res = await api.putProjectFiles(projectId, body);
-        if (!res.ok) { set({ conflict: { paths: res.conflicts, files: res.files } }); return; }
-        session.markSaved(changed);
-        set((s) => ({ etags: { ...s.etags, ...Object.fromEntries(Object.entries(res.files).map(([p, v]) => [p, v.etag])) } }));
+        if (changed.length) {
+          const body = Object.fromEntries(changed.map((p) => [p, { text: session.getFileText(p), etag: etags[p] ?? null }]));
+          const res = await api.putProjectFiles(projectId, body);
+          if (!res.ok) { set({ conflict: { paths: res.conflicts, files: res.files } }); return; }
+          session.markSaved(changed);
+          set((s) => ({ etags: { ...s.etags, ...Object.fromEntries(Object.entries(res.files).map(([p, v]) => [p, v.etag])) } }));
+        }
+        if (pendingDeletes.length) {
+          const remaining: string[] = [];
+          for (const p of pendingDeletes) {
+            try {
+              await api.deleteProjectFile(projectId, p);
+            } catch (e) {
+              remaining.push(p);
+              useUi.getState().showToast(`Could not delete ${p}: ${(e as Error).message}`, "error");
+            }
+          }
+          set({ pendingDeletes: remaining });
+        }
         sync(false);
       } catch (e) {
         set({ error: `Save failed: ${(e as Error).message}` });

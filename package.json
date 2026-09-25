@@ -3,17 +3,23 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
-  "workspaces": ["packages/*", "apps/*"],
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
   "scripts": {
-    "build": "npm run build --workspaces --if-present",
+    "build": "npm run build -w packages/schema && npm run build -w packages/catalog -w packages/engine -w packages/project && npm run build -w apps/server -w apps/cli -w apps/web",
     "test": "npm run test --workspaces --if-present",
     "typecheck": "npm run typecheck --workspaces --if-present",
     "dev": "npm run dev --workspace=apps/web",
-    "start": "node apps/server/dist/index.js"
+    "start": "node apps/server/dist/index.js",
+    "build:packages": "npm run build -w packages/schema && npm run build -w packages/catalog -w packages/engine -w packages/project"
   },
   "devDependencies": {
     "typescript": "^5.9.2",
     "vitest": "^3.2.4"
   },
-  "engines": { "node": ">=22" }
+  "engines": {
+    "node": ">=22"
+  }
 }

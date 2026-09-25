@@ -1,18 +1,27 @@
 # simple-link: the smallest possible project. Two hosts, two 10GBASE-LR SFP+ transceivers,
-# each end's Tx and Rx both wired (one SFP per end, no dangling ports), over a 10km G.652.D
-# span in each direction. Single file, no fragments.
-# 10GBASE-LR is 1310nm: loss = 2 x LC (0.2 typ) + 10km x 0.35 dB/km (@1310nm) = 3.9 dB.
-# Tx typ -1 dBm -> Rx typ -4.9 dBm, well within sensitivity -14.4 / overload 0.5 dBm.
+# each end's Tx and Rx both wired (one SFP per end, no dangling ports), over a 2km G.652.D
+# span in each direction (2x LC patch cords each way, 4 connectors per direction). Single
+# file, no fragments.
+# 10GBASE-LR's IEEE 802.3 worst-case link budget is only 6.2dB (tx min -8.2 to sensitivity
+# -14.4), so at its full 10km/0.35dB/km reach even a light margins policy leaves ~0 spare
+# once 4 real connectors (2 patch cords, 0.5dB max each) are counted — this project uses a
+# short 2km run (a realistic "same-building/campus" LR deployment) and a lighter margins
+# policy (short local link, not a spliced long-haul route) so the worst-case (min Tx, max
+# connector loss) case still clears sensitivity with margin to spare in both directions.
+# 10GBASE-LR is 1310nm: loss (typ) = 4 x LC (0.2 typ) + 2km x 0.35 dB/km = 1.5 dB.
+# Tx typ -1 dBm -> Rx typ -2.5 dBm. Worst case: Tx min -8.2, 4x LC max (0.5 each) + 2km
+# (0.7dB) = 2.7dB loss -> Rx min -10.9 dBm; minus margins 1.6dB = -12.5 dBm vs sensitivity
+# -14.4 dBm -> 1.9dB spare (pass, not just warn).
 optiplanner: 1
 
 project:
   name: Simple point-to-point link
-  description: A 10GBASE-LR signal from A-sfp to B-sfp and back, each over 10km of G.652.D fibre.
+  description: A 10GBASE-LR signal from A-sfp to B-sfp and back, each over 2km of G.652.D fibre.
   wavelength_plans: []
   margins:
-    system_margin_dB: 3.0
-    ageing_dB: 1.0
-    repair_splices: 2
+    system_margin_dB: 1.0
+    ageing_dB: 0.5
+    repair_splices: 1
     repair_splice_loss_dB: 0.1
     connector_ageing_dB: 0.0
     cd_margin_pct: 10
@@ -36,7 +45,7 @@ fibres:
     b: { to: span1.a }
   - id: span1
     type: g652d
-    length_km: 10
+    length_km: 2
     a: { joint: lc-upc, to: p1.b }
     b: { joint: lc-upc, to: p2.a }
   - id: p2
@@ -50,7 +59,7 @@ fibres:
     b: { to: span2.a }
   - id: span2
     type: g652d
-    length_km: 10
+    length_km: 2
     a: { joint: lc-upc, to: p3.b }
     b: { joint: lc-upc, to: p4.a }
   - id: p4

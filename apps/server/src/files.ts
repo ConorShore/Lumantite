@@ -1,6 +1,7 @@
 import { createHash } from "node:crypto";
 import { promises as fs } from "node:fs";
 import path from "node:path";
+import { parse as parseYaml } from "yaml";
 
 /** Thrown for any file-API problem that should be surfaced to the HTTP client with a specific status code. */
 export class FileApiError extends Error {
@@ -65,6 +66,27 @@ export async function atomicWrite(p: string, text: string): Promise<void> {
   const tmp = path.join(dir, `.${path.basename(p)}.${process.pid}.${Date.now()}.${Math.random().toString(36).slice(2)}.tmp`);
   await fs.writeFile(tmp, text, "utf8");
   await fs.rename(tmp, p);
+}
+
+/** Delete a file. Throws FileApiError(404) if it does not exist. */
+export async function removeFile(p: string): Promise<void> {
+  try {
+    await fs.unlink(p);
+  } catch (err: any) {
+    if (err?.code === "ENOENT" || err?.code === "ENOTDIR") throw new FileApiError(404, `file not found: ${toPosix(p)}`);
+    throw err;
+  }
+}
+
+/** True if `text` parses as YAML whose top level has `optiplanner: 1` (a project parent file). */
+export function isProjectParentFile(text: string): boolean {
+  let doc: unknown;
+  try {
+    doc = parseYaml(text);
+  } catch {
+    return false;
+  }
+  return !!doc && typeof doc === "object" && (doc as Record<string, unknown>).optiplanner === 1;
 }
 
 export async function pathExists(p: string): Promise<boolean> {

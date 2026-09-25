@@ -4,7 +4,7 @@ import fastifyStatic from "@fastify/static";
 import Fastify, { type FastifyError, type FastifyInstance, type FastifyReply } from "fastify";
 import type { AppConfig } from "@optiplanner/schema";
 import { FileApiError, pathExists, safeResolve, toPosix } from "./files.js";
-import { putFiles, readFilesRecursive, type PutFilesBody, type PutFilesResult } from "./fileset.js";
+import { deleteFile, putFiles, readFilesRecursive, type PutFilesBody, type PutFilesResult } from "./fileset.js";
 import { createProject, getProject, listProjects } from "./projects.js";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
@@ -90,12 +90,40 @@ export async function buildServer(config: AppConfig, opts: BuildServerOptions = 
     return { error: "not found" };
   });
 
+  // DELETE /api/projects/*/files?path=<relative to projectsDir> — deletes one project fragment
+  // file. Refuses (409) to delete a project parent file (top-level `optiplanner: 1`).
+  fastify.delete("/api/projects/*", async (request, reply) => {
+    const rest = toPosix((request.params as Record<string, string>)["*"] ?? "");
+    if (!rest.endsWith("/files")) {
+      reply.code(404);
+      return { error: "not found" };
+    }
+    const query = (request.query ?? {}) as { path?: string };
+    if (typeof query.path !== "string" || query.path.length === 0) {
+      reply.code(400);
+      return { error: "path query parameter is required" };
+    }
+    await deleteFile(projectsDir, query.path);
+    return { ok: true };
+  });
+
   // ---- shared catalog ---------------------------------------------------------------
   fastify.get("/api/catalog", async () => ({ files: await readFilesRecursive(catalogDir) }));
 
   fastify.put("/api/catalog/files", async (request, reply) => {
     const body = (request.body ?? {}) as PutFilesBody;
     return respondPutResult(await putFiles(catalogDir, body), reply);
+  });
+
+  // DELETE /api/catalog/files?path=<relative to catalogDir> — deletes one shared catalog file.
+  fastify.delete("/api/catalog/files", async (request, reply) => {
+    const query = (request.query ?? {}) as { path?: string };
+    if (typeof query.path !== "string" || query.path.length === 0) {
+      reply.code(400);
+      return { error: "path query parameter is required" };
+    }
+    await deleteFile(catalogDir, query.path);
+    return { ok: true };
   });
 
   // ---- static SPA ---------------------------------------------------------------

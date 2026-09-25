@@ -1,5 +1,15 @@
 import path from "node:path";
-import { atomicWrite, etagOf, listFilesRecursive, readFileIfExists, safeResolve, toPosix } from "./files.js";
+import {
+  FileApiError,
+  atomicWrite,
+  etagOf,
+  isProjectParentFile,
+  listFilesRecursive,
+  readFileIfExists,
+  removeFile,
+  safeResolve,
+  toPosix,
+} from "./files.js";
 
 export interface FileEntry {
   text: string;
@@ -81,4 +91,22 @@ export async function putFiles(baseDir: string, body: PutFilesBody): Promise<Put
     outFiles[e.relPath] = { etag: etagOf(e.text) };
   }
   return { ok: true, files: outFiles };
+}
+
+/**
+ * Delete a single file under `baseDir`, with the same traversal protection as reads/writes:
+ * `safeResolve` throws FileApiError(400) for a path outside `baseDir`. Throws FileApiError(404)
+ * if the file does not exist, and FileApiError(409) if it is a project parent file (top-level
+ * `optiplanner: 1`) — those must be removed by deleting/renaming the project, not this route.
+ */
+export async function deleteFile(baseDir: string, relPath: string): Promise<void> {
+  const fullPath = safeResolve(baseDir, relPath); // throws FileApiError(400) on traversal
+  const text = await readFileIfExists(fullPath);
+  if (text === undefined) {
+    throw new FileApiError(404, `file not found: ${relPath}`);
+  }
+  if (isProjectParentFile(text)) {
+    throw new FileApiError(409, `refusing to delete a project parent file: ${relPath}`);
+  }
+  await removeFile(fullPath);
 }

@@ -155,10 +155,17 @@ GET  /api/catalog                       → { files: { [path]: { text, etag } } 
 PUT  /api/catalog/files                 ← same shape as project files PUT
 GET  /api/projects/:id(*)/catalog       → project-local catalog files (dir `catalog/` beside the parent), may be empty
 PUT  /api/projects/:id(*)/catalog/files
+DELETE /api/projects/:id(*)/files?path=<relative>   deletes one project fragment file (path relative to `paths.projects`)
+DELETE /api/catalog/files?path=<relative>           deletes one shared catalog file (path relative to `paths.catalog`)
 GET  /*                                 → static SPA from apps/web/dist (history fallback to index.html)
 ```
 Path traversal outside the configured dirs must be rejected (400). Config file path from
 `OPTIPLANNER_CONFIG` env (default `/config.yaml`, falling back to `./config.yaml`).
+
+The two DELETE routes remove one file inside the configured base directory, guarded the same way
+reads/writes are: 400 if `path` escapes the base dir, 404 if it does not exist. Both refuse (409)
+to delete a project parent file (a YAML whose top level has `optiplanner: 1`) — a parent file's
+lifecycle is the project's, not a single fragment's.
 
 ## @optiplanner/web
 
@@ -166,7 +173,10 @@ Path traversal outside the configured dirs must be rejected (400). Config file p
   `zustand` for state, Tailwind v4 for styling.
 - Loads project + catalog via the server API, opens them with `@optiplanner/project`, runs
   `resolveCatalog` + `compute` in a **web worker** (`src/worker/compute.worker.ts`), debounced 150 ms.
-- Save = `PUT` of `session.changedFiles()` with their etags; on 409 show reload/overwrite.
+- Save = `PUT` of `session.changedFiles()` with their etags; on 409 show reload/overwrite. A
+  fragment removed via the `removeFile` op is queued (by storage path) and `DELETE`d from the
+  server on the next successful save; a failed delete stays queued and is retried on the next
+  save, surfaced via the error toast.
 - Tabs per SPEC §9: Canvas, YAML, Catalog, Margins, Results, Exports. Issues panel at the bottom.
 
 ## Shared conventions

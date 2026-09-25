@@ -10,9 +10,9 @@ nodes:
     site: site2
     host: site2-host
     slot: Eth1/1
-    settings: { channel: "1491" }
-  - { id: site2-oadm-out, model: generic-cwdm-oadm-8ch, site: site2 }
-  - { id: site2-oadm-in, model: generic-cwdm-oadm-8ch, site: site2 }
+    settings: { channel: "1491", tx_power_override_dBm: 4 } # fixed launch power (see project.yaml)
+  - { id: site2-oadm-out, model: generic-cwdm-oadm-1491, site: site2 }
+  - { id: site2-oadm-in, model: generic-cwdm-oadm-1531, site: site2 }
 
 fibres:
   - { id: p-site2-tx, type: lc-patch, a: { to: site2-sfp.tx }, b: { to: site2-oadm-out.1491 } }

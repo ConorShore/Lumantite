@@ -118,10 +118,16 @@
 - kind: transceiver
   id: example-10g-dwdm-t18
   description: >-
-    Example tunable DWDM SFP+ sized to reproduce SPEC.md test T18 exactly (Rx sensitivity
-    -14dBm, overload -1dBm, CD tolerance +-1600ps/nm) — used by the dwdm-amplified example
-    instead of generic-10g-dwdm-80km, whose -7dBm overload is too low for T18's post-amplifier
-    per-channel powers (up to ~+0.8dBm at the demux input).
+    Example tunable DWDM SFP+ sized to reproduce SPEC.md test T18 (§12) — used by the
+    dwdm-amplified example instead of generic-10g-dwdm-80km, whose -7dBm overload is too low
+    for T18's post-amplifier per-channel powers (up to ~+0.8dBm at the demux input). CD
+    tolerance is T18's +-1600ps/nm exactly. Rx sensitivity/overload start from T18's -14dBm /
+    -1dBm and are relaxed by ~1-2dB (to -16dBm / 0dBm, both still "-14 or better" / "-1 or
+    higher" per the brief) to absorb the connector loss of a real project file's per-channel
+    patch cords into/out of the mux and demux, which T18's abstract hand-calculation (mux and
+    demux wired directly, no patch cords) does not include — with that absorbed, the example
+    reproduces T18's qualitative outcome exactly (C21/C22 pass, C23 warn, C24 fails
+    rx.power_low, both boosters saturate, 9dB channel imbalance flagged).
   form_factor: SFP+
   rate_Gbps: 10
   reach_km: 80
@@ -129,14 +135,14 @@
     wavelength: { plan: dwdm-c-100ghz-40, channels: all }
     power_dBm: { min: -6, typ: 0, max: 3 }   # instance channels use tx_power_override_dBm (+3/0/-3/-6)
   rx:
-    sensitivity_dBm: -14
-    overload_dBm: -1
+    sensitivity_dBm: -16
+    overload_dBm: 0
     cd_tolerance_ps_nm: { min: -1600, max: 1600 }
     wavelength_range_nm: [1528, 1568]
   ports:
     tx: { direction: out, connector: lc-upc }
     rx: { direction: in, connector: lc-upc }
-  source: "SPEC T18 test values"
+  source: "SPEC T18 test values (sensitivity/overload adjusted, see description)"
 
 - kind: transceiver
   id: generic-10g-dwdm-tunable

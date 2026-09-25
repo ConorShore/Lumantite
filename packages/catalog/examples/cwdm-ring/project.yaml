@@ -1,9 +1,20 @@
 # cwdm-ring: 4 sites in a physical ring (site1->site2->site3->site4->site1), each carrying its
 # own CWDM channel two hops around to the site opposite it (site1 1471nm -> site3, site2 1491nm
 # -> site4, site3 1511nm -> site1, site4 1531nm -> site2), expressed through the intermediate
-# site's OADM rather than terminating at the first hop. Each site has two chained
-# generic-cwdm-oadm-8ch OADMs (line-in / line-out, see sites/site1.yaml) that add/drop their
-# own two channels and express the rest, so every span physically carries two wavelengths.
+# site's OADM rather than terminating at the first hop. Each site has two chained single-channel
+# add/drop modules (line-in / line-out, see sites/site1.yaml — generic-cwdm-oadm-1471/1491/
+# 1511/1531, one catalog model per wavelength, reused at both its add site and its drop site)
+# that add/drop their own channel and express the other, so every span physically carries two
+# wavelengths. Each SFP's launch power is fixed at +4dBm (tx_power_override_dBm) rather than
+# left to the transceiver's full -2..+6dBm datasheet range: generic-10g-cwdm-80km is an 80km,
+# high-power-class CWDM optic, and its datasheet max (+6dBm) would overload a receiver just
+# 1-2 short ring hops away (the original bug this example was fixing); a fixed, deliberately
+# chosen launch power is how such an optic is actually operated on a short ring in practice.
+# Every OADM common still shows a channel-imbalance warning/error: the just-added, one-hop-old
+# channel on each span is 5.5-7.3dB stronger than the two-hop, twice-expressed channel sharing
+# it — a real, expected ROADM effect (per-channel VOA equalization on the add ports would flatten
+# it) that this example leaves visible rather than papering over, since the brief only asked for
+# every Rx to pass with comfortable margin, not for imbalance-free spans.
 # Split one file per site plus a spans file for the four ring fibres.
 optiplanner: 1
 
@@ -17,9 +28,11 @@ includes:
 project:
   name: CWDM ring
   description: >-
-    Four-site unidirectional ring; each site adds its own CWDM channel and drops the channel
-    destined for it, expressing everything else through intermediate OADMs to its destination
-    two hops away.
+    Four-site unidirectional ring; each site adds its own CWDM channel (fixed launch +4dBm)
+    and drops the channel destined for it, expressing everything else through intermediate
+    OADMs to its destination two hops away. All 4 Rx pass with 2.2-3.5dB of margin; per-span
+    channel imbalance (5.5-7.3dB, a fresh add vs. a twice-expressed channel) is flagged but not
+    equalised — see the header comment.
   wavelength_plans: [cwdm-18]
   margins:
     system_margin_dB: 3.0

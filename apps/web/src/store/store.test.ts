@@ -149,6 +149,45 @@ describe("save", () => {
     expect(fetch).not.toHaveBeenCalled();
     expect(useProject.getState().dirtyFiles).toEqual([]);
   });
+
+  it("removeFile queues the fragment's storage path and DELETEs it on the next successful save", async () => {
+    openSample();
+    // sample/spans.yaml holds no nodes/sites, but does hold fibres; move them out first so the
+    // fragment is empty and removeFile can succeed.
+    const fibreIds = useProject.getState().model!.fibres.filter((f) => f.file === mSPANS).map((f) => f.id);
+    useProject.getState().applyOps(fibreIds.map((id) => ({ op: "moveToFile" as const, kind: "fibre" as const, id, file: SAMPLE_ROOT })));
+    const issues = useProject.getState().applyOps([{ op: "removeFile", file: mSPANS }]);
+    expect(issues.some((i) => i.severity === "error")).toBe(false);
+    expect(useProject.getState().pendingDeletes).toEqual([SPANS]);
+
+    const calls: string[] = [];
+    vi.stubGlobal("fetch", vi.fn(async (url: string, init?: RequestInit) => {
+      calls.push(`${init?.method ?? "GET"} ${url}`);
+      if (init?.method === "DELETE") return json(200, { ok: true });
+      const body = JSON.parse(String(init!.body)) as { files: Record<string, unknown> };
+      return json(200, { files: Object.fromEntries(Object.keys(body.files).map((p) => [p, { etag: "e" }])) });
+    }));
+    await useProject.getState().save();
+    expect(calls).toContain(`DELETE /api/projects/${SAMPLE_ROOT}/files?path=${encodeURIComponent(SPANS)}`);
+    expect(useProject.getState().pendingDeletes).toEqual([]);
+  });
+
+  it("a failed delete-on-save stays queued and shows an error toast", async () => {
+    openSample();
+    const fibreIds = useProject.getState().model!.fibres.filter((f) => f.file === mSPANS).map((f) => f.id);
+    useProject.getState().applyOps(fibreIds.map((id) => ({ op: "moveToFile" as const, kind: "fibre" as const, id, file: SAMPLE_ROOT })));
+    useProject.getState().applyOps([{ op: "removeFile", file: mSPANS }]);
+    useUi.setState({ toast: null });
+
+    vi.stubGlobal("fetch", vi.fn(async (_url: string, init?: RequestInit) => {
+      if (init?.method === "DELETE") return json(404, { error: "file not found" });
+      const body = JSON.parse(String(init!.body)) as { files: Record<string, unknown> };
+      return json(200, { files: Object.fromEntries(Object.keys(body.files).map((p) => [p, { etag: "e" }])) });
+    }));
+    await useProject.getState().save();
+    expect(useProject.getState().pendingDeletes).toEqual([SPANS]);
+    expect(useUi.getState().toast?.kind).toBe("error");
+  });
 });
 
 describe("bootstrap + selection actions", () => {

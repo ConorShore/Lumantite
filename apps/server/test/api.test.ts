@@ -254,6 +254,78 @@ describe("project-local catalog", () => {
   });
 });
 
+describe("DELETE /api/projects/*/files?path= (fragment delete)", () => {
+  it("deletes a project fragment file", async () => {
+    await fs.mkdir(path.join(projectsDir, "proj3", "sites"), { recursive: true });
+    await fs.writeFile(
+      path.join(projectsDir, "proj3", "project.yaml"),
+      ["optiplanner: 1", "includes:", "  - { file: sites/a.yaml }", "project:", "  name: Demo3"].join("\n"),
+    );
+    const fragFull = path.join(projectsDir, "proj3", "sites", "a.yaml");
+    await fs.writeFile(fragFull, "nodes: []\n");
+
+    const res = await fastify.inject({
+      method: "DELETE",
+      url: "/api/projects/proj3/project.yaml/files?path=" + encodeURIComponent("proj3/sites/a.yaml"),
+    });
+    expect(res.statusCode).toBe(200);
+    await expect(fs.access(fragFull)).rejects.toThrow();
+  });
+
+  it("refuses to delete a project parent file (409)", async () => {
+    const full = path.join(projectsDir, "parent.yaml");
+    await fs.writeFile(full, "optiplanner: 1\nproject:\n  name: Parent\n");
+
+    const res = await fastify.inject({
+      method: "DELETE",
+      url: "/api/projects/parent.yaml/files?path=" + encodeURIComponent("parent.yaml"),
+    });
+    expect(res.statusCode).toBe(409);
+    const onDisk = await fs.readFile(full, "utf8");
+    expect(onDisk).toContain("optiplanner: 1");
+  });
+
+  it("rejects a traversal path with 400", async () => {
+    const res = await fastify.inject({
+      method: "DELETE",
+      url: "/api/projects/x/files?path=" + encodeURIComponent("../../../etc/passwd"),
+    });
+    expect(res.statusCode).toBe(400);
+  });
+
+  it("404s for a missing file", async () => {
+    const res = await fastify.inject({
+      method: "DELETE",
+      url: "/api/projects/x/files?path=" + encodeURIComponent("does/not/exist.yaml"),
+    });
+    expect(res.statusCode).toBe(404);
+  });
+});
+
+describe("DELETE /api/catalog/files?path= (shared catalog delete)", () => {
+  it("deletes a shared catalog file", async () => {
+    const full = path.join(catalogDir, "joints.yaml");
+    await fs.writeFile(full, "kind: joint\nid: lc-upc\n");
+
+    const res = await fastify.inject({ method: "DELETE", url: "/api/catalog/files?path=joints.yaml" });
+    expect(res.statusCode).toBe(200);
+    await expect(fs.access(full)).rejects.toThrow();
+  });
+
+  it("rejects a traversal path with 400", async () => {
+    const res = await fastify.inject({
+      method: "DELETE",
+      url: "/api/catalog/files?path=" + encodeURIComponent("../../../etc/passwd"),
+    });
+    expect(res.statusCode).toBe(400);
+  });
+
+  it("404s for a missing file", async () => {
+    const res = await fastify.inject({ method: "DELETE", url: "/api/catalog/files?path=nope.yaml" });
+    expect(res.statusCode).toBe(404);
+  });
+});
+
 describe("POST /api/projects (create)", () => {
   it("creates a new project from a minimal parent file", async () => {
     const res = await fastify.inject({
