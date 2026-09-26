@@ -77,7 +77,6 @@ function CanvasInner() {
       const selected = selectedNodeIds.has(n.id);
       return p?.dragging ? { ...n, position: p.position, dragging: true, selected } : { ...n, selected };
     }));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [graph, selectedNodeIds]);
   useEffect(() => {
     setEdges((graph?.edges ?? []).map((e) => ({ ...e, selected: selectedFibres.has(e.id) })));
@@ -166,6 +165,9 @@ function CanvasInner() {
   }, []);
   const onEdgesChange = useCallback((changes: EdgeChange[]) => setEdges((es) => applyEdgeChanges(changes, es)), []);
 
+  const frameRects = (type: "fileFrame" | "siteFrame") =>
+    nodesRef.current.filter((n) => n.type === type).map((n) => ({ id: (n.data as FrameData).id, rect: rectOf(n) }));
+
   const onNodeDragStart = useCallback((_: unknown, _node: Node, dragged: Node[]) => {
     dragMembers.current.clear();
     const draggedIds = new Set(dragged.map((d) => d.id));
@@ -181,9 +183,6 @@ function CanvasInner() {
       dragMembers.current.set(f.id, members.map((m) => m.id));
     }
   }, []);
-
-  const frameRects = (type: "fileFrame" | "siteFrame") =>
-    nodesRef.current.filter((n) => n.type === type).map((n) => ({ id: (n.data as FrameData).id, rect: rectOf(n) }));
 
   const onNodeDragStop = useCallback((_: unknown, _node: Node, dragged: Node[]) => {
     const m = useProject.getState().model;

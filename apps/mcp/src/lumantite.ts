@@ -126,7 +126,7 @@ export function createProject(path: string, name: string): string {
   // "wx" creates exclusively, so the existence check and the write are one atomic step.
   try { writeFileSync(abs, newProjectText(name), { flag: "wx" }); }
   catch (e) {
-    if ((e as NodeJS.ErrnoException).code === "EEXIST") throw new Error(`${abs} already exists`);
+    if ((e as NodeJS.ErrnoException).code === "EEXIST") throw new Error(`${abs} already exists`, { cause: e });
     throw e;
   }
   return abs;

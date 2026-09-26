@@ -223,7 +223,11 @@ scripts/           screenshots.mjs (Playwright)
 
 ```bash
 npm test
+npm run lint           # ESLint; `npm run lint:fix` applies safe fixes
 ```
+
+GitHub Actions (`.github/workflows/ci.yml`) runs lint, build, typecheck and tests on every push to
+`main` and on pull requests.
 
 The engine is tested against hand-derived physics cases (spec section 12): single spans, spliced
 sections, CWDM interpolation, mux combining with unequal channels, saturated and clamped

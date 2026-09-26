@@ -86,7 +86,7 @@ export function createServer(): McpServer {
     inputSchema: { project, include_layout: z.boolean().optional().describe("Include canvas layout coordinates (default false)") },
   }, tool(({ project, include_layout }: { project: string; include_layout?: boolean }) => {
     const { session } = loadProject(project);
-    const { layout, ...rest } = session.model;
+    const { layout: _layout, ...rest } = session.model;
     return include_layout ? session.model : rest;
   }));
 

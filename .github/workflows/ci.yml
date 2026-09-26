@@ -15,6 +15,21 @@ permissions:
   contents: read
 
 jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci --no-audit --no-fund
+
+      - run: npm run lint
+
   test:
     name: Build, typecheck and test
     runs-on: ubuntu-latest
@@ -35,7 +50,7 @@ jobs:
 
   container:
     name: Build and publish container
-    needs: test
+    needs: [lint, test]
     runs-on: ubuntu-latest
     # A normal run takes 5-10 min; fail fast if the QEMU-emulated arm64 build hangs (e.g. npm ci).
     timeout-minutes: 30

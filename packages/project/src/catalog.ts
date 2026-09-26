@@ -1,4 +1,4 @@
-import { Document, YAMLMap, YAMLSeq, isMap, isSeq, parseAllDocuments } from "yaml";
+import { Document, type YAMLMap, type YAMLSeq, isMap, isSeq, parseAllDocuments } from "yaml";
 import { CatalogEntryLoose } from "@lumantite/schema";
 import type { Issue } from "@lumantite/schema";
 import { normPath } from "./paths.js";
