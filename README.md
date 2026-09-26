@@ -50,7 +50,7 @@ meet its dispersion tolerance at 100 km?".
 ## Screenshots
 
 **Canvas.** Sites and files are frames, devices show their ports, fibres are edges coloured by
-status. Selecting a transceiver highlights its signal path in both directions.
+status and drawn as right-angle routes. Selecting a transceiver highlights its signal path in both directions.
 
 <img src="docs/screenshots/canvas.png" alt="Canvas with the amplified DWDM example and a highlighted path" width="900">
 
