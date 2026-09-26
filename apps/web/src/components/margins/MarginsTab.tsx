@@ -13,6 +13,10 @@ const FIELDS: { key: keyof ResolvedMargins; label: string; unit: string; help: s
   { key: "connector_ageing_dB", label: "Connector ageing", unit: "dB / connector", help: "Extra loss per connector on the path." },
   { key: "cd_margin_pct", label: "CD margin", unit: "%", help: "Accumulated CD is scaled by (1 + pct/100) before the tolerance check." },
   { key: "max_channel_imbalance_dB", label: "Max channel imbalance", unit: "dB", help: "Max − min channel power at mux common ports and amplifiers." },
+  { key: "repair_loss_dB_per_km", label: "Repair loss per km", unit: "dB / km", help: "Extra repair allowance per km of fibre on the path, added to the Rx penalty." },
+  { key: "osnr_margin_dB", label: "OSNR margin", unit: "dB", help: "Subtracted from worst-case OSNR before comparing with the receiver's required OSNR (FEC cliff)." },
+  { key: "amp_min_channel_input_dBm", label: "Min amp channel input", unit: "dBm", help: "Warn when a channel reaches an amplifier below this power (ASE noise dominates)." },
+  { key: "min_crosstalk_ratio_dB", label: "Min crosstalk ratio", unit: "dB", help: "Signal to adjacent-channel crosstalk at demux ports, from mux isolation." },
 ];
 
 function checkStatuses(r: Results | null): Map<string, CheckStatus> {

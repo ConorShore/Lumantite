@@ -60,13 +60,15 @@ export function toSignalsCsv(results: Results, delimiter = ","): string {
     [
       "signal", "tx", "rx", "channel", "plan", "wavelength_nm", "frequency_GHz", "terminated",
       "rx_power_min_dBm", "rx_power_typ_dBm", "rx_power_max_dBm",
-      "margin_sensitivity_dB", "margin_overload_dB", "cd_ps_nm", "cd_tolerance_min_ps_nm", "cd_tolerance_max_ps_nm", "status",
+      "margin_sensitivity_dB", "margin_overload_dB", "cd_ps_nm", "cd_tolerance_min_ps_nm", "cd_tolerance_max_ps_nm",
+      "cd_spread_ps_nm", "osnr_min_dB", "osnr_typ_dB", "margin_osnr_dB", "dgd_ps", "path_km", "status",
     ],
   ];
   for (const s of results.signals) {
     const low = checkOf(s.checks, "rx.power_low");
     const high = checkOf(s.checks, "rx.power_high");
     const cd = checkOf(s.checks, "rx.cd");
+    const osnr = checkOf(s.checks, "rx.osnr");
     const atRx = s.terminated === "rx";
     rows.push([
       s.id,
@@ -85,6 +87,12 @@ export function toSignalsCsv(results: Results, delimiter = ","): string {
       num(s.cdAtEnd),
       cd ? num(Number(cd.values?.tolerance_min), 0) : "",
       cd ? num(Number(cd.values?.tolerance_max), 0) : "",
+      num(s.cdSpread, 1),
+      num(s.osnr?.min),
+      num(s.osnr?.typ),
+      num(osnr?.margin),
+      num(s.dgd_ps),
+      num(s.path_km, 3),
       s.status,
     ]);
   }
@@ -148,7 +156,9 @@ export function toMarkdown(model: ProjectModel, results: Results): string {
     md.push(
       `Tx \`${sig.tx.node}.${sig.tx.port}\` → ${sig.rx ? `Rx \`${sig.rx.node}.${sig.rx.port}\`` : `_${sig.terminated}_`} · ` +
         `channel ${ch.id} (${ch.plan}, ${ch.wavelength_nm.toFixed(2)} nm) · launch ${t3(sig.launch)} dBm · ` +
-        `end ${t3(sig.powerAtEnd)} dBm · CD ${num(sig.cdAtEnd, 1)} ps/nm`,
+        `end ${t3(sig.powerAtEnd)} dBm · CD ${num(sig.cdAtEnd, 1)}${sig.cdSpread ? ` ± ${num(sig.cdSpread, 1)}` : ""} ps/nm · ${num(sig.path_km, 1)} km` +
+        (sig.osnr ? ` · OSNR ${t3(sig.osnr)} dB` : "") +
+        (sig.dgd_ps !== undefined ? ` · DGD ${num(sig.dgd_ps)} ps` : ""),
     );
     md.push("");
     md.push(
@@ -197,10 +207,15 @@ export function toMarkdown(model: ProjectModel, results: Results): string {
     md.push("");
     for (const a of results.amplifiers) {
       md.push(`#### ${a.id} per channel${a.operatingPoints ? ` (${a.operatingPoints})` : ""}`, "");
+      if (a.loading)
+        md.push(
+          `Channel loading: ${a.loading.litChannels} lit of ${a.loading.designChannels} design · ΔG full ${num(a.loading.full_dB)} dB · single ${num(a.loading.single_dB)} dB`,
+          "",
+        );
       md.push(
         table(
-          ["Signal", "Channel", "Pin (dBm)", "Gain (dB)", "Pout (dBm)"],
-          a.perChannel.map((c) => [c.signalId, c.channel.id, t3(c.pin), t3(c.gain), t3(c.pout)]),
+          ["Signal", "Channel", "Pin (dBm)", "Gain (dB)", "Pout (dBm)", "OSNR out (dB)"],
+          a.perChannel.map((c) => [c.signalId, c.channel.id, t3(c.pin), t3(c.gain), t3(c.pout), t3(c.osnrOut)]),
         ),
       );
       md.push("");

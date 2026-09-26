@@ -6,7 +6,7 @@ import { routeTransceiver } from "./transceiver.js";
 import { warnTerm, type RouteCtx, type RouteOut, type RouteSig } from "./types.js";
 
 export * from "./types.js";
-export { computeAmplifier, type AmpComputation, type AmpInput } from "./amplifier.js";
+export { computeAmplifier, type AmpComputation, type AmpInput, type AmpOptions } from "./amplifier.js";
 
 /** The device-class transfer function: route(signal, inPort) → [(outPort, Δpower, Δcd)]. */
 export function route(ctx: RouteCtx, node: NodeInfo, inPort: string, sig: RouteSig): RouteOut[] {

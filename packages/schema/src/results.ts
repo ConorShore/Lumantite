@@ -19,7 +19,19 @@ export type IssueCode =
   | "amp.input_low" | "amp.input_high" | "amp.output_saturated" | "amp.gain_clamped" | "amp.gain_out_of_range"
   | "amp.spectrum_extrapolated" | "amp.out_of_band" | "amp.mode_unsupported"
   | "fibre.power_high" | "fibre.wavelength_out_of_table"
-  | "imbalance.high";
+  | "imbalance.high"
+  // design rules, SPEC 7.10
+  | "rx.multiple_signals" | "rx.power_damage" | "rx.osnr" | "rx.pmd" | "rx.reach"
+  | "amp.channel_loading" | "amp.channel_input_low"
+  | "mux.passband_exceeded" | "mux.crosstalk"
+  | "fibre.channel_power_high" | "fibre.mode_mismatch" | "fibre.core_mismatch" | "fibre.type_mismatch"
+  | "fibre.fwm_risk" | "fibre.water_peak" | "fibre.xpm_risk"
+  | "joint.polish_mismatch" | "joint.reflection_risk"
+  | "dcm.fibre_mismatch"
+  | "safety.laser_class";
+
+/** Indicative laser hazard class (SPEC 7.10 R13). */
+export type LaserClass = "1" | "3R" | "3B" | "4";
 
 export interface Issue {
   severity: Severity;
@@ -66,6 +78,16 @@ export interface SignalResult {
   path: PathStep[];
   powerAtEnd: Triple;
   cdAtEnd: number;
+  /** ± CD uncertainty accumulated from fibre dispersion_uncertainty (SPEC 7.10 R9). */
+  cdSpread: number;
+  /** OSNR in 0.1 nm, dB; min = worst case. Absent when unamplified with an ideal Tx, or unknown (amp without NF). SPEC 7.10 R16. */
+  osnr?: Triple;
+  /** Mean DGD, ps (SPEC 7.10 R15). Absent when no fibre on the path has a PMD coefficient. */
+  dgd_ps?: number;
+  /** Σ fibre length on the path, km. */
+  path_km: number;
+  /** Channel-loading deltas at the end of the path (SPEC 7.10 R2); absent without amplifiers. */
+  loading?: { full_dB: number; single_dB: number };
   terminated: "rx" | "dead_end" | "dropped" | "loop";
   checks: Check[];
   status: CheckStatus;
@@ -92,6 +114,8 @@ export interface FibreDirectionResult {
   direction: "a>b" | "b>a";
   channels: PortChannelResult[];   // power at launch (entering the fibre)
   totalPower?: Triple;
+  /** Indicative laser hazard class of the aggregate launch power (SPEC 7.10 R13). */
+  laserClass?: LaserClass;
   status: CheckStatus;
 }
 
@@ -111,7 +135,9 @@ export interface AmplifierResult {
   poutTotal: Triple;
   gainEffective: Triple;
   headroom_dB: number;        // Pout_max − poutTotal.max
-  perChannel: { signalId: string; channel: Channel; gain: Triple; pin: Triple; pout: Triple }[];
+  perChannel: { signalId: string; channel: Channel; gain: Triple; pin: Triple; pout: Triple; osnrOut?: Triple }[];
+  /** Channel-loading scenarios (SPEC 7.10 R2): per-channel gain change at full and single-channel load. */
+  loading?: { designChannels: number; litChannels: number; full_dB: number; single_dB: number };
   imbalanceIn_dB?: number;    // typ, max−min over channels
   imbalanceOut_dB?: number;
   operatingPoints?: string;   // description of measured points used

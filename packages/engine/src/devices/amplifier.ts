@@ -65,6 +65,8 @@ export interface AmpComputation {
   imbalanceIn_dB?: number;
   imbalanceOut_dB?: number;
   operatingPoints?: string;
+  /** Channel-loading scenarios (SPEC 7.10 R2): step-3 gain change at full and single-channel load, typ case. */
+  loading?: { designChannels: number; litChannels: number; full_dB: number; single_dB: number };
   checks: AmpCheck[];
   issues: Issue[];
   status: CheckStatus;
@@ -119,12 +121,60 @@ function selectMeasured(points: GainSpectrumPoint[], G: number, pinTot: number):
   };
 }
 
+export interface AmpOptions {
+  warnThreshold: number;
+  maxImbalance: number;
+  /** R4: lowest acceptable per-channel input, dBm (warn-only). */
+  minChannelInput?: number;
+  /** R2: full-load channel count; absent → no full-load scenario. */
+  designChannels?: number;
+}
+
+/**
+ * SPEC 7.6 step 3: effective gain for a total input `pt` — constant_output_power clamped to the
+ * gain range, then the saturation clamp at Pout_max (either mode).
+ */
+function stepGain(model: AmplifierModel, s: NodeSettings, mode: AmpMode, pt: number): { g: number; saturated: boolean; clamped: boolean } {
+  const poutMax = model.output_power_total_dBm.max;
+  let g: number;
+  let clamped = false;
+  let saturated = false;
+  if (mode === "constant_output_power") {
+    g = (s.output_power_dBm ?? poutMax) - pt;
+    if (g > model.gain_dB.max + EPS) {
+      g = model.gain_dB.max;
+      clamped = true;
+    } else if (g < model.gain_dB.min - EPS) {
+      g = model.gain_dB.min;
+      clamped = true;
+    }
+  } else {
+    g = s.gain_dB ?? model.gain_dB.min;
+  }
+  // Saturation: total output cannot exceed Pout_max.
+  if (pt + g > poutMax + EPS) {
+    g = poutMax - pt;
+    saturated = true;
+  }
+  return { g, saturated, clamped };
+}
+
+/** R2 channel loading: N_lit distinct channels at `in`, scenarios at the typ Pin_total. */
+function channelLoading(model: AmplifierModel, s: NodeSettings, mode: AmpMode, inputs: AmpInput[], pinTyp: number, designChannels?: number) {
+  const lit = new Set(inputs.map((i) => `${i.channel.plan}:${i.channel.id}`)).size;
+  if (designChannels === undefined || lit === 0) return undefined;
+  const g0 = stepGain(model, s, mode, pinTyp).g;
+  const full = designChannels > lit ? stepGain(model, s, mode, pinTyp + 10 * Math.log10(designChannels / lit)).g - g0 : 0;
+  const single = lit > 1 ? stepGain(model, s, mode, pinTyp - 10 * Math.log10(lit)).g - g0 : 0;
+  return { designChannels, litChannels: lit, full_dB: full, single_dB: single };
+}
+
 export function computeAmplifier(
   id: string,
   model: AmplifierModel,
   settings: NodeSettings | undefined,
   inputs: AmpInput[],
-  opts: { warnThreshold: number; maxImbalance: number },
+  opts: AmpOptions,
 ): AmpComputation {
   const s = settings ?? {};
   const mode: AmpMode = s.mode ?? model.modes[0];
@@ -155,24 +205,10 @@ export function computeAmplifier(
     const pins = agg.map((p) => p[c]);
     const pt = sumDbm(pins);
     pinTot[c] = pt;
-    let g: number;
-    if (mode === "constant_output_power") {
-      g = (s.output_power_dBm ?? poutMax) - pt;
-      if (g > gmax + EPS) {
-        g = gmax;
-        clamped = true;
-      } else if (g < gmin - EPS) {
-        g = gmin;
-        clamped = true;
-      }
-    } else {
-      g = s.gain_dB ?? gmin;
-    }
-    // Saturation: total output cannot exceed Pout_max.
-    if (pt + g > poutMax + EPS) {
-      g = poutMax - pt;
-      saturated = true;
-    }
+    const st = stepGain(model, s, mode, pt);
+    let g = st.g;
+    if (st.saturated) saturated = true;
+    if (st.clamped) clamped = true;
     // Per-channel nominal gain.
     let per: number[];
     if (gainModel === "measured") {
@@ -270,10 +306,25 @@ export function computeAmplifier(
   for (const o of oob) {
     checks.push({
       code: "amp.out_of_band",
-      status: "warn",
+      status: "fail",
       values: { channel: o.channel.id, wavelength_nm: o.channel.wavelength_nm, band_min: b0, band_max: b1 },
-      message: `${id}: ${o.channel.id} (${o.channel.wavelength_nm.toFixed(2)} nm) outside band ${b0}…${b1} nm`,
+      message: `${id}: ${o.channel.id} (${o.channel.wavelength_nm.toFixed(2)} nm) outside band ${b0}…${b1} nm; gain still applied`,
     });
+  }
+  if (opts.minChannelInput !== undefined) {
+    const lim = opts.minChannelInput;
+    for (const i of inputs) {
+      const mg = i.pin.min - lim;
+      if (mg >= -EPS) continue;
+      checks.push({
+        code: "amp.channel_input_low",
+        port: "in",
+        status: "warn",
+        margin: mg,
+        values: { channel: i.channel.id, pin_min: i.pin.min, limit_dBm: lim },
+        message: `${id}: ${i.channel.id} input (min case) ${f2(i.pin.min)} dBm below ${lim} dBm; ASE noise dominates`,
+      });
+    }
   }
   let imbalanceIn_dB: number | undefined;
   let imbalanceOut_dB: number | undefined;
@@ -300,8 +351,8 @@ export function computeAmplifier(
     if (ck.status !== "warn" && ck.status !== "fail") continue;
     const i: Issue = { severity: ck.status === "fail" ? "error" : "warn", code: ck.code, element: id, message: ck.message };
     if (ck.port) i.port = ck.port;
-    if (ck.code === "amp.out_of_band" && ck.values) i.channel = String(ck.values.channel);
-    if (ck.values) i.values = ck.values;
+    if ((ck.code === "amp.out_of_band" || ck.code === "amp.channel_input_low") && ck.values) i.channel = String(ck.values.channel);
+    if (ck.values) i.values = ck.margin !== undefined ? { ...ck.values, margin: ck.margin } : ck.values;
     issues.push(i);
   }
 
@@ -318,6 +369,7 @@ export function computeAmplifier(
     imbalanceIn_dB,
     imbalanceOut_dB,
     operatingPoints: opDesc,
+    loading: channelLoading(model, s, mode, inputs, pinTotal.typ, opts.designChannels),
     checks,
     issues,
     status: worstOf(checks.map((c) => c.status)),

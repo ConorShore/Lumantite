@@ -16,7 +16,9 @@ Status: draft for review. Open questions are collected in section 14.
   - optical power (worst / typical / best case),
   - accumulated chromatic dispersion (CD),
   - aggregate power on multi-channel fibres,
-  - pass/fail against receiver, amplifier and fibre limits plus project margins.
+  - OSNR (amplifier ASE accumulation) and PMD (mean DGD) at every receiver,
+  - pass/fail against receiver, amplifier and fibre limits plus project margins,
+  - design rules for common optical pitfalls (7.10).
 - Be wavelength aware: CWDM (18 ch), DWDM C-band 100 GHz (40 ch) and 50 GHz (80 ch).
 - Keep the YAML as the canonical, git-friendly source of truth. The canvas and the YAML
   editor are two views of the same document and edits in either are reflected in the other.
@@ -29,14 +31,21 @@ Status: draft for review. Open questions are collected in section 14.
 
 Out of scope but the schema leaves room (see 6.9 "extension fields"):
 
-- OSNR, ASE noise accumulation, noise figure calculations (NF is *stored* in the catalog).
-- PMD, nonlinear effects (SPM/XPM/FWM), reflectance / ORL, crosstalk.
+- Full nonlinear propagation (split-step / GN-model SPM, XPM, FWM, SRS). Nonlinear effects are
+  covered by *design rules* only (per-channel launch limit, low-dispersion FWM risk, mixed
+  direct-detect / coherent XPM risk, see 7.10).
+- ORL / reflectance budgets (connector polish and high-power reflection risk are design rules).
+- Raman amplification.
 - Analytical spectral hole burning in EDFAs (measured gain spectra cover it, see 7.6).
 - ROADM / WSS multi-degree switching (a mux model with express ports covers simple cases).
 - Geographic maps. Layout is schematic only.
 - Authentication, authorisation, multi-user locking. Version control is done with git
   outside the tool.
 - Live data from devices (SNMP, NETCONF).
+
+OSNR (ASE accumulation from amplifier noise figures), PMD (mean DGD), and adjacent-channel
+crosstalk from mux isolation were non-goals in draft 0.1 and are now in scope at planning grade
+(7.10, decision 9).
 
 ## 3. Users and deployment
 
@@ -95,7 +104,8 @@ once per fibre end. Rules:
   must match the port's `connector` family (LC/UPC into an LC/UPC port). Mismatch → error.
 - fibre end → fibre end: both ends must carry the same joint model (fusion ↔ fusion, or
   connector ↔ connector meaning a mated pair through an adapter). Mismatch → error.
-- Joint models carry `insertion_loss_dB: {min, typ, max}` and `return_loss_dB` (stored only).
+- Joint models carry `insertion_loss_dB: {min, typ, max}`, `polish` (PC / UPC / APC; APC must
+  not mate with a non-APC connector, 7.10 R6) and `return_loss_dB` (stored only).
 
 ### 4.5 Signals
 
@@ -141,15 +151,25 @@ id: fs-sfp-10g-dwdm-c21-80km
 vendor: FS
 model: SFP-10G-DWDM-C21-80
 extends: generic-10g-dwdm-80km        # optional
+reach_km: 80                    # nominal, informational only (7.10 R11)
+detection: direct               # direct (IM-DD: NRZ, PAM4) | coherent; default direct
+baud_GBd: 10.3                  # optional; occupied bandwidth ≈ 1.15 × baud
+signal_bandwidth_GHz: 12        # optional explicit occupied bandwidth (wins over baud)
+fibre_mode: smf                 # smf | mmf; default smf (mmf if tx λ < 1000 nm)
 tx:
   wavelength: { plan: dwdm-c-100ghz-40, channel: C21 }   # fixed
   # or tunable: { plan: dwdm-c-50ghz-80, channels: all }  # instance picks the channel
-  power_dBm: { min: 0, typ: 2, max: 4 }
+  power_dBm: { min: 0, typ: 2, max: 4 }   # per lane
+  lanes: 1                      # parallel lanes on the same fibre (LR4 = 4), 7.10 R14
+  osnr_dB: 40                   # optional Tx OSNR (0.1 nm); default ideal
 rx:
   sensitivity_dBm: -24          # at the reference BER
-  overload_dBm: -7
+  overload_dBm: -7              # saturation: errors while above
+  damage_dBm: 3                 # optional: permanent damage above this
   cd_tolerance_ps_nm: { min: -800, max: 1600 }
   wavelength_range_nm: [1260, 1620]
+  min_osnr_dB: 14               # optional required OSNR (0.1 nm ref. bandwidth), pre-FEC threshold
+  dgd_tolerance_ps: 10          # optional max mean DGD; default 0.1 × bit period for direct detect
 ports:
   tx: { direction: out, connector: lc-upc }
   rx: { direction: in,  connector: lc-upc }
@@ -180,6 +200,12 @@ dispersion:
   # model: linear   { d0_ps_nm_km: 4.0, at_nm: 1550, slope_ps_nm2_km: 0.085 }   # NZDSF
   # model: table    [ {nm: 1530, value: 16.5}, {nm: 1565, value: 18.5} ]
 max_power_dBm: 20               # aggregate launch power limit (nonlinear / safety threshold)
+max_channel_power_dBm: 4        # per-channel launch limit, nonlinear rule of thumb (default +4)
+dispersion_uncertainty_ps_nm_km: 0.5   # optional ± on D(λ); CD is checked at both extremes
+pmd_ps_per_sqrt_km: 0.1         # optional PMD coefficient (mean DGD)
+core_um: 9                      # optional core diameter (9 SMF, 50 OM2–OM5, 62.5 OM1)
+low_water_peak: true            # optional; derived from `standard` when absent
+standard: G.652.D
 default_joint: fusion-splice
 ```
 
@@ -217,10 +243,10 @@ port_overrides:                 # optional per-port loss, e.g. measured values
   C40: { insertion_loss_dB: 3.8 }
 express_port:                   # optional: unmatched channels pass through here
   insertion_loss_dB: { typ: 1.0, max: 1.5 }
-monitor_port:                   # optional tap, informational
+monitor_port:                   # optional tap on common; its through loss is applied (7.10 R12)
   tap_dB: 20
-isolation_dB: 30                # stored only
-passband_ghz: 50                # stored only
+isolation_dB: 30                # adjacent-channel isolation, used for crosstalk (7.10 R17)
+passband_ghz: 50                # −3 dB passband: channel matching and signal width (7.10 R10)
 ports:
   common: { direction: bidi, connector: lc-upc }
   # channel ports C21…C60 are generated from `plan` / `channel_ports`
@@ -246,7 +272,8 @@ gain_flatness_dB: 1.0           # ± ripple over band, applied as worst-case spr
 gain_tilt:                      # optional relative gain vs wavelength at nominal setting
   - { nm: 1528, dB: 0.5 }
   - { nm: 1566, dB: -0.5 }
-noise_figure_dB: 5.5            # stored for future OSNR work
+noise_figure_dB: 5.5            # used for OSNR (7.10 R16)
+design_channels: 40             # optional full-load channel count (7.10 R2)
 gain_model: parametric          # parametric (tilt + flatness, above) | measured (below)
 gain_spectrum:                  # optional measured data, used when gain_model: measured
   - input_power_total_dBm: -20
@@ -262,13 +289,14 @@ ports:
 ```
 
 Instance settings: `mode`, `gain_dB` (constant gain) or `output_power_dBm` (constant output
-power), optional `tilt_dB` (linear tilt applied across the band, positive = more gain at
+power), optional `design_channels` (overrides the model), optional `tilt_dB` (linear tilt applied across the band, positive = more gain at
 long wavelengths), optional `gain_model` override. See 7.6 for both models.
 
 ### 5.6 `attenuator`, `dcm`, `splitter`, `passthrough`
 
 - `attenuator`: `loss_dB` fixed, or `range_dB` for a VOA with instance `setting_dB`.
 - `dcm`: `dispersion_ps_nm` (negative), `insertion_loss_dB`, both optionally per wavelength.
+  Optional `for_fibre`: fibre model id or `standard` the DCM's slope is matched to (7.10 R9).
 - `splitter`: `ratio` e.g. `[50, 50]` or `[90, 10]`; loss per leg = 10·log10(100/pct) +
   `excess_loss_dB`. Ports `in`, `out1..N`.
 - `passthrough`: `insertion_loss_dB` (scalar or wavelength table), N in/out pairs. Used for
@@ -312,6 +340,10 @@ project:
     connector_ageing_dB: 0.0
     cd_margin_pct: 10
     max_channel_imbalance_dB: 6
+    repair_loss_dB_per_km: 0.0
+    osnr_margin_dB: 3.0
+    amp_min_channel_input_dBm: -25
+    min_crosstalk_ratio_dB: 20
 
 sites:
   - { id: siteA, name: Exchange A }
@@ -460,10 +492,13 @@ Project margins (Margins page) are applied as follows. Every check yields `pass`
 
 | Check | Rule |
 |---|---|
-| Rx power (low) | `P.min − system_margin − ageing − repair_splices×repair_splice_loss − connector_ageing×n_connectors ≥ rx.sensitivity_dBm` |
-| Rx power (high) | `P.max ≤ rx.overload_dBm` |
+| Rx power (low) | `P.min − system_margin − ageing − repair_splices×repair_splice_loss − connector_ageing×n_connectors − repair_loss_dB_per_km×path_km ≥ rx.sensitivity_dBm` |
+| Rx power (high) | `P.max ≤ rx.overload_dBm` (direct detect: Σ of every signal arriving at the port, 7.10 R1) |
+| Rx damage | `P.max ≤ rx.damage_dBm` (7.10 R5) |
+| Rx OSNR | `OSNR.min − osnr_margin ≥ rx.min_osnr_dB` (7.10 R16) |
+| Rx PMD | `DGD_mean ≤ dgd_tolerance` (7.10 R15) |
 | Rx wavelength | λ within `rx.wavelength_range_nm` |
-| CD | `cd_tolerance.min ≤ cd × (1 + cd_margin_pct/100) ≤ cd_tolerance.max` |
+| CD | `cd_tolerance.min ≤ (cd ± cd_spread) × (1 + cd_margin_pct/100) ≤ cd_tolerance.max` |
 | Amp input | total input within `input_power_total_dBm` (min and max cases) |
 | Amp output | total output ≤ `output_power_total_dBm.max` |
 | Amp gain | effective gain within `gain_dB` |
@@ -471,17 +506,144 @@ Project margins (Margins page) are applied as follows. Every check yields `pass`
 | Channel imbalance | at any mux common / amp in-out: ≤ `max_channel_imbalance_dB` |
 | Mux channel | signal wavelength matches channel port |
 | Topology | unterminated tx, unconnected rx, loops, connector family mismatch, duplicate channel on one fibre in one direction |
+| Amp band | every channel inside `band_nm`, else fail (`amp.out_of_band`; gain is still applied) |
+| Design rules | R1–R19 in 7.10 |
 
 ### 7.9 Results object
 
 ```
 results:
-  signals[]:      { id, tx, rx?, channel, path[], power_at_rx, cd_at_rx, checks[] }
+  signals[]:      { id, tx, rx?, channel, path[], power_at_rx, cd_at_rx, cd_spread, osnr_at_rx{min,typ,max}, dgd_ps, path_km, loading?, checks[] }
   ports[]:        { node, port, direction, channels[]: {channel, power{min,typ,max}, cd}, total_power{min,typ,max} }
-  fibres[]:       { id, per direction: total_power, channels[], loss{min,typ,max}, cd_per_channel }
-  amplifiers[]:   { id, pin_total, pout_total, gain_eff, mode, headroom, imbalance_in, imbalance_out }
+  fibres[]:       { id, per direction: total_power, channels[], laser_class, loss{min,typ,max}, cd_per_channel }
+  amplifiers[]:   { id, pin_total, pout_total, gain_eff, mode, headroom, imbalance_in, imbalance_out, per-channel osnr_out, loading{design_channels, full_dB, single_dB} }
   issues[]:       { severity: error|warn|info, code, element, message, values }
 ```
+
+### 7.10 Design rules
+
+Planning-grade rules for the common optical pitfalls (source: the conference tutorial "Everything You Always
+Wanted to Know About Optical Networking"). Each rule has a stable issue code. Unless stated,
+a rule is silent when the parameters it needs are absent, so older catalogs behave as before.
+"Warn-only" rules never produce `fail`: margin < 0 → `warn`, otherwise `pass`.
+
+**R1 Direct-detect receivers see all light** (`rx.multiple_signals`, `rx.power_high`).
+A direct-detect photodiode responds to everything from ~1260 to 1620 nm and cannot select a
+channel; only coherent receivers lock onto one frequency. When more than one signal reaches
+the same Rx port of a `detection: direct` transceiver, every such signal fails
+`rx.multiple_signals`, and the overload check uses the aggregate
+`Σ P.max` of all signals at the port. Coherent receivers are checked per signal, so a coherent
+link over a plain splitter (no demux) is valid.
+
+**R2 Channel loading** (`amp.channel_loading`). An amplifier's per-channel output depends on how
+many channels are lit. For each amplifier, `N_lit` = distinct channels at `in` and
+`N_design` = `settings.design_channels` ?? model `design_channels` ?? number of channels of the
+plan(s) carried at `in` that fall inside `band_nm` (skip for grey-only inputs). Two scenarios,
+each evaluated standalone with 7.6 step 3 (same mode, saturation and gain clamps) and with
+added / removed channels at the mean (typ) per-channel input power:
+- *full*: `Pin_total' = Pin_total + 10·log10(N_design / N_lit)` (only if `N_design > N_lit`),
+- *single*: `Pin_total' = Pin_total − 10·log10(N_lit)` (only if `N_lit > 1`).
+`ΔG_scenario = G_eff' − G_eff` (≤ 0 for full, ≥ 0 for single). For a signal at an Rx,
+`Δ = Σ ΔG` over the amplifiers on its path from the last `constant_output_power` amplifier
+(inclusive; a CoP amplifier re-levels everything upstream) to the Rx, or over all amplifiers if
+none is CoP. Checks: the Rx-low check repeated with `P.min + Δ_full` and the Rx-high check with
+`P.max + Δ_single`, both reported as `amp.channel_loading` (`values.case` = full | single) and
+graded like the checks they repeat. This is the "turn up new channels and the old ones stop
+working" / "a site loses power and the survivors get too hot" failure.
+
+**R3 Per-channel launch power** (`fibre.channel_power_high`, warn-only). Nonlinear effects are
+a high-power-density problem; below about +4 dBm per wavelength a system is generally safe.
+For every fibre ≥ 1 km, each channel's launch `P.max ≤ max_channel_power_dBm` (fibre type,
+default +4 dBm).
+
+**R4 Amplifier per-channel input** (`amp.channel_input_low`, warn-only). Letting a channel fall
+too low before amplification is where ASE noise wins. Each channel's `Pin.min ≥
+margins.amp_min_channel_input_dBm` (default −25 dBm). R16 quantifies the same effect.
+
+**R5 Receiver damage** (`rx.power_damage`). Overload (saturation) causes errors while the power
+is too high; above `rx.damage_dBm` the receiver is permanently damaged (typically long-reach
+optics plugged back to back). `P.max ≤ damage_dBm`, graded by margin. When `rx.power_high`
+fails, its message and `values.suggested_attenuation_dB` give the attenuator to add:
+`P.max − overload + warn_threshold`, and `values.max_attenuation_dB` = the Rx-low margin (the
+most that can be added without failing sensitivity).
+
+**R6 Connector polish** (`joint.polish_mismatch`, `joint.reflection_risk`). APC mated to
+UPC/PC gives high loss and reflection. At every fibre-end → port joint, the fibre end's joint
+polish and the port connector's polish must both be APC or both non-APC → error. Where a fibre
+direction carries more than +17 dBm total (max case) through a non-splice joint that is not
+APC → warn (back-reflection at high power, especially when unplugged).
+
+**R7 Fibre mode and type** (`fibre.mode_mismatch`, `fibre.core_mismatch`, `fibre.type_mismatch`).
+- Any fibre on a signal's path whose `multimode` differs from the Tx `fibre_mode` → error (once
+  per fibre, anchored at the fibre). Same against the Rx transceiver's `fibre_mode`.
+- Fibre ↔ fibre junction between multimode fibres with different `core_um` → warn.
+- Fibre ↔ fibre junction between single-mode fibres with different `standard` → info
+  (mismatched mode-field diameter: extra splice loss, OTDR "gainers").
+- Fibre ↔ fibre junction between a multimode and a single-mode fibre → error `fibre.mode_mismatch`.
+
+**R8 WDM on the wrong fibre** (`fibre.fwm_risk`, `fibre.water_peak`, warn-only).
+- Four-wave mixing: a fibre (≥ 1 km) carrying ≥ 2 channels in one direction where
+  `|D(λ)| < 1.0 ps/(nm·km)` at any of those channels (dispersion-shifted G.653 in the C band).
+- Water peak: a channel between 1360 and 1460 nm on a fibre that is not low-water-peak
+  (`low_water_peak: false`, or `standard` G.652, G.652.A or G.652.B).
+
+**R9 Dispersion compensation matched to the fibre** (`dcm.fibre_mismatch`, warn; `rx.cd`).
+A DCM with `for_fibre` warns when a fibre ≥ 1 km on the signal's path before the DCM (since the
+previous DCM) has neither that model id nor that `standard`. Fibre
+`dispersion_uncertainty_ps_nm_km` (±) accumulates `cd_spread = Σ u × L` per signal; `rx.cd`
+checks both `cd − cd_spread` and `cd + cd_spread` (with the CD margin).
+
+**R10 Signal width vs passband** (`mux.passband_exceeded`). Occupied bandwidth =
+`signal_bandwidth_GHz` ?? `1.15 × baud_GBd` of the transmitter. At a mux channel port with
+`passband_ghz`, bandwidth > passband → fail (the signal is still traced so its other results
+are available; the check is attached to the signal and an error issue to the mux).
+
+**R11 Nominal reach is not a limit** (`rx.reach`, info). Standard reach classes (10/40/80 km)
+are labels, not limits; only the budget decides. When a signal's `path_km` (Σ fibre lengths)
+exceeds the transmitter's `reach_km`, an info issue reports it with the budget margin. Never
+warn or fail on reach.
+
+**R12 Monitor tap loss.** A mux `monitor_port.tap_dB` taps the common port: every signal passing
+`common` (either direction) loses `−10·log10(1 − 10^(−tap_dB/10))` (95/5 tap: tap 13.01 dB,
+through 0.223 dB). The monitor port stays unrouted.
+
+**R13 Laser safety class** (`safety.laser_class`, info). Per fibre direction, the aggregate
+launch power (max case, lanes included) is classed against indicative IEC 60825-2 hazard
+levels: for λ ≥ 1400 nm (IRB) Class 1 ≤ +10 dBm, 3R ≤ +17 dBm, 3B ≤ +27 dBm, above → 4. For
+λ < 1400 nm (IRA, more hazardous to the eye) the limits are 3 dB lower (conservative planning
+value). With mixed wavelengths the stricter band applies. Result `laser_class`; an info issue
+above Class 1 ("automatic power reduction / shutdown required"). Indicative only, not a
+compliance classification.
+
+**R14 Lanes.** A transceiver with `tx.lanes: N` contributes `P + 10·log10(N)` to every Σ-power
+quantity (port and fibre totals, amplifier `Pin_total`, R13); per-signal Rx checks use the
+per-lane power. (LR4 at 0 dBm per lane = +6.02 dBm total.)
+
+**R15 PMD** (`rx.pmd`). Mean DGD adds in quadrature: `DGD = √(Σ PMD_i² × L_i)` over fibres with
+`pmd_ps_per_sqrt_km`. Tolerance = `rx.dgd_tolerance_ps` ?? (direct detect with `baud_GBd`:
+`0.1 × 1000 / baud_GBd` ps); no tolerance → no check. Graded by margin.
+
+**R16 OSNR** (`rx.osnr`). Per amplifier and channel, in a 0.1 nm (12.5 GHz) reference bandwidth:
+`OSNR_i = 58 + Pin_i − NF` (dB, dBm). Contributions add as noise-to-signal ratios:
+`1/OSNR = 1/OSNR_tx + Σ 1/OSNR_i` (linear). Computed per case (min uses Pin.min — worst).
+Passive loss does not change OSNR. If an amplifier on the path has no `noise_figure_dB` the
+OSNR is unknown and the check is `n/a`. Check: `OSNR.min − osnr_margin_dB ≥ rx.min_osnr_dB`,
+graded by margin (`osnr_margin_dB` default 3 dB covers the FEC cliff). No amplifier and no Tx
+OSNR → no check.
+
+**R17 Adjacent-channel crosstalk** (`mux.crosstalk`). At a mux with `isolation_dB`, for each
+channel leaving a channel port from `common`: neighbours = the other signals entering `common`
+whose frequency is the nearest grid slot on either side (|Δf| ≤ 1.5 × plan spacing, CWDM:
+≤ 1.5 × 20 nm). Crosstalk = `Σ_n (P_n,in.max − IL_n − isolation_dB)`, signal = `P_c,out.min`,
+ratio = signal − crosstalk (dB) ≥ `margins.min_crosstalk_ratio_dB` (default 20), graded by
+margin. Skipped for coherent transmitters.
+
+**R18 Mixed direct-detect and coherent (XPM)** (`fibre.xpm_risk`, warn). On a fibre ≥ 1 km that
+carries at least one channel that has passed an amplifier, a direct-detect channel within
+100 GHz of a coherent channel in the same direction → warn.
+
+**R19 Repair margin per km.** `margins.repair_loss_dB_per_km` × `path_km` is added to the Rx
+penalty (7.8), in addition to the fixed repair-splice allowance.
 
 ## 8. Configuration files
 
@@ -495,7 +657,8 @@ paths:
   catalog: /data/catalog         # shared catalog; project may add a local `catalog/` too
 defaults:
   wavelength_plan: dwdm-c-100ghz-40
-  margins: { system_margin_dB: 3.0, ageing_dB: 1.0, repair_splices: 2, repair_splice_loss_dB: 0.1, cd_margin_pct: 10, max_channel_imbalance_dB: 6 }
+  margins: { system_margin_dB: 3.0, ageing_dB: 1.0, repair_splices: 2, repair_splice_loss_dB: 0.1, cd_margin_pct: 10, max_channel_imbalance_dB: 6,
+             repair_loss_dB_per_km: 0.0, osnr_margin_dB: 3.0, amp_min_channel_input_dBm: -25, min_crosstalk_ratio_dB: 20 }
 ui:
   warn_threshold_dB: 1.0         # "warn" if pass margin is below this
   power_display: dBm             # dBm | mW
@@ -678,6 +841,62 @@ mux typ 3.0 dB).
 - **T25 performance**: generated 500-node / 5 000-fibre / 40-channel project computes in
   < 2 s (vitest benchmark) and the canvas stays interactive.
 
+### Design rules (7.10)
+
+- **T26 direct-detect Rx behind a splitter (R1).** Two 1550/1530 nm grey Tx at 0 dBm → 2:1
+  combiner (50/50, no excess) → 1:2 splitter → two direct-detect Rx: each Rx gets two signals
+  → both fail `rx.multiple_signals`; overload uses Σ (two at −6.02 dBm → −3.01 dBm). Same with
+  coherent transceivers → no `rx.multiple_signals`, overload per signal.
+- **T27 channel loading (R2).** CoP amp at 17 dBm, 4 lit channels, `design_channels: 40`:
+  full → ΔG = −10·log10(40/4) = −10.00 dB; single → ΔG = +10·log10(4) = +6.02 dB (amp
+  `gain_dB` range wide enough not to clamp either scenario). Constant-gain
+  amp far from saturation → full-load ΔG = 0 until Pin_total' + G > Pout_max.
+- **T28 per-channel launch (R3).** +6 dBm into 20 km → warn (margin −2); the same into a 2 m
+  patch → silent; +4 dBm → pass (warn-only rule).
+- **T29 amp channel input (R4).** Channel Pin.min −27 dBm, limit −25 → warn.
+- **T30 damage and attenuator hint (R5).** Tx +4 max back to back into Rx overload −7,
+  damage +3 → `rx.power_damage` fail (margin −1), `rx.power_high` fail with
+  suggested_attenuation_dB = 4 + 7 + 1 = 12.
+- **T31 polish (R6).** LC/APC fibre end into an LC/UPC port → error. 20 dBm total through
+  LC/UPC → `joint.reflection_risk` warn; through LC/APC → silent.
+- **T32 mode (R7).** 850 nm mmf optic on G.652.D → `fibre.mode_mismatch` error; OM1 (62.5) ↔ OM3
+  (50) junction → `fibre.core_mismatch` warn; G.652.D ↔ G.655 splice → `fibre.type_mismatch` info.
+- **T33 fibre suitability (R8).** Two DWDM channels over 50 km of G.653 (D = 0 at 1550) →
+  `fibre.fwm_risk`; CWDM 1391 nm on `low_water_peak: false` → `fibre.water_peak`; on G.652.D
+  → silent.
+- **T34 DCM matching and CD spread (R9).** DCM `for_fibre: G.655` after 80 km G.652.D → warn.
+  `dispersion_uncertainty_ps_nm_km: 0.5` × 80 km → cd_spread 40 ps/nm; rx.cd checks
+  (1396.8 + 40) × 1.1 = 1580.5 ≤ 1600 → pass, at 82 km → fail.
+- **T35 passband (R10).** 64 GBd (73.6 GHz) through a mux with `passband_ghz: 50` → fail;
+  32 GBd (36.8 GHz) → pass; explicit `signal_bandwidth_GHz` wins.
+- **T36 reach (R11).** 10 km-rated optic over 11 km with a passing budget → one info
+  `rx.reach`, no warn/fail.
+- **T37 monitor tap (R12).** `tap_dB: 13.0103` (95/5) → through loss 0.2228 dB on common,
+  both directions.
+- **T38 laser class and lanes (R13, R14).** 1550 nm total +15 dBm → 3R, +20 dBm → 3B (info); +10 → 1 (silent);
+  1310 nm +8 dBm → 3R (IRA limits −3 dB). LR4: 4 lanes × 0 dBm → fibre total +6.02 dBm, Rx
+  checks at 0 dBm per lane.
+- **T39 PMD (R15).** 0.5 ps/√km × 100 km → DGD 5.0 ps, tolerance 10 → pass (margin 5);
+  1.0 ps/√km × 400 km → 20 ps → fail. Two fibres 0.5/√km × 64 km and 0.2/√km × 100 km →
+  √(16 + 4) = 4.47 ps.
+- **T40 OSNR (R16).** One amp, Pin −20 dBm/ch, NF 5 → 33.0 dB; two identical amps → 29.99 dB;
+  with Tx OSNR 35 → 10·log10(1/(10^-3.5 + 2·10^-3.3)) = 28.80 dB. `min_osnr_dB 27`, margin 3 → fail at 29.99
+  − 3 = 26.99 (margin −0.01). Amp without NF → `n/a`.
+- **T41 crosstalk (R17).** Demux isolation 25 dB, C22 at −10 dBm, C21 and C23 at −5 dBm into common,
+  IL 3 → crosstalk = 10·log10(2 × 10^((−5 − 3 − 25)/10)) = −29.99 dBm, signal −13 → ratio 16.99
+  < 20 → fail (margin −3.01). Coherent C22 → skipped.
+- **T42 XPM (R18).** Amplified 80 km span with 10G direct C21 and coherent C22 (100 GHz apart) →
+  warn; coherent at C25 → silent; unamplified → silent.
+- **T43 repair per km (R19).** 0.01 dB/km × 80 km = 0.8 dB added to the Rx penalty.
+
+### Reference numbers from the optical networking tutorial
+
+- **T44 golden cases.** 40 × 0 dBm = +16.02 dBm; into an amp with max input −6 dBm total →
+  `amp.input_high` unless each channel ≤ −22.02 dBm. +17 dBm over 40 channels = +0.98 dBm per
+  channel. G.652.D 80 km at 1550 nm = 1396.8 ps/nm. 50/50 splitter = 3.01 dB + excess. A
+  40 km optic (Tx max +2, overload −3) back to back → `rx.power_high`. A 1310 nm signal through a
+  C-band EDFA → `amp.out_of_band` fail.
+
 UI: Playwright smoke tests (open project, drag a fibre, see status change, export CSV).
 
 ## 13. Milestones
@@ -701,3 +920,18 @@ Resolved in review (2026-09-25):
 6. ROADM / WSS out of v1.
 7. Repair margin = N future splices × splice loss (dB/km form can be added later).
 8. Starter catalog seeds FS, Cisco, Finisar transceivers and generic mux / EDFA models.
+
+Added 2026-09-26 (review of the "Everything You Always Wanted to Know About Optical Networking" tutorial against the engine):
+
+9. OSNR (NF-based ASE accumulation), PMD (mean DGD) and adjacent-channel crosstalk move from
+   non-goals into scope at planning grade (7.10 R15–R17). Full nonlinear simulation, ORL
+   budgets, Raman and ROADM stay out; nonlinear and reflection pitfalls are design rules.
+10. Transceivers declare `detection: direct | coherent`. Direct-detect receivers are checked
+    against the total power at the port and may not receive more than one signal (R1).
+11. Amplifiers are checked at full channel load and single-channel load (R2), so a design
+    doesn't pass only because the system is lightly loaded.
+12. Nominal `reach_km` is informational and never fails a link; the budget decides (R11).
+13. Laser safety classes are indicative info only (R13), not a compliance classification.
+14. New project margins: `repair_loss_dB_per_km` (0), `osnr_margin_dB` (3),
+    `amp_min_channel_input_dBm` (−25), `min_crosstalk_ratio_dB` (20).
+15. `amp.out_of_band` is a failure (was a warning): an EDFA does not amplify outside its band.

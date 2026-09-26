@@ -113,7 +113,7 @@ describe("lumantite export", () => {
       "row_type,node,port,direction,channel,plan,wavelength_nm,signal,power_min_dBm,power_typ_dBm,power_max_dBm,cd_ps_nm,port_total_min_dBm,port_total_typ_dBm,port_total_max_dBm,channel_count,status",
     );
     expect(signals.split(/\r?\n/)[0]).toBe(
-      "signal,tx,rx,channel,plan,wavelength_nm,frequency_GHz,terminated,rx_power_min_dBm,rx_power_typ_dBm,rx_power_max_dBm,margin_sensitivity_dB,margin_overload_dB,cd_ps_nm,cd_tolerance_min_ps_nm,cd_tolerance_max_ps_nm,status",
+      "signal,tx,rx,channel,plan,wavelength_nm,frequency_GHz,terminated,rx_power_min_dBm,rx_power_typ_dBm,rx_power_max_dBm,margin_sensitivity_dB,margin_overload_dB,cd_ps_nm,cd_tolerance_min_ps_nm,cd_tolerance_max_ps_nm,cd_spread_ps_nm,osnr_min_dB,osnr_typ_dB,margin_osnr_dB,dgd_ps,path_km,status",
     );
     expect(md.startsWith("# CLI Smoke Test — optical link budget")).toBe(true);
   }, 30000);
